@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-playfair: 'Playfair Display', Georgia, serif;
+    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  body {
+    font-family: var(--font-inter);
+    background-color: #0a0c0a;
+    color: #e3e3df;
+  }
+
+  h1, h2, h3, h4, .font-serif, .font-display {
+    font-family: var(--font-playfair);
+  }
+}
+
+.gold-border {
+  border-color: rgba(186, 143, 49, 0.2);
+}
+
+.gold-border-hover:hover {
+  border-color: rgba(186, 143, 49, 1);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #ffcd7f 0%, #f3ac20 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
