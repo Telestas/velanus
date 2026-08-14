@@ -5,6 +5,9 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    // GitHub Pages sirve el sitio bajo /velanus/, no en la raíz del dominio.
+    // Cambiar a '/' si se configura un dominio propio con CNAME.
+    base: '/velanus/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
