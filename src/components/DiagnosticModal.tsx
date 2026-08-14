@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, MessageSquare, Send, Building2, User, Phone, Mail } from 'lucide-react';
+import { whatsappLink } from '../config';
 
 interface DiagnosticModalProps {
   isOpen: boolean;
@@ -30,8 +31,9 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
   };
 
   const handleWhatsApp = () => {
-    const text = encodeURIComponent(`Hola Vela Nus, deseo agendar un diagnóstico gratuito para mi empresa ${formData.empresa || ''}.`);
-    window.open(`https://wa.me/5350000000?text=${text}`, '_blank');
+    const empresa = formData.empresa ? ` para mi empresa ${formData.empresa}` : '';
+    const text = `Hola Vela Nus, deseo agendar un diagnóstico gratuito${empresa}. Área de interés: ${formData.servicio}.`;
+    window.open(whatsappLink(text), '_blank', 'noopener,noreferrer');
   };
 
   return (

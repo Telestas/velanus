@@ -3,23 +3,45 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ScreenId } from './types';
+import { NavigationProps, ScreenId } from './types';
+import { currentScreen, pathForScreen } from './router';
 import { PrototypeController } from './components/PrototypeController';
 import { HomeDesktopScreen } from './components/HomeDesktopScreen';
 import { HomeMovilScreen } from './components/HomeMovilScreen';
 import { ServiciosDesktopScreen } from './components/ServiciosDesktopScreen';
+import { NosotrosDesktopScreen } from './components/NosotrosDesktopScreen';
+import { CasosDesktopScreen } from './components/CasosDesktopScreen';
 import { DiagnosticModal } from './components/DiagnosticModal';
 
+const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
+  'home-desktop': HomeDesktopScreen,
+  'home-movil': HomeMovilScreen,
+  'servicios-desktop': ServiciosDesktopScreen,
+  'nosotros-desktop': NosotrosDesktopScreen,
+  'casos-desktop': CasosDesktopScreen,
+};
+
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<ScreenId>('home-desktop');
+  const [screen, setScreen] = useState<ScreenId>(currentScreen);
   const [transitionDirection, setTransitionDirection] = useState<'push' | 'push_back'>('push');
   const [diagnosticModalOpen, setDiagnosticModalOpen] = useState(false);
 
+  // El botón atrás del navegador debe cambiar de pantalla, no salir del sitio.
+  useEffect(() => {
+    const onPopState = () => {
+      setTransitionDirection('push_back');
+      setScreen(currentScreen());
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
   const handleNavigate = (target: ScreenId, transitionType: 'push' | 'push_back' = 'push') => {
     setTransitionDirection(transitionType);
-    setCurrentScreen(target);
+    setScreen(target);
+    window.history.pushState({ screen: target }, '', pathForScreen(target));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -48,73 +70,31 @@ export default function App() {
     }),
   };
 
+  const ActiveScreen = SCREENS[screen];
+
   return (
     <div className="min-h-screen bg-[#0a0c0a] text-[#e3e3df] flex flex-col font-sans selection:bg-[#f3ac20] selection:text-[#432c00]">
       {/* Top Prototype Navigation Controller Bar */}
-      <PrototypeController
-        currentScreen={currentScreen}
-        onNavigate={(screen) => {
-          const dir = screen === 'home-desktop' && currentScreen === 'servicios-desktop' ? 'push_back' : 'push';
-          handleNavigate(screen, dir);
-        }}
-      />
+      <PrototypeController currentScreen={screen} onNavigate={handleNavigate} />
 
       {/* Screen Render Canvas with Motion Transitions */}
       <div className="flex-grow relative overflow-x-hidden">
         <AnimatePresence mode="wait" custom={transitionDirection}>
-          {currentScreen === 'home-desktop' && (
-            <motion.div
-              key="home-desktop"
-              custom={transitionDirection}
-              variants={screenVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="w-full min-h-full"
-            >
-              <HomeDesktopScreen
-                currentScreen={currentScreen}
-                onNavigate={handleNavigate}
-                openDiagnosticModal={() => setDiagnosticModalOpen(true)}
-              />
-            </motion.div>
-          )}
-
-          {currentScreen === 'home-movil' && (
-            <motion.div
-              key="home-movil"
-              custom={transitionDirection}
-              variants={screenVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="w-full min-h-full"
-            >
-              <HomeMovilScreen
-                currentScreen={currentScreen}
-                onNavigate={handleNavigate}
-                openDiagnosticModal={() => setDiagnosticModalOpen(true)}
-              />
-            </motion.div>
-          )}
-
-          {currentScreen === 'servicios-desktop' && (
-            <motion.div
-              key="servicios-desktop"
-              custom={transitionDirection}
-              variants={screenVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="w-full min-h-full"
-            >
-              <ServiciosDesktopScreen
-                currentScreen={currentScreen}
-                onNavigate={handleNavigate}
-                openDiagnosticModal={() => setDiagnosticModalOpen(true)}
-              />
-            </motion.div>
-          )}
+          <motion.div
+            key={screen}
+            custom={transitionDirection}
+            variants={screenVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full min-h-full"
+          >
+            <ActiveScreen
+              currentScreen={screen}
+              onNavigate={handleNavigate}
+              openDiagnosticModal={() => setDiagnosticModalOpen(true)}
+            />
+          </motion.div>
         </AnimatePresence>
       </div>
 

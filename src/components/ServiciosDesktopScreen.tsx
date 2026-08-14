@@ -1,75 +1,22 @@
 import React from 'react';
 import { NavigationProps } from '../types';
-import { 
-  Landmark, Printer, Calendar, FileText, 
-  MessageSquare, ArrowLeft, CheckCircle2 
-} from 'lucide-react';
+import { SiteHeader } from './SiteHeader';
+import { SiteFooter } from './SiteFooter';
+import { Landmark, Printer, Calendar, FileText, MessageSquare } from 'lucide-react';
 
 export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
+  currentScreen,
   onNavigate,
   openDiagnosticModal,
 }) => {
   return (
     <div className="min-h-screen bg-[#121412] text-[#e3e3df] flex flex-col font-sans">
-      {/* TopAppBar - Header element containing required xpath match: //header//span[contains(text(), 'Vela Nus')] */}
-      <header className="sticky top-0 z-50 flex justify-between items-center px-10 md:px-20 h-20 bg-[#121412]/95 backdrop-blur-sm border-b border-[#f0bf5d]/20 transition-all duration-300">
-        <div className="flex items-center gap-4">
-          {/* Back button for UX convenience */}
-          <button
-            onClick={() => onNavigate('home-desktop', 'push_back')}
-            className="p-1.5 rounded-full border border-[#BA8F31]/30 hover:border-[#f3ac20] text-[#ffcd7f] hover:bg-[#1e201e] transition-all mr-1"
-            title="Volver a Home Desktop"
-            aria-label="Volver a inicio"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-
-          {/* Mandatory xpath element: //header//span[contains(text(), 'Vela Nus')] */}
-          <span 
-            onClick={() => onNavigate('home-desktop', 'push_back')}
-            className="font-serif text-2xl font-semibold text-[#ffcd7f] tracking-tight cursor-pointer hover:opacity-90 transition-opacity"
-          >
-            Vela Nus
-          </span>
-        </div>
-
-        <nav className="hidden md:flex items-center gap-8">
-          <a 
-            href="#servicios"
-            onClick={(e) => e.preventDefault()}
-            className="text-[#ffcd7f] border-b-2 border-[#ffcd7f] pb-1 font-semibold text-xs tracking-widest uppercase"
-          >
-            Servicios
-          </a>
-          <a 
-            href="#nosotros"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate('home-desktop', 'push_back');
-            }}
-            className="text-[#d6c4ad] font-semibold text-xs tracking-widest uppercase hover:text-[#ffcd7f] transition-colors"
-          >
-            Nosotros
-          </a>
-          <a 
-            href="#casos"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate('home-desktop', 'push_back');
-            }}
-            className="text-[#d6c4ad] font-semibold text-xs tracking-widest uppercase hover:text-[#ffcd7f] transition-colors"
-          >
-            Casos
-          </a>
-        </nav>
-
-        <button 
-          onClick={openDiagnosticModal}
-          className="hidden md:flex items-center justify-center border border-[#BA8F31]/40 hover:border-[#f3ac20] hover:bg-[#1e201e] transition-colors px-6 py-2.5 rounded text-[#e3e3df] font-semibold text-xs uppercase tracking-wider"
-        >
-          Agendar diagnóstico
-        </button>
-      </header>
+      <SiteHeader
+        currentScreen={currentScreen}
+        onNavigate={onNavigate}
+        openDiagnosticModal={openDiagnosticModal}
+        showBack
+      />
 
       {/* Main Content */}
       <main className="flex-grow pt-16 pb-24 px-10 md:px-20 max-w-7xl mx-auto w-full">
@@ -243,70 +190,7 @@ export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
         </section>
       </main>
 
-      {/* Footer element containing mandatory xpath match: //footer//span[contains(text(), 'Vela Nus')] */}
-      <footer className="w-full py-16 px-10 md:px-20 bg-[#0d0f0d] border-t border-[#f0bf5d]/15 mt-auto">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
-          
-          <div className="flex flex-col gap-4 max-w-xs">
-            {/* Mandatory xpath element: //footer//span[contains(text(), 'Vela Nus')] */}
-            <span 
-              onClick={() => onNavigate('home-desktop', 'push_back')}
-              className="font-serif text-3xl font-semibold text-[#ffcd7f] cursor-pointer hover:opacity-90 transition-opacity"
-            >
-              Vela Nus
-            </span>
-            <p className="text-sm text-[#d6c4ad]">
-              © 2024 Vela Nus. All rights reserved.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-12 sm:gap-20">
-            <div className="flex flex-col gap-3">
-              <span className="text-xs uppercase tracking-widest text-[#ffcd7f] font-semibold">
-                Navegación
-              </span>
-              <a 
-                href="#servicios" 
-                onClick={(e) => e.preventDefault()}
-                className="text-sm text-[#d6c4ad] font-semibold text-[#ffcd7f]"
-              >
-                Servicios
-              </a>
-              <a 
-                href="#nosotros" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('home-desktop', 'push_back');
-                }}
-                className="text-sm text-[#d6c4ad] hover:text-[#ffdf97] transition-colors"
-              >
-                Nosotros
-              </a>
-              <a 
-                href="#casos" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('home-desktop', 'push_back');
-                }}
-                className="text-sm text-[#d6c4ad] hover:text-[#ffdf97] transition-colors"
-              >
-                Casos
-              </a>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <span className="text-xs uppercase tracking-widest text-[#ffcd7f] font-semibold">
-                Contacto & Redes
-              </span>
-              <a href="#instagram" className="text-sm text-[#d6c4ad] hover:text-[#ffdf97] transition-colors">Instagram</a>
-              <a href="https://wa.me/5350000000" className="text-sm text-[#d6c4ad] hover:text-[#ffdf97] transition-colors">WhatsApp</a>
-              <a href="mailto:contacto@velanus.cu" className="text-sm text-[#d6c4ad] hover:text-[#ffdf97] transition-colors">Email</a>
-              <span className="text-sm text-[#d6c4ad]">La Habana, Cuba</span>
-            </div>
-          </div>
-
-        </div>
-      </footer>
+      <SiteFooter currentScreen={currentScreen} onNavigate={onNavigate} />
     </div>
   );
 };

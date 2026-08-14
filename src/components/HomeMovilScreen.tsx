@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavigationProps } from '../types';
+import { CONTACT_EMAIL, whatsappLink } from '../config';
 import { 
   Landmark, Printer, Calendar, FileText, Menu, X, 
   MessageSquare, User, CheckCircle2, ChevronRight 
@@ -72,10 +73,12 @@ export const HomeMovilScreen: React.FC<NavigationProps> = ({
               onClick={(e) => {
                 e.preventDefault();
                 setMobileMenuOpen(false);
+                onNavigate('nosotros-desktop', 'push');
               }}
-              className="text-[#d6c4ad] font-semibold text-sm py-2 border-b border-[#BA8F31]/15"
+              className="text-[#d6c4ad] font-semibold text-sm py-2 border-b border-[#BA8F31]/15 flex items-center justify-between"
             >
-              Nosotros
+              <span>Nosotros</span>
+              <ChevronRight className="w-4 h-4 text-[#f3ac20]" />
             </a>
 
             <a
@@ -83,10 +86,12 @@ export const HomeMovilScreen: React.FC<NavigationProps> = ({
               onClick={(e) => {
                 e.preventDefault();
                 setMobileMenuOpen(false);
+                onNavigate('casos-desktop', 'push');
               }}
-              className="text-[#d6c4ad] font-semibold text-sm py-2"
+              className="text-[#d6c4ad] font-semibold text-sm py-2 flex items-center justify-between"
             >
-              Casos
+              <span>Casos</span>
+              <ChevronRight className="w-4 h-4 text-[#f3ac20]" />
             </a>
 
             <button
@@ -178,8 +183,15 @@ export const HomeMovilScreen: React.FC<NavigationProps> = ({
 
           {/* Testimonial / Cases */}
           <section className="flex flex-col gap-4">
-            <h2 className="font-serif text-xl font-medium text-[#e3e3df] border-b border-[#BA8F31]/20 pb-2">
-              Casos de éxito
+            <h2 className="font-serif text-xl font-medium text-[#e3e3df] border-b border-[#BA8F31]/20 pb-2 flex items-center justify-between">
+              <span>Casos de éxito</span>
+              <button
+                onClick={() => onNavigate('casos-desktop', 'push')}
+                className="text-[10px] uppercase tracking-wider text-[#f3ac20] font-semibold flex items-center gap-1"
+              >
+                Ver todos
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </h2>
             <div className="bg-[#121716] border border-[#BA8F31]/20 p-4 rounded space-y-3">
               <p className="text-xs text-[#d6c4ad] italic leading-relaxed">
@@ -219,8 +231,8 @@ export const HomeMovilScreen: React.FC<NavigationProps> = ({
 
           <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-xs text-[#d6c4ad]">
             <a href="#instagram" className="hover:text-[#ffdf97]">Instagram</a>
-            <a href="https://wa.me/5350000000" className="hover:text-[#ffdf97]">WhatsApp</a>
-            <a href="mailto:contacto@velanus.cu" className="hover:text-[#ffdf97]">Email</a>
+            <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="hover:text-[#ffdf97]">WhatsApp</a>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-[#ffdf97]">Email</a>
             <span className="hover:text-[#ffdf97]">La Habana</span>
             
             {/* Mandatory xpath element: //footer//a[contains(text(), 'Servicios')] */}
@@ -234,13 +246,31 @@ export const HomeMovilScreen: React.FC<NavigationProps> = ({
             >
               Servicios
             </a>
-            <a href="#nosotros" className="hover:text-[#ffdf97]">Nosotros</a>
-            <a href="#casos" className="hover:text-[#ffdf97]">Casos</a>
+            <a
+              href="#nosotros"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('nosotros-desktop', 'push');
+              }}
+              className="hover:text-[#ffdf97] cursor-pointer"
+            >
+              Nosotros
+            </a>
+            <a
+              href="#casos"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('casos-desktop', 'push');
+              }}
+              className="hover:text-[#ffdf97] cursor-pointer"
+            >
+              Casos
+            </a>
           </div>
 
           <div className="pt-4 border-t border-[#BA8F31]/20">
             <p className="text-[11px] text-[#9e8e7a]">
-              © 2024 Vela Nus. All rights reserved.
+              © 2026 Vela Nus. All rights reserved.
             </p>
           </div>
         </footer>

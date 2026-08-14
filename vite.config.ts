@@ -1,14 +1,29 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import fs from 'fs';
 import path from 'path';
-import {defineConfig} from 'vite';
+import {defineConfig, Plugin} from 'vite';
+
+/**
+ * GitHub Pages es hosting estático: solo conoce index.html, así que entrar
+ * directo a /servicios o recargar esa URL daría 404. Pages sirve 404.html
+ * cuando no encuentra el fichero y conserva la URL, de modo que una copia de
+ * index.html hace que la SPA arranque y el router resuelva la ruta.
+ */
+const spaFallback = (): Plugin => ({
+  name: 'spa-404-fallback',
+  closeBundle() {
+    const dist = path.resolve(__dirname, 'dist');
+    fs.copyFileSync(path.join(dist, 'index.html'), path.join(dist, '404.html'));
+  },
+});
 
 export default defineConfig(() => {
   return {
     // GitHub Pages sirve el sitio bajo /velanus/, no en la raíz del dominio.
     // Cambiar a '/' si se configura un dominio propio con CNAME.
     base: '/velanus/',
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), spaFallback()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
