@@ -2,5 +2,5 @@
   "name": "Vela Nus",
   "description": "Consultoría corporativa y gestión administrativa para empresas en Cuba.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

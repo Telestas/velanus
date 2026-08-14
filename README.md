@@ -1,20 +1,41 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Vela Nus
 
-# Run and deploy your AI Studio app
+Sitio de consultoría corporativa y gestión administrativa para empresas en Cuba.
 
-This contains everything you need to run your app locally.
+**En vivo:** https://telestas.github.io/velanus/
 
-View your app in AI Studio: https://ai.studio/apps/a4d3bb5d-59e0-422c-b25b-8ad58b2b48ef
+Prototipo de front estático (React 19 + TypeScript + Vite + Tailwind v4). No tiene
+backend ni llamadas a APIs externas.
 
-## Run Locally
+## Desarrollo local
 
-**Prerequisites:**  Node.js
+**Requisitos:** Node.js 22+
 
+```bash
+npm install
+npm run dev      # http://localhost:3000
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Otros comandos:
+
+- `npm run lint` — typecheck con `tsc --noEmit`
+- `npm run build` — build de producción en `dist/`
+- `npm run preview` — sirve el build local
+
+No hace falta ningún archivo `.env`: el proyecto no usa variables de entorno.
+
+## Despliegue
+
+Cada push a `main` dispara [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
+que compila y publica en GitHub Pages.
+
+El `base` de Vite está fijado a `/velanus/` porque Pages sirve el sitio bajo ese
+subpath. Si se configura un dominio propio, hay que cambiarlo a `/` en
+[`vite.config.ts`](vite.config.ts).
+
+## Pendiente antes de considerarlo producción
+
+- El número de WhatsApp es un placeholder (`5350000000`) en `src/components/DiagnosticModal.tsx`.
+- La barra `PrototypeController` es andamiaje de prototipo y sigue visible.
+- Las imágenes apuntan a URLs temporales de AI Studio; conviene bajarlas al repo.
+- El formulario de diagnóstico no envía datos a ningún sitio.
