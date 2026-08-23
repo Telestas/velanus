@@ -20,9 +20,9 @@ const spaFallback = (): Plugin => ({
 
 export default defineConfig(() => {
   return {
-    // GitHub Pages sirve el sitio bajo /velanus/, no en la raíz del dominio.
-    // Cambiar a '/' si se configura un dominio propio con CNAME.
-    base: '/velanus/',
+    // Dominio propio velanus.com (public/CNAME): el sitio se sirve en la raíz.
+    // Volver a '/velanus/' si se quitara el dominio y se usara telestas.github.io.
+    base: '/',
     plugins: [react(), tailwindcss(), spaFallback()],
     resolve: {
       alias: {

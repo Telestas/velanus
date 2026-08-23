@@ -63,10 +63,16 @@ Los enlaces de navegación son `<a href>` reales con `preventDefault()` en el
 
 ### Base path y GitHub Pages
 
-`base: '/velanus/'` en `vite.config.ts` está atado al nombre del repo, porque
-Pages sirve el sitio en `telestas.github.io/velanus/`. El router calcula todo a
-partir de `import.meta.env.BASE_URL`, así que **si cambia el base (dominio propio,
-repo renombrado) solo hay que tocar `vite.config.ts`**.
+El sitio se publica en el dominio propio **velanus.com**, así que
+`base: '/'` en `vite.config.ts` y `public/CNAME` contiene `velanus.com`. El
+dominio está en Cloudflare (DNS proxied) apuntando a GitHub Pages, y el custom
+domain está fijado en la configuración de Pages del repo. El router calcula todo
+a partir de `import.meta.env.BASE_URL`, así que **si cambia el dominio hay que
+tocar `vite.config.ts`, `public/CNAME` y el ajuste de Pages**.
+
+TLS lo termina Cloudflare; GitHub no emite certificado para el dominio (por eso
+`https_enforced` está en `false` en la API de Pages). El redirect a HTTPS y el
+modo SSL se gestionan desde Cloudflare, no desde GitHub.
 
 Pages es estático y no sabe de rutas: el plugin `spaFallback` copia `index.html`
 a `404.html` al terminar el build para que los deep links arranquen la SPA.
@@ -105,4 +111,4 @@ presente:
 Push a `main` dispara `.github/workflows/deploy.yml` (lint → build →
 `deploy-pages`). Pages está configurado con origen *GitHub Actions*; no hay que
 tocar Settings. Verificar un despliegue con `gh run watch` y luego curl a
-https://telestas.github.io/velanus/.
+https://velanus.com/.
