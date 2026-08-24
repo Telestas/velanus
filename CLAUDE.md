@@ -158,6 +158,10 @@ presente:
   quitar esos avisos sin que el cliente valide el contenido.
 - `PrototypeController` es andamiaje de prototipo (salta entre pantallas) y sigue
   visible en producción.
+- El panel de /admin ya escribe en Firestore (artículos, preguntas y moderación
+  de comentarios), pero **el sitio público todavía no lee de ahí**: el blog de la
+  home sigue mostrando los marcadores de la maqueta y no existe la ruta
+  `/blog/{slug}` ni el formulario de comentarios. Es lo siguiente.
 - Home, Servicios (índice y cuatro subpáginas) y Nosotros están rediseñadas con
   el manual de marca. **`CasosDesktopScreen`, `SiteHeader`, `SiteFooter` y
   `DiagnosticModal` siguen con el lenguaje visual anterior** (verde/dorado,
@@ -179,6 +183,41 @@ presente:
   "enviado" en local. El botón de WhatsApp sí funciona.
 - Las imágenes de `ServiciosDesktopScreen` apuntan a URLs temporales de AI Studio
   (`lh3.googleusercontent.com/aida-public/...`) que pueden caducar.
+
+## Firebase
+
+El proyecto es `velanus-12056` (plan Spark, gratuito). El **frontend sigue en
+GitHub Pages**; de Firebase se usan solo Firestore y Authentication.
+
+- `firestore.rules` es el backend. No hay API propia ni servidor: el navegador
+  habla directo con Firestore y **las reglas son lo único que protege los
+  datos**. Ocultar un botón en React no protege nada; si algo no puede pasar,
+  tiene que estar prohibido en las reglas.
+- Ser admin = tener un documento en `admins/{uid}`. Esa colección **no se puede
+  escribir desde el navegador**, ni siendo admin: se siembra con
+  `node scripts/alta-admin.mjs correo@ejemplo.com`, que usa el token de
+  `firebase login`. Así nadie se asciende a sí mismo.
+- Colecciones: `entradas` (blog), `preguntas` (FAQ), `comentarios`, `admins`.
+- El SDK se carga con `import()` dinámico desde `src/firebase.ts`: pesa ~170 kB
+  gzip y no debe caer en el bundle de la home. No importarlo de forma estática.
+- La configuración web de `src/firebase.ts` **no es secreta** (es pública por
+  diseño en Firebase); no tratarla como una credencial ni moverla a variables
+  de entorno pensando que así se protege algo.
+
+Límites del plan Spark que condicionan el diseño:
+
+- **Cloud Functions exige Blaze.** No hay código en servidor: ni moderación
+  automática de comentarios, ni límites de frecuencia, ni envío de correos.
+  Los comentarios se validan solo por forma (sesión anónima obligatoria, campos
+  exactos, longitudes) y se moderan a posteriori desde el panel. **App Check
+  está pendiente** y es la defensa que falta contra bots.
+- **Cloud Storage pide facturación**, así que las imágenes de los artículos van
+  en el repo o en un servicio externo, no en Firebase.
+- Si algún día hace falta código en servidor, el hueco gratis es Cloudflare
+  Workers (el dominio ya pasa por Cloudflare), no subir a Blaze.
+
+Activar Authentication la primera vez **solo se puede hacer desde la consola**
+(la API la rechaza en Spark: la ruta de Identity Platform pide facturación).
 
 ## Despliegue
 

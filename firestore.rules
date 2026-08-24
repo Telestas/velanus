@@ -1,0 +1,89 @@
+rules_version = '2';
+
+/**
+ * Reglas de seguridad de Firestore.
+ *
+ * El sitio es estático y no hay servidor propio: el navegador habla directo con
+ * Firestore. Esto es, por tanto, la única puerta que protege los datos. Todo lo
+ * que no esté permitido aquí, no se puede hacer, venga de donde venga.
+ *
+ * Quién es admin: quien tenga un documento en `admins/{su-uid}`. Esa colección
+ * no se puede escribir desde el navegador —ni siquiera siendo admin—, solo con
+ * credenciales de servidor (la CLI de Firebase). Así nadie puede ascenderse a
+ * sí mismo aunque se cuele en el panel.
+ */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function esAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function texto(campo, minimo, maximo) {
+      return campo is string && campo.size() >= minimo && campo.size() <= maximo;
+    }
+
+    /** Lista de administradores. Se siembra desde la CLI, nunca desde la web. */
+    match /admins/{uid} {
+      allow read: if esAdmin();
+      allow write: if false;
+    }
+
+    /**
+     * Entradas del blog. Las publicadas las lee cualquiera; los borradores,
+     * solo el admin. El listado público debe filtrar por `publicada == true`,
+     * porque una consulta sin ese filtro pediría también los borradores y
+     * Firestore la rechazaría entera.
+     */
+    match /entradas/{id} {
+      allow read: if resource.data.publicada == true || esAdmin();
+      allow create, update, delete: if esAdmin();
+    }
+
+    /** Preguntas frecuentes: mismo trato que las entradas. */
+    match /preguntas/{id} {
+      allow read: if resource.data.publicada == true || esAdmin();
+      allow create, update, delete: if esAdmin();
+    }
+
+    /**
+     * Comentarios de los lectores.
+     *
+     * Los publica cualquiera y se quedan visibles hasta que el admin los borre
+     * u oculte. Como no hay servidor donde moderar (Cloud Functions exige plan
+     * Blaze), la validación posible es la de forma: sesión iniciada —aunque sea
+     * anónima, para poder atribuir el comentario—, campos exactos y longitudes
+     * acotadas.
+     *
+     * OJO: esto no frena a un bot decidido. La defensa real es App Check, que
+     * está pendiente de activar.
+     */
+    match /comentarios/{id} {
+      allow read: if true;
+
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(
+             ['entrada', 'nombre', 'texto', 'creado', 'autor', 'oculto'])
+        && request.resource.data.keys().hasAll(
+             ['entrada', 'nombre', 'texto', 'creado', 'autor', 'oculto'])
+        && request.resource.data.autor == request.auth.uid
+        && request.resource.data.oculto == false
+        && request.resource.data.creado == request.time
+        && texto(request.resource.data.entrada, 1, 200)
+        && texto(request.resource.data.nombre, 2, 60)
+        && texto(request.resource.data.texto, 2, 2000);
+
+      // Nadie edita un comentario publicado: el admin lo oculta o lo borra.
+      allow update: if esAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['oculto']);
+      allow delete: if esAdmin();
+    }
+
+    /** Todo lo demás queda cerrado. */
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
