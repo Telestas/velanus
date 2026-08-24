@@ -77,10 +77,10 @@ export const NAV_HOME: DestinoEnlace[] = [
 ];
 
 export const PIE_SERVICIOS: DestinoEnlace[] = [
-  { label: 'Contabilidad', pantalla: 'servicios-desktop' },
-  { label: 'Legal corporativo', pantalla: 'servicios-desktop' },
-  { label: 'Trámites y visas', pantalla: 'servicios-desktop' },
-  { label: 'Eventos y capacitación', pantalla: 'servicios-desktop' },
+  { label: 'Contabilidad', pantalla: 'servicios-contabilidad' },
+  { label: 'Legal corporativo', pantalla: 'servicios-legal' },
+  { label: 'Trámites y visas', pantalla: 'servicios-tramites' },
+  { label: 'Eventos y capacitación', pantalla: 'servicios-eventos' },
 ];
 
 export const PIE_FIRMA: DestinoEnlace[] = [

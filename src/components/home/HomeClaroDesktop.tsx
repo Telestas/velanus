@@ -3,7 +3,6 @@ import { NavigationProps } from '../../types';
 import {
   CONTACT_ADDRESS_LINES,
   CONTACT_EMAIL,
-  CONTACT_SCHEDULE,
   CONTACT_TIMEZONE,
   WHATSAPP_DISPLAY,
   whatsappLink,
@@ -16,7 +15,6 @@ import {
   HERO_CLARO,
   LINEAS_SERVICIO,
   PASOS,
-  PIE_DESCRIPCION,
   PROBLEMAS,
   RESENAS,
   TRAMITES,
@@ -27,10 +25,9 @@ import {
   LogoVelaNus,
   MENSAJE_CONSULTA,
   NAV_HOME,
-  PIE_FIRMA,
-  PIE_LEGAL,
-  PIE_SERVICIOS,
 } from './comunes';
+import { PieSitio } from '../marca/PieSitio';
+import { paletaDe } from '../marca/paleta';
 
 /**
  * Home, dirección «modo claro» (1b en la maqueta): portada clara y editorial
@@ -376,72 +373,6 @@ export const HomeClaroDesktop: React.FC<NavigationProps> = ({
       </div>
     </section>
 
-    {/* pie claro */}
-    <footer className="bg-[#F1F1F0] text-[#000000]">
-      <div className="max-w-[1240px] mx-auto px-6 md:px-12 pt-16 pb-8 grid md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] gap-12">
-        <div className="flex flex-col gap-4">
-          <LogoVelaNus tono="negro" alto={40} conBajada />
-          <p className="text-[15px] leading-relaxed text-[#4A4A4A]">{PIE_DESCRIPCION}</p>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <span className="text-xs tracking-[0.16em] uppercase text-[#8A5800]">Servicios</span>
-          {PIE_SERVICIOS.map((destino) => (
-            <Enlace
-              key={destino.label}
-              destino={destino}
-              onNavigate={onNavigate}
-              className="text-[15px] text-[#4A4A4A] hover:text-[#000000] transition-colors"
-            />
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <span className="text-xs tracking-[0.16em] uppercase text-[#8A5800]">Firma</span>
-          {PIE_FIRMA.map((destino) => (
-            <Enlace
-              key={destino.label}
-              destino={destino}
-              onNavigate={onNavigate}
-              className="text-[15px] text-[#4A4A4A] hover:text-[#000000] transition-colors"
-            />
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <span className="text-xs tracking-[0.16em] uppercase text-[#8A5800]">Contacto</span>
-          <span className="text-[15px] text-[#4A4A4A] leading-relaxed">
-            {CONTACT_ADDRESS_LINES[0]}
-            <br />
-            {CONTACT_ADDRESS_LINES[1]}
-          </span>
-          <span className="text-[15px]">{WHATSAPP_DISPLAY}</span>
-          <span className="text-[15px]">{CONTACT_EMAIL}</span>
-          <span className="text-sm text-[#4A4A4A] leading-normal">
-            {CONTACT_SCHEDULE}
-            <br />
-            {CONTACT_TIMEZONE}
-          </span>
-        </div>
-      </div>
-
-      <div className="max-w-[1240px] mx-auto px-6 md:px-12 pb-11">
-        <div className="border-t border-[#DEDEDC] pt-5 flex justify-between items-center gap-8 flex-wrap">
-          <span className="text-sm text-[#767676]">
-            © 2026 Vela Nus Consultores &amp; Asociados
-          </span>
-          <div className="flex gap-6">
-            {PIE_LEGAL.map((destino) => (
-              <Enlace
-                key={destino.label}
-                destino={destino}
-                onNavigate={onNavigate}
-                className="text-sm text-[#4A4A4A]"
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </footer>
+    <PieSitio paleta={paletaDe('claro')} onNavigate={onNavigate} />
   </div>
 );

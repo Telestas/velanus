@@ -13,6 +13,8 @@ import { HomeMovilScreen } from './components/HomeMovilScreen';
 import { ServiciosDesktopScreen } from './components/ServiciosDesktopScreen';
 import { NosotrosDesktopScreen } from './components/NosotrosDesktopScreen';
 import { CasosDesktopScreen } from './components/CasosDesktopScreen';
+import { pantallaDeLinea } from './components/servicios/LineaScreen';
+import { LINEAS } from './content/servicios';
 import { AdminScreen } from './components/AdminScreen';
 import { DiagnosticModal } from './components/DiagnosticModal';
 
@@ -20,6 +22,11 @@ const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   'home-desktop': HomeDesktopScreen,
   'home-movil': HomeMovilScreen,
   'servicios-desktop': ServiciosDesktopScreen,
+  // Las cuatro subpáginas de servicio comparten plantilla y solo cambian de datos.
+  'servicios-contabilidad': pantallaDeLinea(LINEAS[0]),
+  'servicios-legal': pantallaDeLinea(LINEAS[1]),
+  'servicios-tramites': pantallaDeLinea(LINEAS[2]),
+  'servicios-eventos': pantallaDeLinea(LINEAS[3]),
   'nosotros-desktop': NosotrosDesktopScreen,
   'casos-desktop': CasosDesktopScreen,
   admin: AdminScreen,

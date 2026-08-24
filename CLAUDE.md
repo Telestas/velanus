@@ -40,10 +40,27 @@ contrato `NavigationProps` (`currentScreen`, `onNavigate`, `openDiagnosticModal`
 aparte que dibuja un marco de teléfono con barra de estado simulada y usa los
 textos cortos que trae la maqueta de 390 px.
 
-`ServiciosDesktopScreen`, `NosotrosDesktopScreen` y `CasosDesktopScreen`
-comparten `SiteHeader` y `SiteFooter`, que resuelven solos el enlace activo a
-partir de `currentScreen`. Las pantallas de la home **no** los usan: llevan su
-propia cabecera y su propio pie, como en la maqueta.
+`CasosDesktopScreen` es la única que sigue usando `SiteHeader` y `SiteFooter`
+(el lenguaje visual antiguo). Las pantallas rediseñadas —home, Servicios y
+Nosotros— usan `src/components/marca/`: `CabeceraSitio`, `PieSitio` y las
+piezas de `piezas.tsx` (miga de pan, banda CTA, titulares de sección).
+
+### Tono: una retícula, dos paletas
+
+Servicios y Nosotros son en la maqueta la misma retícula pintada con dos
+paletas, así que se pintan **una vez** y reciben la paleta desde
+`src/components/marca/paleta.ts` (`paletaDe(variante)`). Cambiar un color es
+cambiarlo ahí, no en cada pantalla.
+
+Ojo con Tailwind: las clases se descubren escaneando el código fuente, así que
+una clase compuesta en tiempo de ejecución (`` hover:${paleta.acentoTexto} ``)
+no se genera nunca. Por eso la paleta lleva `acentoHover` aparte.
+
+Las cuatro subpáginas de servicio (`servicios/contabilidad`, `/legal`,
+`/tramites-y-visas`, `/eventos`) comparten estructura, así que las pinta una
+sola plantilla —`servicios/LineaScreen.tsx`— con los datos de
+`src/content/servicios.ts`. Añadir una línea es añadir un objeto ahí, su
+`ScreenId` y su entrada en `SCREENS`.
 
 ### La home tiene dos direcciones visuales
 
@@ -113,8 +130,9 @@ salida es un hosting con rewrites o generar HTML por ruta.
 
 ### Contenido
 
-El texto de la home está en `src/content/home.ts`. El de las pantallas
-interiores sigue hardcodeado en el JSX; `ServiceItem` y `Testimonial` existen en
+El texto de las pantallas rediseñadas está en `src/content/`: `home.ts`,
+`servicios.ts` y `nosotros.ts`. El de `CasosDesktopScreen` sigue hardcodeado en
+el JSX; `ServiceItem` y `Testimonial` existen en
 `types.ts` pero no los usa nadie — si se externaliza ese contenido, ahí está el
 punto de partida.
 
@@ -140,13 +158,20 @@ presente:
   quitar esos avisos sin que el cliente valide el contenido.
 - `PrototypeController` es andamiaje de prototipo (salta entre pantallas) y sigue
   visible en producción.
-- La home está rediseñada con el manual de marca; **`ServiciosDesktopScreen`,
-  `NosotrosDesktopScreen`, `CasosDesktopScreen`, `SiteHeader`, `SiteFooter` y
+- Home, Servicios (índice y cuatro subpáginas) y Nosotros están rediseñadas con
+  el manual de marca. **`CasosDesktopScreen`, `SiteHeader`, `SiteFooter` y
   `DiagnosticModal` siguen con el lenguaje visual anterior** (verde/dorado,
-  Playfair). Ir de la home a cualquier interior se nota. Es lo siguiente.
-- La home trae marcadores que el cliente aún no ha rellenado y que no hay que
-  inventar: cifras (`[DATO PENDIENTE]`), reseñas, entradas del blog y el horario
-  de atención. El conmutador ES/EN está dibujado pero no hay versión en inglés.
+  Playfair). Entrar en Casos desde cualquier otra pantalla se nota. Es lo
+  siguiente.
+- Las pantallas rediseñadas están llenas de marcadores que el cliente aún no ha
+  rellenado y que **no hay que inventar**: cifras, reseñas y entradas del blog en
+  la home; `[PLAZO PENDIENTE]` y varias respuestas de las FAQ en Servicios;
+  historia de la firma, equipo, cifras y credenciales en Nosotros. El conmutador
+  ES/EN está dibujado pero no hay versión en inglés.
+- Sin navegador en el entorno de desarrollo, la verificación que se hace es
+  renderizar cada pantalla con `renderToString` sobre un build SSR temporal
+  (`vite build --ssr`) y comprobar el HTML. Detecta que no revientan y que el
+  contenido sale; no sustituye mirar la maqueta en un navegador real.
 - El formulario de contacto de la home no hace POST: compone la consulta y abre
   WhatsApp con el texto redactado, y lo avisa bajo el botón. Es un desvío
   deliberado de la maqueta, que dibujaba un envío convencional.

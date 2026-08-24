@@ -2,6 +2,10 @@ export type ScreenId =
   | 'home-desktop'
   | 'home-movil'
   | 'servicios-desktop'
+  | 'servicios-contabilidad'
+  | 'servicios-legal'
+  | 'servicios-tramites'
+  | 'servicios-eventos'
   | 'nosotros-desktop'
   | 'casos-desktop'
   | 'admin';
