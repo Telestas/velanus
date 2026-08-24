@@ -1,7 +1,13 @@
 import React from 'react';
 import { NavigationProps } from '../types';
 import { CONTACT_EMAIL, CONTACT_TIMEZONE, whatsappLink } from '../config';
-import { INDICE, LINEAS_CORPORATIVAS, LINEA_PERSONAS } from '../content/servicios';
+import {
+  contenidoServicios,
+  lineaPersonas,
+  lineasCorporativas,
+} from '../content/servicios';
+import { useIdioma } from '../i18n/idioma';
+import { textos } from '../i18n/textos';
 import { Enlace } from './home/comunes';
 import { useVarianteHome } from './home/useVariante';
 import { CabeceraSitio } from './marca/CabeceraSitio';
@@ -20,6 +26,11 @@ export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
   onNavigate,
   openDiagnosticModal,
 }) => {
+  const idioma = useIdioma();
+  const t = textos(idioma);
+  const contenido = contenidoServicios(idioma);
+  const indice = contenido.indice;
+  const personas = lineaPersonas(contenido);
   const paleta = paletaDe(useVarianteHome());
 
   return (
@@ -35,8 +46,8 @@ export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
       <Miga
         paleta={paleta}
         onNavigate={onNavigate}
-        ruta={[{ label: 'Inicio', pantalla: 'home-desktop' }]}
-        actual="Servicios"
+        ruta={[{ label: t.servicios.migaInicio, pantalla: 'home-desktop' }]}
+        actual={t.servicios.migaServicios}
       />
 
       {/* portada del índice */}
@@ -44,27 +55,27 @@ export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
         <div className="flex flex-col gap-6">
           <div className="w-14 h-[3px] bg-[#F9A600]" />
           <h1 className="text-[38px] md:text-[54px] leading-[1.08] font-bold tracking-[-0.01em] text-pretty">
-            {INDICE.titulo}
+            {indice.titulo}
           </h1>
           <p className={`text-lg md:text-xl leading-relaxed ${paleta.textoFuerte} max-w-[620px] text-pretty`}>
-            {INDICE.entradilla}
+            {indice.entradilla}
           </p>
         </div>
 
         <div className={`border ${paleta.borde} p-8 flex flex-col gap-[18px]`}>
           <span className={`text-xs tracking-[0.18em] uppercase ${paleta.acentoTexto}`}>
-            {INDICE.panel.etiqueta}
+            {indice.panel.etiqueta}
           </span>
           <p className={`text-[17px] leading-relaxed ${paleta.textoSuave}`}>
-            {INDICE.panel.texto}
+            {indice.panel.texto}
           </p>
           <a
-            href={whatsappLink(INDICE.panel.mensaje)}
+            href={whatsappLink(indice.panel.mensaje)}
             target="_blank"
             rel="noopener"
             className="text-base font-bold text-[#000000] bg-[#F9A600] p-[15px] text-center hover:bg-[#FFC048] transition-colors"
           >
-            {INDICE.panel.boton}
+            {indice.panel.boton}
           </a>
           <span className={`text-sm ${paleta.textoTenue}`}>
             {CONTACT_EMAIL} · {CONTACT_TIMEZONE}
@@ -75,12 +86,12 @@ export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
       {/* tres líneas corporativas */}
       <div className={`${ANCHO} pb-10`}>
         <span className={`text-[13px] tracking-[0.2em] uppercase ${paleta.acentoTexto}`}>
-          Servicios a empresas
+          {t.servicios.empresas}
         </span>
       </div>
 
       <section className={`${ANCHO} pb-18 grid md:grid-cols-3 gap-6`}>
-        {LINEAS_CORPORATIVAS.map((linea) => (
+        {lineasCorporativas(contenido).map((linea) => (
           <article
             key={linea.clave}
             className={`border ${paleta.borde} border-t-4 border-t-[#F9A600] px-8 py-9 flex flex-col gap-5`}
@@ -98,7 +109,7 @@ export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
               ))}
             </div>
             <Enlace
-              destino={{ label: 'Ver línea completa →', pantalla: linea.pantalla }}
+              destino={{ label: t.home.verLineaCompleta, pantalla: linea.pantalla }}
               onNavigate={onNavigate}
               className={`mt-auto text-base font-bold ${paleta.acentoTexto}`}
             />
@@ -113,15 +124,15 @@ export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
         >
           <div className="flex flex-col gap-2 max-w-[640px]">
             <span className={`text-xs tracking-[0.16em] uppercase ${paleta.textoTenue}`}>
-              C · Personas naturales
+              {t.servicios.personasNaturales}
             </span>
-            <h2 className="text-[27px] font-bold">{LINEA_PERSONAS.titulo}</h2>
+            <h2 className="text-[27px] font-bold">{personas.titulo}</h2>
             <p className={`text-base leading-relaxed ${paleta.textoSuave}`}>
-              {LINEA_PERSONAS.resumen}
+              {personas.resumen}
             </p>
           </div>
           <Enlace
-            destino={{ label: 'Ir a trámites personales', pantalla: LINEA_PERSONAS.pantalla }}
+            destino={{ label: t.servicios.irATramites, pantalla: personas.pantalla }}
             onNavigate={onNavigate}
             className={`text-base font-bold border px-[26px] py-[15px] flex-none transition-colors ${paleta.botonSecundario}`}
           />
@@ -130,9 +141,9 @@ export const ServiciosDesktopScreen: React.FC<NavigationProps> = ({
 
       <BandaCta
         paleta={paleta}
-        titulo={INDICE.cierre.titulo}
-        boton={INDICE.cierre.boton}
-        mensaje={INDICE.cierre.mensaje}
+        titulo={indice.cierre.titulo}
+        boton={indice.cierre.boton}
+        mensaje={indice.cierre.mensaje}
       />
 
       <PieSitio paleta={paleta} onNavigate={onNavigate} />

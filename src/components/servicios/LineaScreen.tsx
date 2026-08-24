@@ -1,6 +1,9 @@
 import React from 'react';
 import { NavigationProps } from '../../types';
-import { LineaPagina } from '../../content/servicios';
+import { contenidoServicios, lineaDe } from '../../content/servicios';
+import { ScreenId } from '../../types';
+import { useIdioma } from '../../i18n/idioma';
+import { textos } from '../../i18n/textos';
 import { Enlace } from '../home/comunes';
 import { useVarianteHome } from '../home/useVariante';
 import { CabeceraSitio } from '../marca/CabeceraSitio';
@@ -9,7 +12,8 @@ import { BandaCta, Miga, Vinneta } from '../marca/piezas';
 import { ANCHO, paletaDe } from '../marca/paleta';
 
 interface LineaScreenProps extends NavigationProps {
-  linea: LineaPagina;
+  /** Qué línea se pinta. El contenido se resuelve por idioma en cada render. */
+  pantalla: ScreenId;
 }
 
 /**
@@ -20,11 +24,14 @@ interface LineaScreenProps extends NavigationProps {
  * que la pantalla se pinta una vez y recibe los datos de `content/servicios.ts`.
  */
 export const LineaScreen: React.FC<LineaScreenProps> = ({
-  linea,
+  pantalla,
   currentScreen,
   onNavigate,
   openDiagnosticModal,
 }) => {
+  const idioma = useIdioma();
+  const t = textos(idioma);
+  const linea = lineaDe(contenidoServicios(idioma), pantalla)!;
   const paleta = paletaDe(useVarianteHome());
 
   /*
@@ -33,10 +40,10 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
    */
   const ruta =
     linea.clave === 'C'
-      ? [{ label: 'Inicio', pantalla: 'home-desktop' as const }]
+      ? [{ label: t.servicios.migaInicio, pantalla: 'home-desktop' as const }]
       : [
-          { label: 'Inicio', pantalla: 'home-desktop' as const },
-          { label: 'Servicios', pantalla: 'servicios-desktop' as const },
+          { label: t.servicios.migaInicio, pantalla: 'home-desktop' as const },
+          { label: t.servicios.migaServicios, pantalla: 'servicios-desktop' as const },
         ];
 
   return (
@@ -46,7 +53,7 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
         currentScreen={currentScreen}
         onNavigate={onNavigate}
         openDiagnosticModal={openDiagnosticModal}
-        seccionActiva="Servicios"
+        seccionActiva={t.nav.servicios}
         borde
       />
 
@@ -107,7 +114,7 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
 
       {/* qué incluye */}
       <section className={`${ANCHO} pb-20`}>
-        <h2 className="text-[28px] md:text-[34px] font-bold mb-8">Qué incluye la línea</h2>
+        <h2 className="text-[28px] md:text-[34px] font-bold mb-8">{t.servicios.queIncluye}</h2>
         <div className="flex flex-col">
           {linea.incluye.map((item, i) => (
             <div
@@ -130,7 +137,7 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
       <section className={paleta.banda}>
         <div className={`${ANCHO} py-18 grid lg:grid-cols-2 gap-12 lg:gap-18 items-start`}>
           <div className="flex flex-col gap-6">
-            <h2 className="text-[26px] md:text-[30px] font-bold">Plazos estimados</h2>
+            <h2 className="text-[26px] md:text-[30px] font-bold">{t.servicios.plazos}</h2>
             <div className="flex flex-col">
               {linea.plazos.map((plazo, i) => (
                 <div
@@ -152,7 +159,7 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
           </div>
 
           <div className="flex flex-col gap-6">
-            <h2 className="text-[26px] md:text-[30px] font-bold">Qué necesitamos de usted</h2>
+            <h2 className="text-[26px] md:text-[30px] font-bold">{t.servicios.requisitos}</h2>
             <div className="grid sm:grid-cols-2 gap-x-7 gap-y-3.5">
               {linea.requisitos.map((requisito) => (
                 <Vinneta key={requisito} paleta={paleta}>
@@ -166,7 +173,7 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
 
       {/* preguntas frecuentes */}
       <section className={`${ANCHO} py-20`}>
-        <h2 className="text-[28px] md:text-[34px] font-bold mb-8">Preguntas frecuentes</h2>
+        <h2 className="text-[28px] md:text-[34px] font-bold mb-8">{t.servicios.preguntas}</h2>
         <div className="flex flex-col">
           {linea.preguntas.map((item, i) => (
             <div
@@ -197,8 +204,10 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
 };
 
 /** Una pantalla por línea: el router mapea id → componente, no id → datos. */
-export const pantallaDeLinea = (linea: LineaPagina): React.FC<NavigationProps> => {
-  const Pantalla: React.FC<NavigationProps> = (props) => <LineaScreen {...props} linea={linea} />;
-  Pantalla.displayName = `LineaScreen(${linea.clave})`;
+export const pantallaDeLinea = (pantalla: ScreenId): React.FC<NavigationProps> => {
+  const Pantalla: React.FC<NavigationProps> = (props) => (
+    <LineaScreen {...props} pantalla={pantalla} />
+  );
+  Pantalla.displayName = `LineaScreen(${pantalla})`;
   return Pantalla;
 };

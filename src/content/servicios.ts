@@ -1,16 +1,21 @@
 import { ScreenId } from '../types';
+import { Idioma } from '../i18n/idioma';
 
 /**
- * Contenido de Servicios: el índice y las cuatro subpáginas de línea.
+ * Contenido de Servicios en los dos idiomas: el índice y las cuatro
+ * subpáginas de línea.
  *
- * Sale de la maqueta «Servicios Vela Nus.dc.html». Las cuatro subpáginas
- * comparten estructura —hero con panel, qué incluye, plazos, qué necesitamos,
- * preguntas frecuentes y cierre—, así que se describen como datos y las pinta
- * una sola plantilla.
+ * Las cuatro subpáginas comparten estructura —hero con panel, qué incluye,
+ * plazos, qué necesitamos, preguntas frecuentes y cierre—, así que se
+ * describen como datos y las pinta una sola plantilla.
  *
  * BORRADOR: los `[PLAZO PENDIENTE]` y las respuestas marcadas están así a
  * propósito. Los plazos ante instituciones cubanas y el alcance jurídico los
  * confirma el cliente; no inventarlos.
+ *
+ * En inglés se conservan sin traducir las figuras jurídicas cubanas (MIPYME,
+ * TCP, CNA, PDL) y los sistemas contables (Versat, Odoo): son nombres propios
+ * del marco cubano.
  */
 
 export interface Plazo {
@@ -36,22 +41,15 @@ export interface PanelLateral {
 }
 
 export interface LineaPagina {
-  /** Pantalla del router que pinta esta línea. */
   pantalla: ScreenId;
   clave: string;
-  /** Antetítulo del hero: «Línea A · Servicio a empresas». */
   etiqueta: string;
   titulo: string;
-  /** Título corto para migas y menús. */
   tituloCorto: string;
   entradilla: string;
-  /** Resumen de una línea para la tarjeta del índice. */
   resumen: string;
-  /** Puntos sueltos que lista la tarjeta del índice. */
   puntos: string[];
-  /** Botón principal del hero. */
   botonHero: string;
-  /** Botón secundario del hero, si la maqueta lo trae. */
   botonSecundario?: { label: string; pantalla: ScreenId };
   panel: PanelLateral;
   incluye: ItemIncluido[];
@@ -62,25 +60,19 @@ export interface LineaPagina {
   cierre: { titulo: string; boton: string; mensaje: string };
 }
 
-export const INDICE = {
-  titulo: 'Cuatro líneas de trabajo. Un solo responsable para usted.',
-  entradilla:
-    'Cada línea se contrata por separado o en conjunto. En todos los casos recibe alcance, plazos y honorarios por escrito antes de empezar.',
-  panel: {
-    etiqueta: 'Si no sabe por dónde empezar',
-    texto:
-      'Cuéntenos qué quiere hacer en Cuba y le decimos qué línea necesita y en qué orden.',
-    boton: 'Escribir por WhatsApp',
-    mensaje: 'Hola, no sé qué línea de servicio necesito. ¿Me orientan?',
-  },
-  cierre: {
-    titulo: 'Cuéntenos su caso. Le decimos qué línea necesita y en qué orden.',
-    boton: 'Agendar por WhatsApp',
-    mensaje: 'Hola, quisiera saber qué línea de servicio necesito.',
-  },
-};
+export interface ContenidoServicios {
+  indice: {
+    titulo: string;
+    entradilla: string;
+    panel: { etiqueta: string; texto: string; boton: string; mensaje: string };
+    cierre: { titulo: string; boton: string; mensaje: string };
+  };
+  lineas: LineaPagina[];
+}
 
-const CONTABILIDAD: LineaPagina = {
+/* ================================ español ================================ */
+
+const CONTABILIDAD_ES: LineaPagina = {
   pantalla: 'servicios-contabilidad',
   clave: 'A',
   etiqueta: 'Línea A · Servicio a empresas',
@@ -178,7 +170,7 @@ const CONTABILIDAD: LineaPagina = {
   },
 };
 
-const LEGAL: LineaPagina = {
+const LEGAL_ES: LineaPagina = {
   pantalla: 'servicios-legal',
   clave: 'B',
   etiqueta: 'Línea B · Servicio a empresas',
@@ -275,7 +267,7 @@ const LEGAL: LineaPagina = {
   },
 };
 
-const TRAMITES: LineaPagina = {
+const TRAMITES_ES: LineaPagina = {
   pantalla: 'servicios-tramites',
   clave: 'C',
   etiqueta: 'Línea C · Servicio a personas',
@@ -285,10 +277,7 @@ const TRAMITES: LineaPagina = {
     'Esta línea atiende a personas, no a empresas. Obtenemos y legalizamos sus documentos registrales en Cuba y preparamos expedientes de visa completos y correctos.',
   resumen:
     'Documentos registrales y legalizaciones · Visas a Canadá, México, Panamá y Schengen. Esta línea atiende a personas, no a empresas.',
-  puntos: [
-    'Documentos registrales y legalizaciones',
-    'Expedientes de visa completos',
-  ],
+  puntos: ['Documentos registrales y legalizaciones', 'Expedientes de visa completos'],
   botonHero: 'Consultar mi caso',
   panel: {
     titulo: 'Destinos que tramitamos',
@@ -351,7 +340,7 @@ const TRAMITES: LineaPagina = {
   },
 };
 
-const EVENTOS: LineaPagina = {
+const EVENTOS_ES: LineaPagina = {
   pantalla: 'servicios-eventos',
   clave: 'D',
   etiqueta: 'Línea D · Servicio a empresas',
@@ -421,13 +410,400 @@ const EVENTOS: LineaPagina = {
   },
 };
 
-/** Las tres líneas corporativas del índice, en el orden de la maqueta. */
-export const LINEAS_CORPORATIVAS: LineaPagina[] = [CONTABILIDAD, LEGAL, EVENTOS];
+const ES: ContenidoServicios = {
+  indice: {
+    titulo: 'Cuatro líneas de trabajo. Un solo responsable para usted.',
+    entradilla:
+      'Cada línea se contrata por separado o en conjunto. En todos los casos recibe alcance, plazos y honorarios por escrito antes de empezar.',
+    panel: {
+      etiqueta: 'Si no sabe por dónde empezar',
+      texto:
+        'Cuéntenos qué quiere hacer en Cuba y le decimos qué línea necesita y en qué orden.',
+      boton: 'Escribir por WhatsApp',
+      mensaje: 'Hola, no sé qué línea de servicio necesito. ¿Me orientan?',
+    },
+    cierre: {
+      titulo: 'Cuéntenos su caso. Le decimos qué línea necesita y en qué orden.',
+      boton: 'Agendar por WhatsApp',
+      mensaje: 'Hola, quisiera saber qué línea de servicio necesito.',
+    },
+  },
+  lineas: [CONTABILIDAD_ES, LEGAL_ES, TRAMITES_ES, EVENTOS_ES],
+};
 
-/** La línea C va aparte: atiende a personas, no a empresas. */
-export const LINEA_PERSONAS = TRAMITES;
+/* ================================ inglés ================================= */
 
-export const LINEAS: LineaPagina[] = [CONTABILIDAD, LEGAL, TRAMITES, EVENTOS];
+const CONTABILIDAD_EN: LineaPagina = {
+  pantalla: 'servicios-contabilidad',
+  clave: 'A',
+  etiqueta: 'Line A · Service for companies',
+  titulo: 'Accounting and bookkeeping',
+  tituloCorto: 'Accounting',
+  entradilla:
+    'We keep your books in Versat or Odoo from Cuba, under the Cuban accounting framework, and hand you statements your accountant or bank abroad can read without translation.',
+  resumen: 'Your books up to date, in Versat or Odoo, with statements at every close.',
+  puntos: [
+    'Recording of accounting operations',
+    'Payroll management (Versat and Odoo)',
+    'Product and service cost sheets',
+    'Income statement and balance sheet',
+  ],
+  botonHero: 'Book a consultation',
+  botonSecundario: { label: 'See corporate legal advice', pantalla: 'servicios-legal' },
+  panel: {
+    titulo: 'What you get',
+    items: [
+      { texto: 'Income statement for each period' },
+      { texto: 'Balance sheet' },
+      { texto: 'Cost sheets per product or service' },
+      { texto: 'Payroll calculated and documented' },
+      { texto: 'Books ready for inspection' },
+    ],
+  },
+  incluye: [
+    {
+      numero: '01',
+      titulo: 'Recording of accounting operations',
+      descripcion:
+        'We record the whole period — income, expenses, inventory and bank movements — in your accounting system, with supporting documents filed and traceable.',
+    },
+    {
+      numero: '02',
+      titulo: 'Payroll management in Versat and Odoo',
+      descripcion:
+        'Salaries, withholdings and contributions calculated, with the reports Cuban labour rules require. We work in either Versat or Odoo, whichever your company already uses.',
+    },
+    {
+      numero: '03',
+      titulo: 'Cost sheets',
+      descripcion:
+        'Cost structure per product or service: materials, labour and overheads. It is the basis for setting prices you can defend before clients and inspectors.',
+    },
+    {
+      numero: '04',
+      titulo: 'Income statement and balance sheet',
+      descripcion:
+        'Regular delivery of the two statements you need to know whether you are making money and what you hold. We walk you through them on a call, we do not just email them.',
+    },
+  ],
+  plazos: [
+    { concepto: 'Monthly close', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Payroll calculation', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Cost sheet per product', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Catching up on arrears', plazo: '[TIMELINE PENDING]' },
+  ],
+  notaPlazos:
+    'Timelines are confirmed in writing in the proposal, once we know the volume.',
+  requisitos: [
+    'Incorporation and registration documents',
+    'Previous financial statements, if any',
+    'Access to Versat or Odoo',
+    'Invoices and receipts for the period',
+    'Employment contracts and previous payrolls',
+    'Bank statements for the period',
+  ],
+  preguntas: [
+    {
+      pregunta: 'Do I need to be in Cuba for the accounting close?',
+      respuesta:
+        'No. We work remotely with access to your system and send you the statements by email, with a call to explain them.',
+    },
+    {
+      pregunta: 'Do you work with Versat or with Odoo?',
+      respuesta:
+        'Both. If you do not have a system yet, we recommend one based on the size and type of your operation.',
+    },
+    {
+      pregunta: 'My accounting is several months behind. Will you take it on?',
+      respuesta:
+        'Yes. First we assess the backlog and tell you what can be reconstructed and with which supporting documents; that is quoted separately from the monthly service.',
+    },
+    {
+      pregunta: 'Can you deliver the statements in English?',
+      respuesta:
+        '[ANSWER PENDING — confirm whether bilingual delivery is offered and to what extent]',
+    },
+  ],
+  cierre: {
+    titulo: 'Tell us where your accounting stands. The initial assessment is free.',
+    boton: 'Book on WhatsApp',
+    mensaje: 'Hello, I would like to ask about your accounting service.',
+  },
+};
 
-export const lineaDe = (pantalla: ScreenId): LineaPagina | undefined =>
-  LINEAS.find((linea) => linea.pantalla === pantalla);
+const LEGAL_EN: LineaPagina = {
+  pantalla: 'servicios-legal',
+  clave: 'B',
+  etiqueta: 'Line B · Service for companies',
+  titulo: 'Corporate legal advice',
+  tituloCorto: 'Corporate law',
+  entradilla:
+    'We set up the legal form that fits you and answer for your contracts in Cuba. If the business runs into trouble, we pursue the claim through the right channel.',
+  resumen: 'We set up your legal form and answer for your contracts.',
+  puntos: [
+    'Incorporation of MIPYMES, TCP, CNA and PDL',
+    'Commercial contracts',
+    'Contractual claims',
+    'Employment claims',
+  ],
+  botonHero: 'Book a consultation',
+  botonSecundario: { label: 'See accounting', pantalla: 'servicios-contabilidad' },
+  panel: {
+    titulo: 'Legal forms we set up',
+    items: [
+      { texto: 'MIPYME', detalle: 'micro, small and medium-sized enterprise' },
+      { texto: 'TCP', detalle: 'self-employed worker' },
+      { texto: 'CNA', detalle: 'non-agricultural cooperative' },
+      { texto: 'PDL', detalle: 'local development project' },
+    ],
+    nota: 'We tell you which one suits you before charging you anything.',
+  },
+  incluye: [
+    {
+      numero: '01',
+      titulo: 'Incorporation of MIPYMES, TCP, CNA and PDL',
+      descripcion:
+        'We choose the legal form, draft the file, submit it to the institutions and follow the process through to registration. Holding power of attorney, without you travelling.',
+    },
+    {
+      numero: '02',
+      titulo: 'Commercial contracts',
+      descripcion:
+        'Drafting and review of the contracts your company uses to buy, sell and commit itself in Cuba. We point out which clause leaves you exposed before you sign.',
+    },
+    {
+      numero: '03',
+      titulo: 'Contractual claims',
+      descripcion:
+        'When the other party fails to perform: claim, negotiation and, if needed, formal proceedings. We tell you up front what can realistically be recovered.',
+    },
+    {
+      numero: '04',
+      titulo: 'Employment claims',
+      descripcion:
+        'Disputes with workers, from building the file to representation. Prevention too: we review your employment contracts before there is a problem.',
+    },
+  ],
+  plazos: [
+    { concepto: 'MIPYME incorporation', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'TCP registration', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Contract review', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Claim: first assessment', plazo: '[TIMELINE PENDING]' },
+  ],
+  notaPlazos:
+    'Timelines before institutions are not up to us; we give you the real range, not the optimistic one.',
+  requisitos: [
+    'Identification of the partners',
+    'Intended activity and corporate purpose',
+    'Proposed registered address',
+    'Power of attorney, if you are not travelling',
+    'Contracts and correspondence about the dispute',
+    'Intended capital contribution',
+  ],
+  preguntas: [
+    {
+      pregunta: 'Can a foreigner be a partner in a Cuban MIPYME?',
+      respuesta:
+        '[ANSWER PENDING — to be drafted by the legal team under the regulations in force]',
+    },
+    {
+      pregunta: 'Do I have to travel to Cuba to incorporate?',
+      respuesta:
+        'No, if you grant us power of attorney. We tell you how to grant it from your country and which legalisations it requires.',
+    },
+    {
+      pregunta: 'What is the difference between MIPYME, TCP, CNA and PDL?',
+      respuesta:
+        '[ANSWER PENDING — comparison to be drafted by the legal team; worth a blog post linked from here]',
+    },
+    {
+      pregunta: 'Do you also represent us in litigation?',
+      respuesta: '[ANSWER PENDING — confirm scope of representation and bar membership]',
+    },
+  ],
+  cierre: {
+    titulo: 'Tell us what you want to do in Cuba. We will tell you which legal form you need.',
+    boton: 'Book on WhatsApp',
+    mensaje: 'Hello, I would like to ask about corporate legal advice.',
+  },
+};
+
+const TRAMITES_EN: LineaPagina = {
+  pantalla: 'servicios-tramites',
+  clave: 'C',
+  etiqueta: 'Line C · Service for individuals',
+  titulo: 'Paperwork, documents and visas',
+  tituloCorto: 'Paperwork and visas',
+  entradilla:
+    'This line serves individuals, not companies. We obtain and legalise your Cuban registry documents and prepare complete, correct visa applications.',
+  resumen:
+    'Registry documents and legalisations · Visas for Canada, Mexico, Panama and the Schengen Area. This line serves individuals, not companies.',
+  puntos: ['Registry documents and legalisations', 'Complete visa applications'],
+  botonHero: 'Ask about my case',
+  panel: {
+    titulo: 'Destinations we handle',
+    items: [
+      { texto: 'Canada' },
+      { texto: 'Mexico' },
+      { texto: 'Panama' },
+      { texto: 'Schengen Area' },
+    ],
+    nota: 'We prepare the application. The decision is always the consulate’s.',
+  },
+  incluye: [
+    {
+      numero: '01',
+      titulo: 'Obtaining and legalising registry documents',
+      descripcion:
+        'Birth, marriage and criminal record certificates and other registry documents, with the legalisations the destination country requires. We queue at the counters for you.',
+    },
+    {
+      numero: '02',
+      titulo: 'Visa applications',
+      descripcion:
+        'We review your profile, build the file to the consulate’s current requirements, prepare the forms and explain what to expect at the interview, if there is one.',
+    },
+  ],
+  plazos: [
+    { concepto: 'Simple registry document', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Document with legalisation', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Visa file: preparation', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Consular appointment', plazo: 'Depends on the consulate' },
+  ],
+  requisitos: [
+    'Valid passport',
+    'Identity card',
+    'Original documents you already hold',
+    'Photographs to consular specification',
+    'Purpose and dates of travel',
+    'Authorisation to act on your behalf',
+  ],
+  preguntas: [
+    {
+      pregunta: 'Do you guarantee I will get the visa?',
+      respuesta:
+        'No. Nobody can guarantee a consular decision, and anyone who promises you one is lying. What we guarantee is a complete, correct application filed on time.',
+    },
+    {
+      pregunta: 'What happens if it is refused?',
+      respuesta: '[ANSWER PENDING — fee policy in case of refusal]',
+    },
+    {
+      pregunta: 'I live outside Cuba. Can you obtain my documents there?',
+      respuesta:
+        'Yes, with your authorisation. It is one of the most frequent requests from Cubans living abroad.',
+    },
+  ],
+  cierre: {
+    titulo: 'Tell us which document or visa you need and we will tell you what it takes.',
+    boton: 'Ask on WhatsApp',
+    mensaje: 'Hello, I need help with paperwork or a visa.',
+  },
+};
+
+const EVENTOS_EN: LineaPagina = {
+  pantalla: 'servicios-eventos',
+  clave: 'D',
+  etiqueta: 'Line D · Service for companies',
+  titulo: 'Events and training',
+  tituloCorto: 'Events and training',
+  entradilla:
+    'We organise your corporate event in Cuba and train your team on what they need to know to operate here, from accounting to employment obligations.',
+  resumen: 'Corporate events and training for your team in Cuba.',
+  puntos: ['Corporate event management', 'Workshops and team training'],
+  botonHero: 'Request a proposal',
+  panel: {
+    titulo: 'Formats',
+    items: [
+      { texto: 'Corporate or launch event' },
+      { texto: 'Closed workshop for one team' },
+      { texto: 'Open training session' },
+      { texto: '[FORMAT PENDING — confirm offering]' },
+    ],
+  },
+  incluye: [
+    {
+      numero: '01',
+      titulo: 'Corporate event management',
+      descripcion:
+        'Venue, suppliers, permits and logistics in Cuba. You set the objective and the budget; we handle the local operation and report the spend back to you.',
+    },
+    {
+      numero: '02',
+      titulo: 'Workshops and team training',
+      descripcion:
+        'Practical training for your staff in Cuba: accounting obligations, use of the system, contracting and document management. [SYLLABUS PENDING — confirm what is taught and by whom.]',
+    },
+  ],
+  plazos: [
+    { concepto: 'Event proposal', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Recommended minimum notice', plazo: '[TIMELINE PENDING]' },
+    { concepto: 'Designing a bespoke workshop', plazo: '[TIMELINE PENDING]' },
+  ],
+  requisitos: [
+    'Objective of the event or workshop',
+    'Number of participants',
+    'Tentative dates',
+    'Indicative budget',
+    'Venue and equipment needs',
+    'Starting level of the team, for workshops',
+  ],
+  preguntas: [
+    {
+      pregunta: 'Does it include venue, catering and equipment?',
+      respuesta:
+        '[ANSWER PENDING — confirm what the service covers and what is billed separately]',
+    },
+    {
+      pregunta: 'Do you train on Versat and Odoo?',
+      respuesta:
+        '[ANSWER PENDING — we work with both systems, but whether we teach them is still to be confirmed]',
+    },
+    {
+      pregunta: 'Can you organise an event if my company is not a client?',
+      respuesta: '[ANSWER PENDING]',
+    },
+  ],
+  cierre: {
+    titulo: 'Tell us what event you have in mind and we will send you a proposal.',
+    boton: 'Write on WhatsApp',
+    mensaje: 'Hello, I would like a proposal for an event or training.',
+  },
+};
+
+const EN: ContenidoServicios = {
+  indice: {
+    titulo: 'Four lines of work. One person answering to you.',
+    entradilla:
+      'Each line can be engaged on its own or together with the others. In every case you get the scope, the timelines and the fees in writing before we start.',
+    panel: {
+      etiqueta: 'If you do not know where to start',
+      texto:
+        'Tell us what you want to do in Cuba and we will tell you which line you need, and in what order.',
+      boton: 'Write on WhatsApp',
+      mensaje: 'Hello, I am not sure which service line I need. Can you advise?',
+    },
+    cierre: {
+      titulo: 'Tell us about your case. We will tell you which line you need, and in what order.',
+      boton: 'Book on WhatsApp',
+      mensaje: 'Hello, I would like to know which service line I need.',
+    },
+  },
+  lineas: [CONTABILIDAD_EN, LEGAL_EN, TRAMITES_EN, EVENTOS_EN],
+};
+
+export const contenidoServicios = (idioma: Idioma): ContenidoServicios =>
+  idioma === 'en' ? EN : ES;
+
+/** Las tres líneas corporativas del índice; la C va aparte por dirigirse a personas. */
+export const lineasCorporativas = (contenido: ContenidoServicios): LineaPagina[] =>
+  contenido.lineas.filter((linea) => linea.clave !== 'C');
+
+export const lineaPersonas = (contenido: ContenidoServicios): LineaPagina =>
+  contenido.lineas.find((linea) => linea.clave === 'C')!;
+
+export const lineaDe = (
+  contenido: ContenidoServicios,
+  pantalla: ScreenId,
+): LineaPagina | undefined =>
+  contenido.lineas.find((linea) => linea.pantalla === pantalla);

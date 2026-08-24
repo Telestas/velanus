@@ -7,14 +7,10 @@ import {
   CONTACT_TIMEZONE,
   WHATSAPP_DISPLAY,
 } from '../../config';
-import { PIE_DESCRIPCION } from '../../content/home';
-import {
-  Enlace,
-  LogoVelaNus,
-  PIE_FIRMA,
-  PIE_LEGAL,
-  PIE_SERVICIOS,
-} from '../home/comunes';
+import { contenidoHome } from '../../content/home';
+import { Enlace, LogoVelaNus, pieFirma, pieLegal, pieServicios } from '../home/comunes';
+import { useIdioma } from '../../i18n/idioma';
+import { textos } from '../../i18n/textos';
 import { ANCHO, Paleta } from './paleta';
 
 interface PieProps {
@@ -31,6 +27,8 @@ interface PieProps {
  * el logo negro.
  */
 export const PieSitio: React.FC<PieProps> = ({ paleta, onNavigate }) => {
+  const idioma = useIdioma();
+  const t = textos(idioma).pie;
   const oscuro = paleta.logo === 'ambar';
   const fondo = oscuro ? 'bg-[#000000] text-[#FAFAFA]' : 'bg-[#F1F1F0] text-[#000000]';
   const enlace = `text-[15px] ${paleta.textoSuave} ${paleta.acentoHover} transition-colors`;
@@ -42,26 +40,14 @@ export const PieSitio: React.FC<PieProps> = ({ paleta, onNavigate }) => {
       >
         <div className="flex flex-col gap-4">
           <LogoVelaNus tono={paleta.logo} alto={40} conBajada />
-          <p className={`text-[15px] leading-relaxed ${paleta.textoSuave}`}>{PIE_DESCRIPCION}</p>
+          <p className={`text-[15px] leading-relaxed ${paleta.textoSuave}`}>{contenidoHome(idioma).pieDescripcion}</p>
         </div>
 
         <div className="flex flex-col gap-3">
           <span className={`text-xs tracking-[0.16em] uppercase ${paleta.acentoTexto}`}>
-            Servicios
+            {t.servicios}
           </span>
-          {PIE_SERVICIOS.map((destino) => (
-            <Enlace
-              key={destino.label}
-              destino={destino}
-              onNavigate={onNavigate}
-              className={enlace}
-            />
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <span className={`text-xs tracking-[0.16em] uppercase ${paleta.acentoTexto}`}>Firma</span>
-          {PIE_FIRMA.map((destino) => (
+          {pieServicios(idioma).map((destino) => (
             <Enlace
               key={destino.label}
               destino={destino}
@@ -73,7 +59,21 @@ export const PieSitio: React.FC<PieProps> = ({ paleta, onNavigate }) => {
 
         <div className="flex flex-col gap-3">
           <span className={`text-xs tracking-[0.16em] uppercase ${paleta.acentoTexto}`}>
-            Contacto
+            {t.firma}
+          </span>
+          {pieFirma(idioma).map((destino) => (
+            <Enlace
+              key={destino.label}
+              destino={destino}
+              onNavigate={onNavigate}
+              className={enlace}
+            />
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <span className={`text-xs tracking-[0.16em] uppercase ${paleta.acentoTexto}`}>
+            {t.contacto}
           </span>
           <span className={`text-[15px] leading-relaxed ${paleta.textoSuave}`}>
             {CONTACT_ADDRESS_LINES[0]}
@@ -95,10 +95,10 @@ export const PieSitio: React.FC<PieProps> = ({ paleta, onNavigate }) => {
           className={`border-t ${paleta.borde} pt-6 flex justify-between items-center gap-8 flex-wrap`}
         >
           <span className={`text-sm ${paleta.textoTenue}`}>
-            © 2026 Vela Nus Consultores &amp; Asociados
+            {t.derechos}
           </span>
           <div className="flex gap-6">
-            {PIE_LEGAL.map((destino) => (
+            {pieLegal(idioma).map((destino) => (
               <Enlace
                 key={destino.label}
                 destino={destino}

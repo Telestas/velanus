@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { NavigationProps, ScreenId } from './types';
 import { currentScreen, pathForScreen } from './router';
 import { aplicarSeo } from './seo';
+import { useIdioma } from './i18n/idioma';
 import { PrototypeController } from './components/PrototypeController';
 import { HomeDesktopScreen } from './components/HomeDesktopScreen';
 import { HomeMovilScreen } from './components/HomeMovilScreen';
@@ -15,7 +16,6 @@ import { ServiciosDesktopScreen } from './components/ServiciosDesktopScreen';
 import { NosotrosDesktopScreen } from './components/NosotrosDesktopScreen';
 import { CasosDesktopScreen } from './components/CasosDesktopScreen';
 import { pantallaDeLinea } from './components/servicios/LineaScreen';
-import { LINEAS } from './content/servicios';
 import { AdminScreen } from './components/AdminScreen';
 import { DiagnosticModal } from './components/DiagnosticModal';
 
@@ -24,10 +24,10 @@ const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   'home-movil': HomeMovilScreen,
   'servicios-desktop': ServiciosDesktopScreen,
   // Las cuatro subpáginas de servicio comparten plantilla y solo cambian de datos.
-  'servicios-contabilidad': pantallaDeLinea(LINEAS[0]),
-  'servicios-legal': pantallaDeLinea(LINEAS[1]),
-  'servicios-tramites': pantallaDeLinea(LINEAS[2]),
-  'servicios-eventos': pantallaDeLinea(LINEAS[3]),
+  'servicios-contabilidad': pantallaDeLinea('servicios-contabilidad'),
+  'servicios-legal': pantallaDeLinea('servicios-legal'),
+  'servicios-tramites': pantallaDeLinea('servicios-tramites'),
+  'servicios-eventos': pantallaDeLinea('servicios-eventos'),
   'nosotros-desktop': NosotrosDesktopScreen,
   'casos-desktop': CasosDesktopScreen,
   admin: AdminScreen,
@@ -45,14 +45,15 @@ const mostrarBarraDePrototipo = (): boolean =>
     new URLSearchParams(window.location.search).has('proto'));
 
 export default function App() {
+  const idioma = useIdioma();
   const [screen, setScreen] = useState<ScreenId>(currentScreen);
   const [transitionDirection, setTransitionDirection] = useState<'push' | 'push_back'>('push');
   const [diagnosticModalOpen, setDiagnosticModalOpen] = useState(false);
 
   // Título, descripción y canónica dependen de la pantalla, no del documento.
   useEffect(() => {
-    aplicarSeo(screen);
-  }, [screen]);
+    aplicarSeo(screen, idioma);
+  }, [screen, idioma]);
 
   // El botón atrás del navegador debe cambiar de pantalla, no salir del sitio.
   useEffect(() => {

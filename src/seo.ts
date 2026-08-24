@@ -1,5 +1,6 @@
 import { ScreenId } from './types';
 import { pathForScreen } from './router';
+import { Idioma } from './i18n/idioma';
 
 /**
  * Metadatos por pantalla.
@@ -7,6 +8,11 @@ import { pathForScreen } from './router';
  * El sitio es una SPA: el HTML servido es siempre el mismo, así que sin esto
  * todas las URL comparten título y descripción, y en un buscador o al
  * compartir un enlace se ven idénticas. Aquí se actualizan al navegar.
+ *
+ * El idioma también manda aquí: el visitante inglés ve título y descripción en
+ * inglés. Ojo, eso significa que **una misma URL sirve dos idiomas**, que no es
+ * lo ideal para posicionar: lo correcto sería /en/… con hreflang. Exige, otra
+ * vez, HTML por ruta.
  *
  * LÍMITE CONOCIDO: esto ocurre en el navegador. Google ejecuta JavaScript y lo
  * acaba viendo, pero los rastreadores de redes sociales (WhatsApp, Facebook,
@@ -25,7 +31,7 @@ interface Metadatos {
   descripcion: string;
 }
 
-const PANTALLAS: Record<ScreenId, Metadatos> = {
+const ES: Record<ScreenId, Metadatos> = {
   'home-desktop': {
     titulo: `${TITULO_BASE} — Consultoría corporativa en Cuba`,
     descripcion:
@@ -78,6 +84,58 @@ const PANTALLAS: Record<ScreenId, Metadatos> = {
   },
 };
 
+const EN: Record<ScreenId, Metadatos> = {
+  'home-desktop': {
+    titulo: `${TITULO_BASE} — Corporate consulting in Cuba`,
+    descripcion:
+      'Company incorporation, accounting and paperwork in Cuba for foreign companies and investors. Scope, timelines and fees in writing. We work in Spanish and English.',
+  },
+  'home-movil': {
+    titulo: `${TITULO_BASE} — Corporate consulting in Cuba`,
+    descripcion:
+      'Company incorporation, accounting and paperwork in Cuba for foreign companies and investors.',
+  },
+  'servicios-desktop': {
+    titulo: `Services — ${TITULO_BASE}`,
+    descripcion:
+      'Four lines of work in Cuba: accounting, corporate legal advice, paperwork and visas, and events and training. Engage them separately or together.',
+  },
+  'servicios-contabilidad': {
+    titulo: `Accounting and bookkeeping in Cuba — ${TITULO_BASE}`,
+    descripcion:
+      'We keep your books in Versat or Odoo from Cuba: operations recorded, payroll, cost sheets and financial statements at every close.',
+  },
+  'servicios-legal': {
+    titulo: `Corporate legal advice in Cuba — ${TITULO_BASE}`,
+    descripcion:
+      'Incorporation of MIPYMES, TCP, CNA and PDL, commercial contracts and contractual and employment claims. Holding power of attorney, without you travelling.',
+  },
+  'servicios-tramites': {
+    titulo: `Paperwork, documents and visas in Cuba — ${TITULO_BASE}`,
+    descripcion:
+      'Obtaining and legalising Cuban registry documents and preparing visa applications for Canada, Mexico, Panama and the Schengen Area.',
+  },
+  'servicios-eventos': {
+    titulo: `Corporate events and training in Cuba — ${TITULO_BASE}`,
+    descripcion:
+      'Corporate event management in Cuba and training for teams operating in the country: accounting obligations, contracting and document management.',
+  },
+  'nosotros-desktop': {
+    titulo: `About us — ${TITULO_BASE}`,
+    descripcion:
+      'A Cuban consultancy of accountants and lawyers for foreign companies and investors that need to operate in Cuba. Fixed fees and a named person in charge.',
+  },
+  'casos-desktop': {
+    titulo: `Cases and reviews — ${TITULO_BASE}`,
+    descripcion:
+      'Cases from clients already operating in Cuba with us, and reviews approved before publication.',
+  },
+  admin: {
+    titulo: `Administration — ${TITULO_BASE}`,
+    descripcion: '',
+  },
+};
+
 /** Rutas públicas que sí deben indexarse, para el sitemap. */
 export const RUTAS_INDEXABLES: ScreenId[] = [
   'home-desktop',
@@ -108,10 +166,10 @@ const meta = (atributo: 'name' | 'property', valor: string, contenido: string): 
 };
 
 /** Pone título, descripción, canónica y tarjetas sociales de la pantalla. */
-export const aplicarSeo = (pantalla: ScreenId): void => {
+export const aplicarSeo = (pantalla: ScreenId, idioma: Idioma): void => {
   if (typeof document === 'undefined') return;
 
-  const { titulo, descripcion } = PANTALLAS[pantalla];
+  const { titulo, descripcion } = (idioma === 'en' ? EN : ES)[pantalla];
   const url = `${DOMINIO}${pathForScreen(pantalla)}`;
 
   document.title = titulo;
@@ -124,6 +182,7 @@ export const aplicarSeo = (pantalla: ScreenId): void => {
   });
   canonica.setAttribute('href', url);
 
+  meta('property', 'og:locale', idioma === 'en' ? 'en_US' : 'es_ES');
   meta('property', 'og:title', titulo);
   meta('property', 'og:description', descripcion);
   meta('property', 'og:url', url);

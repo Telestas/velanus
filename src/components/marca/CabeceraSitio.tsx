@@ -1,7 +1,9 @@
 import React from 'react';
 import { ScreenId } from '../../types';
 import { CONTACT_EMAIL, WHATSAPP_DISPLAY } from '../../config';
-import { Enlace, LogoVelaNus, NAV_HOME } from '../home/comunes';
+import { Enlace, LogoVelaNus, navHome } from '../home/comunes';
+import { useIdioma } from '../../i18n/idioma';
+import { textos } from '../../i18n/textos';
 import { ANCHO, Paleta } from './paleta';
 
 interface CabeceraProps {
@@ -33,17 +35,19 @@ export const CabeceraSitio: React.FC<CabeceraProps> = ({
   banda = false,
   borde = false,
 }) => {
+  const idioma = useIdioma();
+  const t = textos(idioma);
+
   return (
     <header className={`${paleta.fondo} ${paleta.texto} ${borde ? `border-b ${paleta.borde}` : ''}`}>
       {banda && (
         <div
           className={`${ANCHO} min-h-[52px] py-2 hidden md:flex items-center justify-between gap-6 text-[13px] ${paleta.textoSuave} border-b ${paleta.borde}`}
         >
-          <span>La Habana, Cuba · Atención en español e inglés</span>
+          <span>La Habana, Cuba · {t.home.idiomaAviso}</span>
           <div className="flex items-center gap-6">
             <span>{CONTACT_EMAIL}</span>
             <span>{WHATSAPP_DISPLAY}</span>
-            <SelectorIdioma paleta={paleta} compacto />
           </div>
         </div>
       )}
@@ -53,7 +57,7 @@ export const CabeceraSitio: React.FC<CabeceraProps> = ({
 
         <div className="flex items-center gap-6 lg:gap-[34px] flex-wrap">
           <nav className="flex items-center gap-6 lg:gap-[34px] flex-wrap">
-            {NAV_HOME.map((destino) => {
+            {navHome(idioma).map((destino) => {
               const activo =
                 destino.pantalla === currentScreen || destino.label === seccionActiva;
 
@@ -73,13 +77,11 @@ export const CabeceraSitio: React.FC<CabeceraProps> = ({
             })}
           </nav>
 
-          {!banda && <SelectorIdioma paleta={paleta} />}
-
           <button
             onClick={openDiagnosticModal}
             className="text-sm font-bold px-[18px] py-[11px] bg-[#F9A600] text-[#000000] hover:bg-[#FFC048] transition-colors"
           >
-            Agendar consulta
+            {t.nav.agendar}
           </button>
         </div>
       </div>
@@ -87,25 +89,3 @@ export const CabeceraSitio: React.FC<CabeceraProps> = ({
   );
 };
 
-/** BORRADOR: el conmutador está dibujado, pero no hay versión en inglés. */
-const SelectorIdioma: React.FC<{ paleta: Paleta; compacto?: boolean }> = ({
-  paleta,
-  compacto = false,
-}) =>
-  compacto ? (
-    <div className="flex items-center gap-2" title="Versión en inglés pendiente">
-      <span className={`font-bold ${paleta.texto}`}>ES</span>
-      <span className={paleta.textoTenue}>/</span>
-      <span className={paleta.textoTenue}>EN</span>
-    </div>
-  ) : (
-    <div
-      className={`flex items-center border ${
-        paleta.logo === 'ambar' ? 'border-[#4A4A4A]' : 'border-[#B9B7B2]'
-      }`}
-      title="Versión en inglés pendiente"
-    >
-      <span className="text-[13px] px-2.5 py-[5px] bg-[#F9A600] text-[#000000] font-bold">ES</span>
-      <span className={`text-[13px] px-2.5 py-[5px] ${paleta.textoTenue}`}>EN</span>
-    </div>
-  );

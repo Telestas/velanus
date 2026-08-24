@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { NavigationProps } from '../../types';
+import { useIdioma } from '../../i18n/idioma';
+import { textos } from '../../i18n/textos';
 import {
   CONTACT_ADDRESS_LINES,
   CONTACT_EMAIL,
@@ -9,26 +11,15 @@ import {
   WHATSAPP_DISPLAY,
   whatsappLink,
 } from '../../config';
-import {
-  AVISO_RESENAS,
-  CIFRAS,
-  CTA,
-  ENTRADAS_BLOG,
-  HERO_CLARO,
-  LINEAS_SERVICIO,
-  PASOS,
-  PROBLEMAS,
-  RESENAS,
-  TRAMITES,
-} from '../../content/home';
+import { contenidoHome } from '../../content/home';
 import {
   Enlace,
   FormularioContacto,
   LogoVelaNus,
-  MENSAJE_CONSULTA,
-  NAV_HOME,
-  PIE_FIRMA,
-  PIE_LEGAL,
+  mensajeConsulta,
+  navHome,
+  pieFirma,
+  pieLegal,
 } from './comunes';
 
 /**
@@ -40,19 +31,16 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
   onNavigate,
   openDiagnosticModal,
 }) => {
+  const idioma = useIdioma();
+  const t = textos(idioma);
+  const c = contenidoHome(idioma);
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   return (
     <div className="bg-[#FAFAFA] text-[#000000] font-marca">
       {/* banda de servicio */}
       <div className="bg-[#000000] text-[#FAFAFA] px-5 py-2 flex items-center justify-between text-xs">
-        <span className="text-[#B9B7B2]">Español e inglés · UTC-4</span>
-        {/* BORRADOR: la versión en inglés todavía no existe. */}
-        <div className="flex items-center gap-1.5" title="Versión en inglés pendiente">
-          <span className="text-[#F9A600] font-bold">ES</span>
-          <span className="text-[#4A4A4A]">/</span>
-          <span className="text-[#4A4A4A]">EN</span>
-        </div>
+        <span className="text-[#B9B7B2]">{t.home.idiomaAviso}</span>
       </div>
 
       {/* cabecera */}
@@ -61,7 +49,7 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
         <button
           onClick={() => setMenuAbierto(!menuAbierto)}
           className="text-[#000000] p-1"
-          aria-label="Abrir menú"
+          aria-label={t.nav.menu}
           aria-expanded={menuAbierto}
         >
           {menuAbierto ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -75,7 +63,7 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
         }`}
       >
         <div className="px-5 flex flex-col gap-3">
-          {NAV_HOME.map((destino) => (
+          {navHome(idioma).map((destino) => (
             <Enlace
               key={destino.label}
               destino={destino}
@@ -92,40 +80,40 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
         <div className="flex items-center gap-2.5">
           <span className="w-[26px] h-[3px] bg-[#F9A600]" />
           <span className="text-[11px] tracking-[0.16em] uppercase text-[#8A5800]">
-            {HERO_CLARO.antetituloMovil}
+            {c.heroClaro.antetituloMovil}
           </span>
         </div>
         <h1 className="text-[32px] leading-[1.12] font-bold text-pretty">
-          {HERO_CLARO.tituloMovil}
+          {c.heroClaro.tituloMovil}
         </h1>
-        <p className="text-[17px] leading-[1.55] text-[#4A4A4A]">{HERO_CLARO.entradillaMovil}</p>
+        <p className="text-[17px] leading-[1.55] text-[#4A4A4A]">{c.heroClaro.entradillaMovil}</p>
         <a
-          href={whatsappLink(MENSAJE_CONSULTA)}
+          href={whatsappLink(mensajeConsulta(idioma))}
           target="_blank"
           rel="noopener"
           className="block text-center text-[17px] font-bold text-[#000000] bg-[#F9A600] py-4"
         >
-          Agendar por WhatsApp
+          {t.home.agendarWhatsAppCorto}
         </a>
         <button
           onClick={openDiagnosticModal}
           className="block text-center text-[17px] font-bold text-[#000000] border border-[#000000] py-4"
         >
-          Agendar diagnóstico
+          {t.nav.agendar}
         </button>
       </section>
 
       {/* cifras — BORRADOR: pendientes de confirmación */}
       <section className="bg-[#000000] text-[#FAFAFA] px-5 py-8 flex flex-col gap-[18px]">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">
-          Vela Nus en cifras
+          {t.home.cifrasEtiqueta}
         </span>
         <div className="flex flex-col gap-3.5">
-          {CIFRAS.map((cifra, i) => (
+          {c.cifras.map((cifra, i) => (
             <div
               key={cifra.etiqueta}
               className={`flex justify-between items-baseline ${
-                i === CIFRAS.length - 1 ? '' : 'pb-3.5 border-b border-[#333333]'
+                i === c.cifras.length - 1 ? '' : 'pb-3.5 border-b border-[#333333]'
               }`}
             >
               <span className="text-sm text-[#B9B7B2]">{cifra.etiquetaMovil}</span>
@@ -138,12 +126,12 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
       {/* problemas sobre negro */}
       <section className="bg-[#000000] text-[#FAFAFA] px-5 pt-2 pb-12 flex flex-col gap-3.5">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">
-          El problema real
+          {t.home.problemasEtiqueta}
         </span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-1.5">
-          ¿Opera o quiere operar en Cuba?
+          {t.home.problemasTitulo}
         </h2>
-        {PROBLEMAS.map((problema) => (
+        {c.problemas.map((problema) => (
           <div
             key={problema.numero}
             className="flex flex-col gap-1.5 py-4 border-t border-[#333333]"
@@ -158,24 +146,24 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
       {/* servicios en filas */}
       <section id="servicios" className="px-5 py-12 flex flex-col gap-4">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#8A5800]">
-          Servicios a empresas
+          {t.home.serviciosEtiqueta}
         </span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-1">
-          Tres líneas de servicio corporativo
+          {t.home.serviciosTitulo}
         </h2>
 
-        {LINEAS_SERVICIO.map((linea, i) => (
+        {c.lineas.map((linea, i) => (
           <div
             key={linea.clave}
             className={`flex flex-col gap-2 py-[22px] ${
               i === 0 ? 'border-t-2 border-[#000000]' : 'border-t border-[#E4E4E4]'
-            } ${i === LINEAS_SERVICIO.length - 1 ? 'border-b border-[#E4E4E4]' : ''}`}
+            } ${i === c.lineas.length - 1 ? 'border-b border-[#E4E4E4]' : ''}`}
           >
             <span className="text-[13px] font-bold text-[#8A5800]">{linea.clave}</span>
             <h3 className="text-[21px] font-bold">{linea.titulo}</h3>
             <p className="text-[15px] leading-[1.55] text-[#4A4A4A]">{linea.resumen}</p>
             <Enlace
-              destino={{ label: 'Ver línea →', pantalla: 'servicios-desktop' }}
+              destino={{ label: t.home.verLinea, pantalla: 'servicios-desktop' }}
               onNavigate={onNavigate}
               className="text-[15px] font-bold"
             />
@@ -184,12 +172,12 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
 
         <div className="border-l-4 border-[#F9A600] bg-[#F1F1F0] px-5 py-[22px] flex flex-col gap-2 mt-3">
           <span className="text-[11px] tracking-[0.14em] uppercase text-[#767676]">
-            {TRAMITES.etiqueta}
+            {c.tramites.etiqueta}
           </span>
-          <h3 className="text-[19px] font-bold">{TRAMITES.tituloCorto}</h3>
-          <p className="text-[15px] leading-[1.55] text-[#4A4A4A]">{TRAMITES.descripcion}</p>
+          <h3 className="text-[19px] font-bold">{c.tramites.tituloCorto}</h3>
+          <p className="text-[15px] leading-[1.55] text-[#4A4A4A]">{c.tramites.descripcion}</p>
           <Enlace
-            destino={{ label: `${TRAMITES.enlace} →`, pantalla: 'servicios-desktop' }}
+            destino={{ label: `${c.tramites.enlace} →`, pantalla: 'servicios-desktop' }}
             onNavigate={onNavigate}
             className="text-[15px] font-bold"
           />
@@ -199,12 +187,12 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
       {/* proceso */}
       <section className="bg-[#F1F1F0] px-5 py-12 flex flex-col gap-3.5">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#8A5800]">
-          Cómo trabajamos
+          {t.home.procesoEtiqueta}
         </span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-2">
-          Del primer mensaje a la entrega
+          {t.home.procesoTituloClaro}
         </h2>
-        {PASOS.map((paso) => (
+        {c.pasos.map((paso) => (
           <div
             key={paso.numero}
             className="flex flex-col gap-1.5 py-4 border-t border-[#DEDEDC]"
@@ -218,41 +206,41 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
 
       {/* reseñas — BORRADOR: sin texto aprobado */}
       <section id="resenas" className="px-5 py-12 flex flex-col gap-4">
-        <h2 className="text-[28px] leading-[1.18] font-bold">Reseñas de clientes</h2>
+        <h2 className="text-[28px] leading-[1.18] font-bold">{t.home.resenasTituloClaro}</h2>
         <div className="border border-[#E4E4E4] bg-white px-5 py-6 flex flex-col gap-3.5">
           <div className="flex gap-1" aria-hidden>
             {Array.from({ length: 5 }).map((_, i) => (
               <span key={i} className="w-3 h-3 bg-[#F9A600]" />
             ))}
           </div>
-          <p className="text-base leading-relaxed">{RESENAS[0].cita}</p>
+          <p className="text-base leading-relaxed">{c.resenas[0].cita}</p>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 flex-none bg-[repeating-linear-gradient(135deg,#EDECEA_0_6px,#F5F4F2_6px_12px)]" />
             <div className="flex flex-col">
-              <span className="text-sm font-bold">{RESENAS[0].autor}</span>
-              <span className="text-xs text-[#767676]">{RESENAS[0].procedencia}</span>
+              <span className="text-sm font-bold">{c.resenas[0].autor}</span>
+              <span className="text-xs text-[#767676]">{c.resenas[0].procedencia}</span>
             </div>
           </div>
         </div>
         <Enlace
-          destino={{ label: 'Ver todas / dejar una reseña', pantalla: 'casos-desktop' }}
+          destino={{ label: t.home.verResenas, pantalla: 'casos-desktop' }}
           onNavigate={onNavigate}
           className="text-[15px] font-bold border-b-2 border-[#F9A600] pb-1 self-start"
         />
-        <span className="text-[13px] text-[#767676]">{AVISO_RESENAS}</span>
+        <span className="text-[13px] text-[#767676]">{c.avisoResenas}</span>
       </section>
 
       {/* blog — BORRADOR: el blog aún no existe */}
       <section id="blog" className="px-5 pb-12 flex flex-col gap-4">
-        <span className="text-[11px] tracking-[0.18em] uppercase text-[#8A5800]">Blog</span>
+        <span className="text-[11px] tracking-[0.18em] uppercase text-[#8A5800]">{t.nav.blog}</span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-1">
-          Normativa cubana, explicada en claro
+          {t.home.blogTitulo}
         </h2>
-        {ENTRADAS_BLOG.map((entrada, i) => (
+        {c.entradasBlog.map((entrada, i) => (
           <article
             key={entrada.categoria}
             className={`flex flex-col gap-2 ${
-              i === ENTRADAS_BLOG.length - 1 ? '' : 'pb-[18px] border-b border-[#E4E4E4]'
+              i === c.entradasBlog.length - 1 ? '' : 'pb-[18px] border-b border-[#E4E4E4]'
             }`}
           >
             <span className="text-[11px] tracking-[0.12em] uppercase text-[#8A5800]">
@@ -269,8 +257,8 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
         id="contacto"
         className="bg-[#000000] text-[#FAFAFA] px-5 py-11 flex flex-col gap-[18px]"
       >
-        <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">Contacto</span>
-        <h2 className="text-[28px] leading-[1.15] font-bold text-pretty">{CTA.titulo}</h2>
+        <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">{t.nav.contacto}</span>
+        <h2 className="text-[28px] leading-[1.15] font-bold text-pretty">{c.cta.titulo}</h2>
         <FormularioContacto tono="oscuro" idPrefijo="claro-movil" />
       </section>
 
@@ -294,11 +282,11 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
 
         <div className="grid grid-cols-2 gap-3">
           <Enlace
-            destino={{ label: 'Servicios', pantalla: 'servicios-desktop' }}
+            destino={{ label: t.nav.servicios, pantalla: 'servicios-desktop' }}
             onNavigate={onNavigate}
             className="text-[15px] text-[#4A4A4A]"
           />
-          {PIE_FIRMA.map((destino) => (
+          {pieFirma(idioma).map((destino) => (
             <Enlace
               key={destino.label}
               destino={destino}
@@ -306,7 +294,7 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
               className="text-[15px] text-[#4A4A4A]"
             />
           ))}
-          {PIE_LEGAL.slice(0, 1).map((destino) => (
+          {pieLegal(idioma).slice(0, 1).map((destino) => (
             <Enlace
               key={destino.label}
               destino={destino}
@@ -317,7 +305,7 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
         </div>
 
         <span className="text-[13px] text-[#767676] border-t border-[#DEDEDC] pt-[18px]">
-          © 2026 Vela Nus Consultores &amp; Asociados
+          {t.pie.derechos}
         </span>
       </footer>
     </div>

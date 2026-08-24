@@ -8,6 +8,8 @@ import {
 } from '../../config';
 import { guardarConsulta } from '../../data/consultas';
 import { mensajeDeError } from '../../firebase';
+import { Idioma, useIdioma } from '../../i18n/idioma';
+import { textos } from '../../i18n/textos';
 
 /**
  * Piezas que comparten las cuatro maquetas de la home (oscura y clara, en
@@ -69,34 +71,46 @@ export interface DestinoEnlace {
   pendiente?: boolean;
 }
 
-export const NAV_HOME: DestinoEnlace[] = [
-  { label: 'Inicio', pantalla: 'home-desktop' },
-  { label: 'Servicios', pantalla: 'servicios-desktop' },
-  { label: 'Nosotros', pantalla: 'nosotros-desktop' },
-  { label: 'Reseñas', pantalla: 'casos-desktop' },
-  { label: 'Blog', ancla: 'blog' },
-  { label: 'Contacto', ancla: 'contacto' },
-];
+export const navHome = (idioma: Idioma): DestinoEnlace[] => {
+  const t = textos(idioma).nav;
+  return [
+    { label: t.inicio, pantalla: 'home-desktop' },
+    { label: t.servicios, pantalla: 'servicios-desktop' },
+    { label: t.nosotros, pantalla: 'nosotros-desktop' },
+    { label: t.resenas, pantalla: 'casos-desktop' },
+    { label: t.blog, ancla: 'blog' },
+    { label: t.contacto, ancla: 'contacto' },
+  ];
+};
 
-export const PIE_SERVICIOS: DestinoEnlace[] = [
-  { label: 'Contabilidad', pantalla: 'servicios-contabilidad' },
-  { label: 'Legal corporativo', pantalla: 'servicios-legal' },
-  { label: 'Trámites y visas', pantalla: 'servicios-tramites' },
-  { label: 'Eventos y capacitación', pantalla: 'servicios-eventos' },
-];
+export const pieServicios = (idioma: Idioma): DestinoEnlace[] => {
+  const t = textos(idioma).pie;
+  return [
+    { label: t.contabilidad, pantalla: 'servicios-contabilidad' },
+    { label: t.legal, pantalla: 'servicios-legal' },
+    { label: t.tramites, pantalla: 'servicios-tramites' },
+    { label: t.eventos, pantalla: 'servicios-eventos' },
+  ];
+};
 
-export const PIE_FIRMA: DestinoEnlace[] = [
-  { label: 'Sobre nosotros', pantalla: 'nosotros-desktop' },
-  { label: 'Reseñas y casos', pantalla: 'casos-desktop' },
-  { label: 'Blog', ancla: 'blog' },
-  { label: 'Contacto', ancla: 'contacto' },
-];
+export const pieFirma = (idioma: Idioma): DestinoEnlace[] => {
+  const t = textos(idioma);
+  return [
+    { label: t.pie.sobreNosotros, pantalla: 'nosotros-desktop' },
+    { label: t.pie.resenasYCasos, pantalla: 'casos-desktop' },
+    { label: t.nav.blog, ancla: 'blog' },
+    { label: t.nav.contacto, ancla: 'contacto' },
+  ];
+};
 
-export const PIE_LEGAL: DestinoEnlace[] = [
-  { label: 'Aviso legal', pendiente: true },
-  { label: 'Privacidad', pendiente: true },
-  { label: 'Disclaimer', pendiente: true },
-];
+export const pieLegal = (idioma: Idioma): DestinoEnlace[] => {
+  const t = textos(idioma).pie;
+  return [
+    { label: t.avisoLegal, pendiente: true },
+    { label: t.privacidad, pendiente: true },
+    { label: t.disclaimer, pendiente: true },
+  ];
+};
 
 interface EnlaceProps {
   destino: DestinoEnlace;
@@ -120,7 +134,7 @@ export const Enlace: React.FC<EnlaceProps> = ({
 }) => {
   if (destino.pendiente) {
     return (
-      <span className={`${className} cursor-default`} title="Página pendiente">
+      <span className={`${className} cursor-default`} title={destino.label}>
         {destino.label}
       </span>
     );
@@ -152,8 +166,10 @@ export const Enlace: React.FC<EnlaceProps> = ({
 };
 
 /** Mensaje ya redactado con el que se abre WhatsApp desde los CTA del hero. */
-export const MENSAJE_CONSULTA =
-  'Hola, quisiera una consulta sobre operar en Cuba.';
+export const mensajeConsulta = (idioma: Idioma): string =>
+  idioma === 'en'
+    ? 'Hello, I would like a consultation about operating in Cuba.'
+    : 'Hola, quisiera una consulta sobre operar en Cuba.';
 
 interface FormularioProps {
   /** `claro`: campos blancos sobre caja clara. `oscuro`: campos sobre negro. */
@@ -171,6 +187,8 @@ interface FormularioProps {
  * después se le propone el atajo.
  */
 export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo }) => {
+  const idioma = useIdioma();
+  const t = textos(idioma).formulario;
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [pais, setPais] = useState('');
@@ -226,11 +244,11 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
     return (
       <div className="flex flex-col gap-4">
         <span className={`text-xl font-bold ${oscuro ? 'text-[#FAFAFA]' : 'text-[#000000]'}`}>
-          Consulta recibida.
+          {t.recibido}
         </span>
         <p className={`text-base leading-relaxed ${oscuro ? 'text-[#B9B7B2]' : 'text-[#4A4A4A]'}`}>
-          Gracias, {nombre.trim() || 'gracias'}. Le respondemos en menos de 24 h hábiles.
-          Si prefiere no esperar, adelántenos el caso por WhatsApp.
+          {nombre.trim() ? `${nombre.trim()}: ` : ''}
+          {t.gracias}
         </p>
         <a
           href={whatsappLink(textoWhatsApp())}
@@ -240,7 +258,7 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
             oscuro ? 'bg-[#F9A600] text-[#000000]' : 'bg-[#000000] text-[#F9A600]'
           }`}
         >
-          Adelantar por WhatsApp
+          {t.adelantar}
         </a>
       </div>
     );
@@ -250,7 +268,7 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
     <form onSubmit={enviar} className="flex flex-col gap-5">
       <div className="flex flex-col gap-[7px]">
         <label htmlFor={`nombre-${idPrefijo}`} className={etiqueta}>
-          Nombre y apellidos
+          {t.nombre}
         </label>
         <input
           id={`nombre-${idPrefijo}`}
@@ -264,7 +282,7 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="flex flex-col gap-[7px]">
           <label htmlFor={`correo-${idPrefijo}`} className={etiqueta}>
-            Correo electrónico
+            {t.correo}
           </label>
           <input
             id={`correo-${idPrefijo}`}
@@ -276,7 +294,7 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
         </div>
         <div className="flex flex-col gap-[7px]">
           <label htmlFor={`pais-${idPrefijo}`} className={etiqueta}>
-            País desde el que opera
+            {t.pais}
           </label>
           <input
             id={`pais-${idPrefijo}`}
@@ -290,7 +308,7 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
 
       <div className="flex flex-col gap-[7px]">
         <label htmlFor={`mensaje-${idPrefijo}`} className={etiqueta}>
-          Qué necesita resolver
+          {t.mensaje}
         </label>
         <textarea
           id={`mensaje-${idPrefijo}`}
@@ -312,11 +330,11 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
           oscuro ? 'bg-[#F9A600] text-[#000000]' : 'bg-[#000000] text-[#F9A600]'
         }`}
       >
-        {enviando ? 'Enviando…' : 'Enviar consulta'}
+        {enviando ? t.enviando : t.enviar}
       </button>
 
       <span className={`text-sm ${oscuro ? 'text-[#B9B7B2]' : 'text-[#4A4A4A]'}`}>
-        También puede escribirnos por WhatsApp ({WHATSAPP_DISPLAY}) o a {CONTACT_EMAIL}.
+        {t.alternativa(WHATSAPP_DISPLAY, CONTACT_EMAIL)}
       </span>
     </form>
   );

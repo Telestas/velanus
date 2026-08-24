@@ -1,22 +1,15 @@
 import React from 'react';
 import { NavigationProps } from '../types';
 import {
-  CONTACT_ADDRESS_LINES,
   CONTACT_EMAIL,
   CONTACT_SCHEDULE,
   CONTACT_TIMEZONE,
   WHATSAPP_DISPLAY,
 } from '../config';
-import {
-  AVISO_EQUIPO,
-  CIERRE,
-  CIFRAS_FIRMA,
-  CREDENCIALES,
-  EQUIPO,
-  HERO,
-  REGLAS,
-} from '../content/nosotros';
-import { LINEAS } from '../content/servicios';
+import { contenidoNosotros } from '../content/nosotros';
+import { contenidoServicios } from '../content/servicios';
+import { useIdioma } from '../i18n/idioma';
+import { textos } from '../i18n/textos';
 import { Enlace } from './home/comunes';
 import { useVarianteHome } from './home/useVariante';
 import { CabeceraSitio } from './marca/CabeceraSitio';
@@ -37,6 +30,9 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
   onNavigate,
   openDiagnosticModal,
 }) => {
+  const idioma = useIdioma();
+  const t = textos(idioma);
+  const c = contenidoNosotros(idioma);
   const paleta = paletaDe(useVarianteHome());
 
   return (
@@ -52,8 +48,8 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
       <Miga
         paleta={paleta}
         onNavigate={onNavigate}
-        ruta={[{ label: 'Inicio', pantalla: 'home-desktop' }]}
-        actual="Sobre nosotros"
+        ruta={[{ label: t.servicios.migaInicio, pantalla: 'home-desktop' }]}
+        actual={t.nosotros.miga}
       />
 
       {/* portada */}
@@ -61,26 +57,26 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
         <div className="flex flex-col gap-6">
           <div className="w-14 h-[3px] bg-[#F9A600]" />
           <h1 className="text-[38px] md:text-[54px] leading-[1.08] font-bold tracking-[-0.01em] text-pretty">
-            {HERO.titulo}
+            {c.hero.titulo}
           </h1>
           <p className={`text-lg md:text-xl leading-relaxed ${paleta.textoFuerte} max-w-[620px] text-pretty`}>
-            {HERO.entradilla}
+            {c.hero.entradilla}
           </p>
           <p className={`text-lg leading-[1.65] ${paleta.textoSuave} max-w-[620px]`}>
-            {HERO.historia}
+            {c.hero.historia}
           </p>
         </div>
 
         <div className={`border ${paleta.borde} p-8 flex flex-col gap-[22px]`}>
           <span className={`text-xs tracking-[0.18em] uppercase ${paleta.acentoTexto}`}>
-            La firma
+            {t.nosotros.laFirma}
           </span>
           <div className="flex flex-col gap-4">
-            {CIFRAS_FIRMA.map((cifra, i) => (
+            {c.cifras.map((cifra, i) => (
               <div
                 key={cifra.etiqueta}
                 className={`flex flex-col gap-0.5 ${
-                  i === CIFRAS_FIRMA.length - 1 ? '' : `pb-4 border-b ${paleta.borde}`
+                  i === c.cifras.length - 1 ? '' : `pb-4 border-b ${paleta.borde}`
                 }`}
               >
                 <span className={`text-[26px] font-bold ${paleta.acentoTexto}`}>
@@ -98,12 +94,12 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
         <div className={`${ANCHO} py-22`}>
           <TituloSeccion
             paleta={paleta}
-            etiqueta="Cómo trabajamos"
-            titulo="Tres reglas que no negociamos"
+            etiqueta={t.nosotros.comoTrabajamos}
+            titulo={t.nosotros.reglasTitulo}
             className="max-w-[680px] mb-12"
           />
           <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-            {REGLAS.map((regla) => (
+            {c.reglas.map((regla) => (
               <div
                 key={regla.titulo}
                 className="flex flex-col gap-3 border-t-[3px] border-[#F9A600] pt-6"
@@ -121,18 +117,22 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
       {/* equipo — BORRADOR: sin nombres ni retratos */}
       <section className={`${ANCHO} py-22`}>
         <div className="flex justify-between items-end gap-10 mb-11 flex-wrap">
-          <TituloSeccion paleta={paleta} etiqueta="Equipo" titulo="Quién va a llevar su caso" />
+          <TituloSeccion
+            paleta={paleta}
+            etiqueta={t.nosotros.equipoEtiqueta}
+            titulo={t.nosotros.equipoTitulo}
+          />
           <span className={`text-sm ${paleta.textoTenue} max-w-[320px] lg:text-right`}>
-            {AVISO_EQUIPO}
+            {c.avisoEquipo}
           </span>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {EQUIPO.map((miembro, i) => (
+          {c.equipo.map((miembro, i) => (
             <article key={i} className="flex flex-col gap-4">
               <div
                 className={`aspect-[4/5] flex items-center justify-center ${paleta.marcoImagen}`}
               >
-                <span className={`font-mono text-[11px] ${paleta.textoTenue}`}>retrato 4:5</span>
+                <span className={`font-mono text-[11px] ${paleta.textoTenue}`}>{t.nosotros.retrato}</span>
               </div>
               <div className="flex flex-col gap-1.5">
                 <h3 className="text-xl font-bold">{miembro.nombre}</h3>
@@ -153,20 +153,20 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
         >
           <div className="flex flex-col gap-3.5 items-start">
             <span className={`text-[13px] tracking-[0.2em] uppercase ${paleta.acentoTexto}`}>
-              Qué hacemos
+              {t.nosotros.queHacemos}
             </span>
             <h2 className="text-[28px] md:text-[32px] leading-[1.18] font-bold">
-              Cuatro líneas, un mismo equipo
+              {t.nosotros.queHacemosTitulo}
             </h2>
             <Enlace
-              destino={{ label: 'Ver servicios →', pantalla: 'servicios-desktop' }}
+              destino={{ label: t.nosotros.verServicios, pantalla: 'servicios-desktop' }}
               onNavigate={onNavigate}
               className={`text-base font-bold ${paleta.acentoTexto}`}
             />
           </div>
 
           <div className="grid sm:grid-cols-2 gap-8">
-            {LINEAS.map((linea) => (
+            {contenidoServicios(idioma).lineas.map((linea) => (
               <div key={linea.clave} className="flex flex-col gap-2">
                 <span className={`text-[13px] ${paleta.textoTenue}`}>{linea.clave}</span>
                 <h3 className="text-xl font-bold">{linea.titulo}</h3>
@@ -182,13 +182,13 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
         <div className={`${ANCHO} py-18 grid lg:grid-cols-2 gap-12 lg:gap-18 items-start`}>
           <div className="flex flex-col gap-5">
             <span className={`text-[13px] tracking-[0.2em] uppercase ${paleta.acentoTexto}`}>
-              Dónde estamos
+              {t.nosotros.dondeEstamos}
             </span>
             <h2 className="text-[26px] md:text-[30px] leading-tight font-bold">
-              La Habana, Centro Habana
+              {t.nosotros.ubicacion}
             </h2>
             <p className={`text-[17px] leading-relaxed ${paleta.textoSuave}`}>
-              {CONTACT_ADDRESS_LINES.join(' ')}, Cuba.
+              {c.direccion}
             </p>
             <div className="flex flex-col gap-2 text-[17px]">
               <span className={paleta.textoFuerte}>{WHATSAPP_DISPLAY}</span>
@@ -201,19 +201,19 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
 
           <div className="flex flex-col gap-5">
             <span className={`text-[13px] tracking-[0.2em] uppercase ${paleta.acentoTexto}`}>
-              Credenciales y colegiación
+              {t.nosotros.credenciales}
             </span>
             {/* BORRADOR: no se publica nada que no se pueda acreditar. */}
-            <p className={`text-[17px] leading-relaxed ${paleta.textoSuave}`}>{CREDENCIALES}</p>
+            <p className={`text-[17px] leading-relaxed ${paleta.textoSuave}`}>{c.credenciales}</p>
           </div>
         </div>
       </section>
 
       <BandaCta
         paleta={paleta}
-        titulo={CIERRE.titulo}
-        boton={CIERRE.boton}
-        mensaje={CIERRE.mensaje}
+        titulo={c.cierre.titulo}
+        boton={c.cierre.boton}
+        mensaje={c.cierre.mensaje}
       />
 
       <PieSitio paleta={paleta} onNavigate={onNavigate} />

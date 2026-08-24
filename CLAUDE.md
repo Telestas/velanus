@@ -128,7 +128,28 @@ Consecuencia conocida y aceptada: `/servicios` y demás rutas **renderizan bien
 pero responden con HTTP 404**. Si el SEO de esas páginas pasa a importar, la
 salida es un hosting con rewrites o generar HTML por ruta.
 
-#### Color y SEO
+#### Idioma
+
+El sitio se sirve en **español o inglés según el navegador del visitante**, sin
+conmutador: era un paso más que casi nadie usa. `src/i18n/idioma.ts` decide
+(`?lang=es|en` manda y se recuerda, luego lo elegido antes, luego
+`navigator.languages`); cualquier idioma que no sea inglés cae en español, y si
+el navegador no declara nada, también.
+
+- Interfaz (menús, botones, rótulos de sección): `src/i18n/textos.ts`.
+- Contenido (titulares, servicios, FAQ): `src/content/*.ts`, con `es` y `en` en
+  el mismo fichero para que no se desincronicen.
+- **Añadir una cadena implica traducirla**: TypeScript obliga, porque `Textos` y
+  los tipos de contenido exigen ambos idiomas.
+- En inglés **no se traducen** MIPYME, TCP, CNA, PDL, Versat ni Odoo: son nombres
+  propios del marco cubano. Se glosan entre paréntesis la primera vez.
+- El panel de /admin sigue solo en español: lo usa la firma, no el público.
+
+**Límite conocido:** los dos idiomas comparten URL. Lo correcto para posicionar
+sería `/en/…` con `hreflang`, y eso exige HTML por ruta —la misma conversación
+pendiente que los 404 y las tarjetas sociales.
+
+### Color, tipografía y SEO
 
 La paleta del manual es la única fuente de verdad y vive en `src/index.css`
 (`--vn-negro`, `--vn-ambar`, `--vn-ambar-texto`, `--vn-hueso`). Los antiguos
@@ -136,8 +157,14 @@ La paleta del manual es la única fuente de verdad y vive en `src/index.css`
 las pantallas todavía sin rediseñar (Casos, `SiteHeader`, `SiteFooter`,
 `DiagnosticModal`). No introducir colores nuevos fuera del manual.
 
+Las fuentes están **autoalojadas** en `public/fonts` (Caladea, Inter y Playfair,
+subconjunto latino, 360 kB): desde Cuba, pedirlas a los CDN de Google añade dos
+conexiones antes de poder pintar texto y a veces no llegan. Las declaraciones
+`@font-face` se generan en `src/fuentes.css`; si se cambia una fuente hay que
+volver a descargar los `woff2` y regenerarlo.
+
 `src/seo.ts` reescribe título, descripción, canónica y tarjetas sociales en
-cada navegación, y marca `/admin` como `noindex`. `index.html` lleva los
+cada navegación —en el idioma activo—, y marca `/admin` como `noindex`. `index.html` lleva los
 metadatos de la home más el JSON-LD de `LegalService`; `public/robots.txt` y
 `public/sitemap.xml` acompañan.
 

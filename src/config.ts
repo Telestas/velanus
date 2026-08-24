@@ -9,7 +9,7 @@ export const WHATSAPP_NUMBER = '5353854623';
 /** El mismo número, formateado para mostrar en pantalla. */
 export const WHATSAPP_DISPLAY = '+53 5 385 4623';
 
-export const CONTACT_EMAIL = 'contacto@velanus.cu';
+export const CONTACT_EMAIL = 'contacto@velanus.com';
 
 export const CONTACT_CITY = 'La Habana, Cuba';
 
@@ -19,8 +19,7 @@ export const CONTACT_ADDRESS_LINES = [
   'Centro Habana, La Habana',
 ];
 
-/** BORRADOR: el cliente aún no ha confirmado el horario de atención. */
-export const CONTACT_SCHEDULE = 'Lun–Vie [HORARIO PENDIENTE]';
+export const CONTACT_SCHEDULE = 'Lun–Vie, 9:00–17:00';
 
 /** Zona horaria, tal y como se muestra al visitante. */
 export const CONTACT_TIMEZONE = 'Hora de Cuba (UTC-4)';

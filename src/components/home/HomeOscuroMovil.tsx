@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { NavigationProps } from '../../types';
+import { useIdioma } from '../../i18n/idioma';
+import { textos } from '../../i18n/textos';
 import {
   CONTACT_ADDRESS_LINES,
   CONTACT_EMAIL,
@@ -9,25 +11,15 @@ import {
   WHATSAPP_DISPLAY,
   whatsappLink,
 } from '../../config';
-import {
-  CIFRAS,
-  CTA,
-  ENTRADAS_BLOG,
-  HERO_OSCURO,
-  LINEAS_SERVICIO,
-  PASOS,
-  PROBLEMAS,
-  RESENAS,
-  TRAMITES,
-} from '../../content/home';
+import { contenidoHome } from '../../content/home';
 import {
   Enlace,
   FormularioContacto,
   LogoVelaNus,
-  MENSAJE_CONSULTA,
-  NAV_HOME,
-  PIE_FIRMA,
-  PIE_LEGAL,
+  mensajeConsulta,
+  navHome,
+  pieFirma,
+  pieLegal,
 } from './comunes';
 
 /**
@@ -41,6 +33,9 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
   onNavigate,
   openDiagnosticModal,
 }) => {
+  const idioma = useIdioma();
+  const t = textos(idioma);
+  const c = contenidoHome(idioma);
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   return (
@@ -49,18 +44,10 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       <div className="bg-[#000000] text-[#FAFAFA] px-5 py-4 flex items-center justify-between">
         <LogoVelaNus tono="ambar" alto={32} />
         <div className="flex items-center gap-3">
-          {/* BORRADOR: la versión en inglés todavía no existe. */}
-          <div
-            className="flex items-center border border-[#4A4A4A]"
-            title="Versión en inglés pendiente"
-          >
-            <span className="text-xs px-2 py-1.5 bg-[#F9A600] text-[#000000] font-bold">ES</span>
-            <span className="text-xs px-2 py-1.5 text-[#767676]">EN</span>
-          </div>
           <button
             onClick={() => setMenuAbierto(!menuAbierto)}
             className="text-[#FAFAFA] p-1"
-            aria-label="Abrir menú"
+            aria-label={t.nav.menu}
             aria-expanded={menuAbierto}
           >
             {menuAbierto ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -75,7 +62,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
         }`}
       >
         <div className="px-5 flex flex-col gap-3">
-          {NAV_HOME.map((destino) => (
+          {navHome(idioma).map((destino) => (
             <Enlace
               key={destino.label}
               destino={destino}
@@ -90,34 +77,34 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       {/* portada */}
       <section className="bg-[#000000] text-[#FAFAFA] px-5 pt-10 pb-11 flex flex-col gap-5">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">
-          {HERO_OSCURO.antetituloMovil}
+          {c.heroOscuro.antetituloMovil}
         </span>
         <h1 className="text-[33px] leading-[1.14] font-bold text-pretty">
-          {HERO_OSCURO.tituloMovil}
+          {c.heroOscuro.tituloMovil}
         </h1>
         <p className="text-[17px] leading-[1.55] text-[#E8E7E4]">
-          {HERO_OSCURO.entradillaMovil}
+          {c.heroOscuro.entradillaMovil}
         </p>
         <a
-          href={whatsappLink(MENSAJE_CONSULTA)}
+          href={whatsappLink(mensajeConsulta(idioma))}
           target="_blank"
           rel="noopener"
           className="block text-center text-[17px] font-bold text-[#000000] bg-[#F9A600] py-4"
         >
-          Agendar por WhatsApp
+          {t.home.agendarWhatsAppCorto}
         </a>
         <button
           onClick={openDiagnosticModal}
           className="block text-center text-[17px] text-[#FAFAFA] border border-[#6E6E6E] py-4"
         >
-          Agendar diagnóstico
+          {t.nav.agendar}
         </button>
-        <p className="text-[13px] text-[#B9B7B2]">Respuesta en 24 h hábiles · Cuba (UTC-4)</p>
+        <p className="text-[13px] text-[#B9B7B2]">{t.home.respuesta24hCorto} · {CONTACT_TIMEZONE}</p>
       </section>
 
       {/* cifras — BORRADOR: pendientes de confirmación */}
       <section className="bg-[#F9A600] text-[#000000] px-5 py-6 grid grid-cols-2 gap-5">
-        {CIFRAS.map((cifra) => (
+        {c.cifras.map((cifra) => (
           <div key={cifra.etiqueta} className="flex flex-col gap-0.5">
             <span className="text-xl font-bold">{cifra.valor}</span>
             <span className="text-xs uppercase tracking-[0.06em]">{cifra.etiquetaMovil}</span>
@@ -129,13 +116,13 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       <section className="px-5 py-12 flex flex-col gap-3">
         <div className="w-12 h-[3px] bg-[#F9A600]" />
         <h2 className="text-[28px] leading-[1.18] font-bold mb-2">
-          ¿Opera o quiere operar en Cuba?
+          {t.home.problemasTitulo}
         </h2>
-        {PROBLEMAS.map((problema, i) => (
+        {c.problemas.map((problema, i) => (
           <div
             key={problema.numero}
             className={`flex flex-col gap-1.5 py-5 border-t border-[#E4E4E4] ${
-              i === PROBLEMAS.length - 1 ? 'border-b' : ''
+              i === c.problemas.length - 1 ? 'border-b' : ''
             }`}
           >
             <span className="text-[13px] font-bold text-[#8A5800]">{problema.numero}</span>
@@ -150,13 +137,13 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       {/* servicios */}
       <section id="servicios" className="bg-[#F1F1F0] px-5 py-12 flex flex-col gap-4">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#8A5800]">
-          Servicios a empresas
+          {t.home.serviciosEtiqueta}
         </span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-2">
-          Tres líneas de servicio corporativo
+          {t.home.serviciosTitulo}
         </h2>
 
-        {LINEAS_SERVICIO.map((linea) => (
+        {c.lineas.map((linea) => (
           <div
             key={linea.clave}
             className="bg-[#FAFAFA] border-t-4 border-[#F9A600] px-5 py-6 flex flex-col gap-3"
@@ -164,7 +151,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
             <h3 className="text-[21px] font-bold">{linea.titulo}</h3>
             <p className="text-[15px] leading-[1.55] text-[#4A4A4A]">{linea.resumen}</p>
             <Enlace
-              destino={{ label: 'Ver línea completa →', pantalla: 'servicios-desktop' }}
+              destino={{ label: t.home.verLineaCompleta, pantalla: 'servicios-desktop' }}
               onNavigate={onNavigate}
               className="text-[15px] font-bold"
             />
@@ -173,12 +160,12 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
 
         <div className="bg-[#FAFAFA] border border-[#E4E4E4] px-5 py-6 flex flex-col gap-2.5">
           <span className="text-[11px] tracking-[0.16em] uppercase text-[#767676]">
-            Personas naturales
+            {c.tramites.etiqueta}
           </span>
-          <h3 className="text-[19px] font-bold">{TRAMITES.tituloCorto}</h3>
-          <p className="text-[15px] leading-[1.55] text-[#4A4A4A]">{TRAMITES.descripcion}</p>
+          <h3 className="text-[19px] font-bold">{c.tramites.tituloCorto}</h3>
+          <p className="text-[15px] leading-[1.55] text-[#4A4A4A]">{c.tramites.descripcion}</p>
           <Enlace
-            destino={{ label: TRAMITES.enlace, pantalla: 'servicios-desktop' }}
+            destino={{ label: c.tramites.enlace, pantalla: 'servicios-desktop' }}
             onNavigate={onNavigate}
             className="text-[15px] font-bold border border-[#000000] p-3 text-center"
           />
@@ -188,16 +175,16 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       {/* proceso */}
       <section className="px-5 py-12 flex flex-col gap-3.5">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#8A5800]">
-          Cómo trabajamos
+          {t.home.procesoEtiqueta}
         </span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-2">
-          Cuatro pasos, sin sorpresas de honorarios
+          {t.home.procesoTitulo}
         </h2>
-        {PASOS.map((paso, i) => (
+        {c.pasos.map((paso, i) => (
           <div
             key={paso.numero}
             className={`pt-4 flex flex-col gap-1.5 border-t-[3px] ${
-              i === PASOS.length - 1 ? 'border-[#F9A600]' : 'border-[#000000]'
+              i === c.pasos.length - 1 ? 'border-[#F9A600]' : 'border-[#000000]'
             }`}
           >
             <span className="text-[13px] font-bold text-[#8A5800]">
@@ -211,10 +198,10 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       {/* reseñas — BORRADOR: sin texto aprobado */}
       <section id="resenas" className="bg-[#000000] text-[#FAFAFA] px-5 py-12 flex flex-col gap-4">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">
-          Reseñas de clientes
+          {t.home.resenasEtiqueta}
         </span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-2">
-          Lo que dicen quienes ya operan con nosotros
+          {t.home.resenasTitulo}
         </h2>
         <div className="border border-[#333333] px-5 py-6 flex flex-col gap-3.5">
           <div className="flex gap-1" aria-hidden>
@@ -222,17 +209,17 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
               <span key={i} className="w-3 h-3 bg-[#F9A600]" />
             ))}
           </div>
-          <p className="text-base leading-relaxed text-[#E8E7E4] italic">{RESENAS[0].cita}</p>
+          <p className="text-base leading-relaxed text-[#E8E7E4] italic">{c.resenas[0].cita}</p>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 flex-none bg-[repeating-linear-gradient(135deg,#1C1C1C_0_6px,#232323_6px_12px)]" />
             <div className="flex flex-col">
-              <span className="text-sm font-bold">{RESENAS[0].autor}</span>
-              <span className="text-xs text-[#B9B7B2]">{RESENAS[0].procedencia}</span>
+              <span className="text-sm font-bold">{c.resenas[0].autor}</span>
+              <span className="text-xs text-[#B9B7B2]">{c.resenas[0].procedencia}</span>
             </div>
           </div>
         </div>
         <Enlace
-          destino={{ label: 'Ver todas / dejar una reseña →', pantalla: 'casos-desktop' }}
+          destino={{ label: `${t.home.verResenas} →`, pantalla: 'casos-desktop' }}
           onNavigate={onNavigate}
           className="text-[15px] font-bold text-[#F9A600]"
         />
@@ -241,16 +228,16 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       {/* blog — BORRADOR: el blog aún no existe */}
       <section id="blog" className="px-5 py-12 flex flex-col gap-4">
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#8A5800]">
-          Últimas del blog
+          {t.home.blogEtiqueta}
         </span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-2">
-          Normativa cubana, explicada en claro
+          {t.home.blogTitulo}
         </h2>
-        {ENTRADAS_BLOG.map((entrada, i) => (
+        {c.entradasBlog.map((entrada, i) => (
           <article
             key={entrada.categoria}
             className={`flex gap-3.5 ${
-              i === ENTRADAS_BLOG.length - 1 ? '' : 'pb-4 border-b border-[#E4E4E4]'
+              i === c.entradasBlog.length - 1 ? '' : 'pb-4 border-b border-[#E4E4E4]'
             }`}
           >
             <div className="w-24 h-[72px] flex-none bg-[repeating-linear-gradient(135deg,#EDECEA_0_8px,#F5F4F2_8px_16px)]" />
@@ -267,11 +254,11 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
 
       {/* contacto */}
       <section id="contacto" className="bg-[#F9A600] text-[#000000] px-5 py-11 flex flex-col gap-[18px]">
-        <h2 className="text-[29px] leading-[1.15] font-bold text-pretty">{CTA.titulo}</h2>
+        <h2 className="text-[29px] leading-[1.15] font-bold text-pretty">{c.cta.titulo}</h2>
         <div className="bg-[#FAFAFA] px-5 py-6">
           <FormularioContacto tono="claro" idPrefijo="oscuro-movil" />
         </div>
-        <span className="text-[15px]">O escríbanos a {CONTACT_EMAIL}</span>
+        <span className="text-[15px]">{t.formulario.alternativa(WHATSAPP_DISPLAY, CONTACT_EMAIL)}</span>
       </section>
 
       {/* pie — contiene el xpath obligatorio //footer//a[contains(text(), 'Servicios')] */}
@@ -295,11 +282,11 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
 
         <div className="grid grid-cols-2 gap-3">
           <Enlace
-            destino={{ label: 'Servicios', pantalla: 'servicios-desktop' }}
+            destino={{ label: t.nav.servicios, pantalla: 'servicios-desktop' }}
             onNavigate={onNavigate}
             className="text-[15px] text-[#FAFAFA]"
           />
-          {PIE_FIRMA.map((destino) => (
+          {pieFirma(idioma).map((destino) => (
             <Enlace
               key={destino.label}
               destino={destino}
@@ -307,7 +294,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
               className="text-[15px] text-[#FAFAFA]"
             />
           ))}
-          {PIE_LEGAL.slice(0, 1).map((destino) => (
+          {pieLegal(idioma).slice(0, 1).map((destino) => (
             <Enlace
               key={destino.label}
               destino={destino}
@@ -318,7 +305,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
         </div>
 
         <span className="text-[13px] text-[#767676] border-t border-[#333333] pt-5">
-          © 2026 Vela Nus Consultores &amp; Asociados
+          {t.pie.derechos}
         </span>
       </footer>
     </div>
