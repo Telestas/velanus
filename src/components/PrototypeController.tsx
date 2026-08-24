@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScreenId } from '../types';
 import { pathForScreen } from '../router';
-import { Monitor, Smartphone, Layers } from 'lucide-react';
+import { Monitor, Smartphone, Layers, SlidersHorizontal } from 'lucide-react';
 
 interface PrototypeControllerProps {
   currentScreen: ScreenId;
@@ -22,6 +22,7 @@ const TABS: ScreenTab[] = [
   { id: 'servicios-desktop', label: 'Servicios', icon: Monitor, title: 'Pantalla 3: Servicios Desktop' },
   { id: 'nosotros-desktop', label: 'Nosotros', icon: Monitor, title: 'Pantalla 4: Nosotros Desktop' },
   { id: 'casos-desktop', label: 'Casos', icon: Monitor, title: 'Pantalla 5: Casos Desktop' },
+  { id: 'admin', label: 'Admin', icon: SlidersHorizontal, title: 'Administración: apariencia de la home' },
 ];
 
 export const PrototypeController: React.FC<PrototypeControllerProps> = ({

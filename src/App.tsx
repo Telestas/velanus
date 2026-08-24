@@ -13,6 +13,7 @@ import { HomeMovilScreen } from './components/HomeMovilScreen';
 import { ServiciosDesktopScreen } from './components/ServiciosDesktopScreen';
 import { NosotrosDesktopScreen } from './components/NosotrosDesktopScreen';
 import { CasosDesktopScreen } from './components/CasosDesktopScreen';
+import { AdminScreen } from './components/AdminScreen';
 import { DiagnosticModal } from './components/DiagnosticModal';
 
 const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
@@ -21,6 +22,7 @@ const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   'servicios-desktop': ServiciosDesktopScreen,
   'nosotros-desktop': NosotrosDesktopScreen,
   'casos-desktop': CasosDesktopScreen,
+  admin: AdminScreen,
 };
 
 export default function App() {

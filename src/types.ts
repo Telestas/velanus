@@ -3,7 +3,8 @@ export type ScreenId =
   | 'home-movil'
   | 'servicios-desktop'
   | 'nosotros-desktop'
-  | 'casos-desktop';
+  | 'casos-desktop'
+  | 'admin';
 
 export interface NavigationProps {
   currentScreen: ScreenId;

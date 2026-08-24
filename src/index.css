@@ -4,6 +4,8 @@
   :root {
     --font-playfair: 'Playfair Display', Georgia, serif;
     --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    /* Tipografía de marca: Caladea es la sustituta métrica de Cambria. */
+    --font-caladea: 'Caladea', Cambria, Georgia, serif;
   }
   
   body {
@@ -14,6 +16,19 @@
 
   h1, h2, h3, h4, .font-serif, .font-display {
     font-family: var(--font-playfair);
+  }
+
+  /*
+   * Pantallas rediseñadas con el manual de marca (home y administración).
+   * Manda sobre la regla de arriba, que sigue vigente en las pantallas
+   * interiores todavía sin rediseñar.
+   */
+  .font-marca,
+  .font-marca h1,
+  .font-marca h2,
+  .font-marca h3,
+  .font-marca h4 {
+    font-family: var(--font-caladea);
   }
 }
 

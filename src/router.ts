@@ -16,6 +16,7 @@ const SCREEN_SLUGS: Record<ScreenId, string> = {
   'servicios-desktop': 'servicios',
   'nosotros-desktop': 'nosotros',
   'casos-desktop': 'casos',
+  admin: 'admin',
 };
 
 /** BASE_URL siempre trae barra final ('/velanus/' o '/'). */
@@ -48,6 +49,7 @@ const SCREEN_ORDER: ScreenId[] = [
   'servicios-desktop',
   'nosotros-desktop',
   'casos-desktop',
+  'admin',
 ];
 
 /** Ir "hacia atrás" en el orden anima con push_back; hacia adelante, push. */
