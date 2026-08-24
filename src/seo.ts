@@ -5,6 +5,9 @@ import { Idioma } from './i18n/idioma';
 /**
  * Metadatos por pantalla.
  *
+ * El título de un artículo del blog no está aquí: lo pone la propia pantalla
+ * con `tituloDeArticulo()` cuando sabe qué artículo ha cargado.
+ *
  * El sitio es una SPA: el HTML servido es siempre el mismo, así que sin esto
  * todas las URL comparten título y descripción, y en un buscador o al
  * compartir un enlace se ven idénticas. Aquí se actualizan al navegar.
@@ -77,6 +80,16 @@ const ES: Record<ScreenId, Metadatos> = {
     descripcion:
       'Casos de clientes que ya operan en Cuba con nosotros y reseñas verificadas antes de publicarse.',
   },
+  blog: {
+    titulo: `Blog — ${TITULO_BASE}`,
+    descripcion:
+      'Normativa cubana explicada en claro: cambios contables, legales y de trámites, y qué implican para quien opera en Cuba desde fuera.',
+  },
+  'blog-articulo': {
+    titulo: `Blog — ${TITULO_BASE}`,
+    descripcion:
+      'Análisis de la normativa contable, legal y de trámites en Cuba, escrito por Vela Nus Consultores & Asociados.',
+  },
   // El panel no debe aparecer en buscadores; se marca con noindex.
   admin: {
     titulo: `Administración — ${TITULO_BASE}`,
@@ -130,6 +143,16 @@ const EN: Record<ScreenId, Metadatos> = {
     descripcion:
       'Cases from clients already operating in Cuba with us, and reviews approved before publication.',
   },
+  blog: {
+    titulo: `Blog — ${TITULO_BASE}`,
+    descripcion:
+      'Cuban regulations explained plainly: accounting, legal and paperwork changes, and what they mean for those operating in Cuba from abroad.',
+  },
+  'blog-articulo': {
+    titulo: `Blog — ${TITULO_BASE}`,
+    descripcion:
+      'Analysis of Cuban accounting, legal and paperwork regulations by Vela Nus Consultores & Asociados.',
+  },
   admin: {
     titulo: `Administration — ${TITULO_BASE}`,
     descripcion: '',
@@ -145,7 +168,7 @@ export const RUTAS_INDEXABLES: ScreenId[] = [
   'servicios-tramites',
   'servicios-eventos',
   'nosotros-desktop',
-  'casos-desktop',
+  'blog',
 ];
 
 const etiqueta = (selector: string, crear: () => HTMLElement): HTMLElement => {
@@ -166,11 +189,15 @@ const meta = (atributo: 'name' | 'property', valor: string, contenido: string): 
 };
 
 /** Pone título, descripción, canónica y tarjetas sociales de la pantalla. */
-export const aplicarSeo = (pantalla: ScreenId, idioma: Idioma): void => {
+export const aplicarSeo = (
+  pantalla: ScreenId,
+  idioma: Idioma,
+  parametro?: string,
+): void => {
   if (typeof document === 'undefined') return;
 
   const { titulo, descripcion } = (idioma === 'en' ? EN : ES)[pantalla];
-  const url = `${DOMINIO}${pathForScreen(pantalla)}`;
+  const url = `${DOMINIO}${pathForScreen(pantalla, parametro)}`;
 
   document.title = titulo;
   meta('name', 'description', descripcion);
@@ -190,5 +217,22 @@ export const aplicarSeo = (pantalla: ScreenId, idioma: Idioma): void => {
   meta('name', 'twitter:description', descripcion);
 
   // El panel de administración no pinta nada en un buscador.
-  meta('name', 'robots', pantalla === 'admin' ? 'noindex, nofollow' : 'index, follow');
+  /*
+   * Fuera del índice: el panel, y `casos`, que sigue publicando casos y
+   * testimonios ilustrativos. Ya no está enlazada desde ningún menú.
+   */
+  const sinIndexar = pantalla === 'admin' || pantalla === 'casos-desktop';
+  meta('name', 'robots', sinIndexar ? 'noindex, nofollow' : 'index, follow');
+};
+
+/** Título y descripción de un artículo, una vez cargado de Firestore. */
+export const tituloDeArticulo = (titulo: string, resumen: string): void => {
+  if (typeof document === 'undefined') return;
+  const completo = `${titulo} — ${TITULO_BASE}`;
+  document.title = completo;
+  meta('name', 'description', resumen);
+  meta('property', 'og:title', completo);
+  meta('property', 'og:description', resumen);
+  meta('name', 'twitter:title', completo);
+  meta('name', 'twitter:description', resumen);
 };

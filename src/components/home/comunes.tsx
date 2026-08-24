@@ -76,9 +76,9 @@ export const navHome = (idioma: Idioma): DestinoEnlace[] => {
   return [
     { label: t.inicio, pantalla: 'home-desktop' },
     { label: t.servicios, pantalla: 'servicios-desktop' },
+    { label: t.tramites, pantalla: 'servicios-tramites' },
     { label: t.nosotros, pantalla: 'nosotros-desktop' },
-    { label: t.resenas, pantalla: 'casos-desktop' },
-    { label: t.blog, ancla: 'blog' },
+    { label: t.blog, pantalla: 'blog' },
     { label: t.contacto, ancla: 'contacto' },
   ];
 };
@@ -97,8 +97,7 @@ export const pieFirma = (idioma: Idioma): DestinoEnlace[] => {
   const t = textos(idioma);
   return [
     { label: t.pie.sobreNosotros, pantalla: 'nosotros-desktop' },
-    { label: t.pie.resenasYCasos, pantalla: 'casos-desktop' },
-    { label: t.nav.blog, ancla: 'blog' },
+    { label: t.nav.blog, pantalla: 'blog' },
     { label: t.nav.contacto, ancla: 'contacto' },
   ];
 };

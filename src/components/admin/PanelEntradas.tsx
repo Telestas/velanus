@@ -23,6 +23,9 @@ const vacia = (): Omit<Entrada, 'id'> & { id?: string } => ({
   fecha: new Date().toISOString().slice(0, 10),
   minutos: 4,
   publicada: false,
+  destacada: false,
+  imagen: '',
+  autorCargo: '',
 });
 
 /** Alta, edición y borrado de artículos del blog. */
@@ -201,6 +204,42 @@ export const PanelEntradas: React.FC = () => {
             onChange={(e) => setEdicion({ ...edicion, cuerpo: e.target.value })}
           />
         </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-[7px]">
+            <label className={etiqueta} htmlFor="e-cargo">
+              Cargo del autor
+            </label>
+            <input
+              id="e-cargo"
+              className={campo}
+              value={edicion.autorCargo}
+              onChange={(e) => setEdicion({ ...edicion, autorCargo: e.target.value })}
+            />
+          </div>
+          <div className="flex flex-col gap-[7px]">
+            <label className={etiqueta} htmlFor="e-imagen">
+              Imagen de cabecera (URL)
+            </label>
+            <input
+              id="e-imagen"
+              className={campo}
+              value={edicion.imagen}
+              placeholder="/blog/mi-imagen.jpg"
+              onChange={(e) => setEdicion({ ...edicion, imagen: e.target.value })}
+            />
+          </div>
+        </div>
+
+        <label className="flex items-center gap-3 text-base">
+          <input
+            type="checkbox"
+            checked={edicion.destacada}
+            onChange={(e) => setEdicion({ ...edicion, destacada: e.target.checked })}
+            className="w-5 h-5 accent-[#F9A600]"
+          />
+          Destacada (sale en grande arriba del blog; manda la más reciente)
+        </label>
 
         <label className="flex items-center gap-3 text-base">
           <input

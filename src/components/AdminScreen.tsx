@@ -8,6 +8,7 @@ import { PanelComentarios } from './admin/PanelComentarios';
 import { PanelConsultas } from './admin/PanelConsultas';
 import { PanelEntradas } from './admin/PanelEntradas';
 import { PanelPreguntas } from './admin/PanelPreguntas';
+import { PanelResenas } from './admin/PanelResenas';
 import { Boton } from './admin/piezas';
 
 /**
@@ -24,13 +25,15 @@ type Pestana =
   | 'consultas'
   | 'entradas'
   | 'preguntas'
-  | 'comentarios';
+  | 'comentarios'
+  | 'resenas';
 
 const PESTANAS: { id: Pestana; label: string }[] = [
   { id: 'consultas', label: 'Consultas' },
   { id: 'entradas', label: 'Artículos' },
   { id: 'preguntas', label: 'Preguntas' },
   { id: 'comentarios', label: 'Comentarios' },
+  { id: 'resenas', label: 'Reseñas' },
   { id: 'cifras', label: 'Cifras' },
   { id: 'apariencia', label: 'Apariencia' },
 ];
@@ -111,6 +114,7 @@ export const AdminScreen: React.FC<NavigationProps> = ({ onNavigate }) => {
         {pestana === 'entradas' && <PanelEntradas />}
         {pestana === 'preguntas' && <PanelPreguntas />}
         {pestana === 'comentarios' && <PanelComentarios />}
+        {pestana === 'resenas' && <PanelResenas />}
         {pestana === 'cifras' && <PanelCifras />}
         {pestana === 'apariencia' && <PanelApariencia onNavigate={onNavigate} />}
       </main>

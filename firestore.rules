@@ -48,36 +48,81 @@ service cloud.firestore {
     }
 
     /**
+     * Marca de tiempo puesta por el cliente.
+     *
+     * El sitio público escribe por la API REST (para no cargar el SDK, que son
+     * ~165 kB), y por REST no existe `serverTimestamp()`. Se acepta la hora del
+     * cliente siempre que sea reciente y no esté en el futuro: basta para
+     * ordenar, y quien manipule su reloj solo se descoloca a sí mismo.
+     */
+    function fechaRazonable(valor) {
+      return valor is timestamp
+        && valor <= request.time
+        && valor > request.time - duration.value(10, 'm');
+    }
+
+    /**
      * Comentarios de los lectores.
      *
-     * Los publica cualquiera y se quedan visibles hasta que el admin los borre
-     * u oculte. Como no hay servidor donde moderar (Cloud Functions exige plan
-     * Blaze), la validación posible es la de forma: sesión iniciada —aunque sea
-     * anónima, para poder atribuir el comentario—, campos exactos y longitudes
-     * acotadas.
+     * **Moderación previa**: nacen con `aprobado: false` y solo el admin puede
+     * aprobarlos. Sin Cloud Functions (exige plan Blaze) no hay filtro
+     * automático, y publicar al instante en el sitio de un despacho es pedir
+     * que el primer bot escriba por él.
      *
-     * OJO: esto no frena a un bot decidido. La defensa real es App Check, que
-     * está pendiente de activar.
+     * Lectura: cualquiera ve los aprobados. El listado público debe filtrar por
+     * `aprobado == true`, porque una consulta sin ese filtro pediría también los
+     * pendientes y Firestore la rechazaría entera.
      */
     match /comentarios/{id} {
-      allow read: if true;
+      allow read: if resource.data.aprobado == true || esAdmin();
 
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(
-             ['entrada', 'nombre', 'texto', 'creado', 'autor', 'oculto'])
+             ['entrada', 'nombre', 'correo', 'texto', 'creado', 'autor',
+              'aprobado', 'respuesta'])
         && request.resource.data.keys().hasAll(
-             ['entrada', 'nombre', 'texto', 'creado', 'autor', 'oculto'])
+             ['entrada', 'nombre', 'texto', 'creado', 'autor', 'aprobado'])
         && request.resource.data.autor == request.auth.uid
-        && request.resource.data.oculto == false
-        && request.resource.data.creado == request.time
+        && request.resource.data.aprobado == false
+        && fechaRazonable(request.resource.data.creado)
         && texto(request.resource.data.entrada, 1, 200)
         && texto(request.resource.data.nombre, 2, 60)
         && texto(request.resource.data.texto, 2, 2000);
 
-      // Nadie edita un comentario publicado: el admin lo oculta o lo borra.
+      // El admin aprueba y, si quiere, responde. Nadie edita el texto ajeno.
       allow update: if esAdmin()
         && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['oculto']);
+             .hasOnly(['aprobado', 'respuesta']);
+      allow delete: if esAdmin();
+    }
+
+    /**
+     * Reseñas de clientes. Mismo trato que los comentarios: se envían para
+     * revisión y no aparecen hasta que el admin las aprueba.
+     */
+    match /resenas/{id} {
+      allow read: if resource.data.aprobada == true || esAdmin();
+
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(
+             ['nombre', 'pais', 'servicio', 'estrellas', 'texto', 'creado',
+              'autor', 'aprobada'])
+        && request.resource.data.keys().hasAll(
+             ['nombre', 'servicio', 'estrellas', 'texto', 'creado', 'autor',
+              'aprobada'])
+        && request.resource.data.autor == request.auth.uid
+        && request.resource.data.aprobada == false
+        && fechaRazonable(request.resource.data.creado)
+        && request.resource.data.estrellas is int
+        && request.resource.data.estrellas >= 1
+        && request.resource.data.estrellas <= 5
+        && texto(request.resource.data.nombre, 2, 60)
+        && texto(request.resource.data.servicio, 2, 80)
+        && texto(request.resource.data.texto, 10, 1500);
+
+      allow update: if esAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['aprobada']);
       allow delete: if esAdmin();
     }
 

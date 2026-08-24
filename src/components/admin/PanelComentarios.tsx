@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
   Comentario,
+  aprobarComentario,
   borrarComentario,
-  ocultarComentario,
+  responderComentario,
   todosLosComentarios,
 } from '../../data/blog';
 import { mensajeDeError } from '../../firebase';
@@ -11,9 +12,9 @@ import { Aviso, Boton } from './piezas';
 /**
  * Moderación de comentarios.
  *
- * Los comentarios se publican al momento, así que esto es moderación posterior:
- * ocultar (reversible) o borrar (definitivo). Sin Cloud Functions no hay filtro
- * automático, así que conviene mirar esta pantalla de vez en cuando.
+ * **Nada se publica sin pasar por aquí.** Un comentario enviado queda pendiente
+ * hasta que se aprueba, y el sitio se lo advierte a quien lo escribe. Sin Cloud
+ * Functions no hay filtro automático, así que esta pantalla es la única puerta.
  */
 export const PanelComentarios: React.FC = () => {
   const [comentarios, setComentarios] = useState<Comentario[]>([]);
@@ -38,7 +39,22 @@ export const PanelComentarios: React.FC = () => {
 
   const alternar = async (comentario: Comentario) => {
     try {
-      await ocultarComentario(comentario.id, !comentario.oculto);
+      await aprobarComentario(comentario.id, !comentario.aprobado);
+      await recargar();
+    } catch (fallo) {
+      setError(mensajeDeError(fallo));
+    }
+  };
+
+  /** La respuesta del equipo sale bajo el comentario, firmada como Vela Nus. */
+  const responder = async (comentario: Comentario) => {
+    const respuesta = window.prompt(
+      `Responder a ${comentario.nombre}:`,
+      comentario.respuesta,
+    );
+    if (respuesta === null) return;
+    try {
+      await responderComentario(comentario.id, respuesta);
       await recargar();
     } catch (fallo) {
       setError(mensajeDeError(fallo));
@@ -85,19 +101,37 @@ export const PanelComentarios: React.FC = () => {
                     ? ` · ${comentario.creado.toLocaleDateString('es-ES')}`
                     : ''}
                 </span>
-                {comentario.oculto && (
-                  <span className="text-xs font-bold uppercase tracking-[0.14em] bg-[#E4E4E4] text-[#4A4A4A] px-2 py-1">
-                    Oculto
-                  </span>
-                )}
+                <span
+                  className={`text-xs font-bold uppercase tracking-[0.14em] px-2 py-1 ${
+                    comentario.aprobado
+                      ? 'bg-[#E4E4E4] text-[#4A4A4A]'
+                      : 'bg-[#F9A600] text-[#000000]'
+                  }`}
+                >
+                  {comentario.aprobado ? 'Publicado' : 'Pendiente'}
+                </span>
               </div>
               <p className="text-base leading-relaxed text-[#4A4A4A] whitespace-pre-line">
                 {comentario.texto}
               </p>
+              {comentario.correo && (
+                <span className="text-sm text-[#767676]">{comentario.correo}</span>
+              )}
+              {comentario.respuesta && (
+                <p className="text-base leading-relaxed border-l-4 border-[#F9A600] pl-4">
+                  <strong>Vela Nus:</strong> {comentario.respuesta}
+                </p>
+              )}
             </div>
             <div className="flex gap-2">
-              <Boton tono="secundario" onClick={() => alternar(comentario)}>
-                {comentario.oculto ? 'Mostrar' : 'Ocultar'}
+              <Boton
+                tono={comentario.aprobado ? 'secundario' : 'principal'}
+                onClick={() => alternar(comentario)}
+              >
+                {comentario.aprobado ? 'Retirar' : 'Aprobar'}
+              </Boton>
+              <Boton tono="secundario" onClick={() => responder(comentario)}>
+                Responder
               </Boton>
               <Boton tono="peligro" onClick={() => eliminar(comentario)}>
                 Borrar

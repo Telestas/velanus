@@ -10,7 +10,7 @@ export interface Textos {
     inicio: string;
     servicios: string;
     nosotros: string;
-    resenas: string;
+    tramites: string;
     blog: string;
     contacto: string;
     agendar: string;
@@ -101,6 +101,75 @@ export interface Textos {
     volver: string;
     servicios: { valor: string; etiqueta: string }[];
   };
+  blog: {
+    miga: string;
+    titulo: string;
+    entradilla: string;
+    buscar: string;
+    buscarPlaceholder: string;
+    botonBuscar: string;
+    categorias: string;
+    todas: string;
+    destacado: string;
+    leerArticulo: string;
+    ultimas: string;
+    articulos: (n: number) => string;
+    sinResultados: string;
+    anterior: string;
+    siguiente: string;
+    imagenDestacada: string;
+    imagen: string;
+    minutos: (n: number) => string;
+    /* reseñas */
+    resenasEtiqueta: string;
+    resenasTitulo: string;
+    resenasNota: string;
+    filtrarServicio: string;
+    todos: string;
+    dejarResena: string;
+    dejarResenaTexto: string;
+    moderacionTitulo: string;
+    moderacionResena: string;
+    moderacionComentario: string;
+    nombre: string;
+    pais: string;
+    servicioRecibido: string;
+    valoracion: string;
+    deCinco: (n: number) => string;
+    suResena: string;
+    enviarRevision: string;
+    enviando: string;
+    resenaEnviada: string;
+    sinResenas: string;
+    /* artículo */
+    enEsteArticulo: string;
+    compartir: string;
+    copiarEnlace: string;
+    enlaceCopiado: string;
+    avisoTitulo: string;
+    aviso: string;
+    ctaTitulo: string;
+    ctaTexto: string;
+    comentarios: string;
+    publicados: (n: number) => string;
+    sinComentarios: string;
+    dejarComentario: string;
+    correoNoPublica: string;
+    comentario: string;
+    comentarioEnviado: string;
+    autorEquipo: string;
+    relacionados: string;
+    volverAlBlog: string;
+    noEncontrado: string;
+    noEncontradoTexto: string;
+    /* estado vacío */
+    vacioEtiqueta: string;
+    vacioTitulo: string;
+    vacioTexto: string;
+    proponerTema: string;
+    verServicios: string;
+    categoriasPrevistas: string;
+  };
   servicios: {
     migaInicio: string;
     migaServicios: string;
@@ -134,7 +203,7 @@ const ES: Textos = {
     inicio: 'Inicio',
     servicios: 'Servicios',
     nosotros: 'Nosotros',
-    resenas: 'Reseñas',
+    tramites: 'Trámites y visas',
     blog: 'Blog',
     contacto: 'Contacto',
     agendar: 'Agendar consulta',
@@ -235,6 +304,82 @@ const ES: Textos = {
       { valor: 'Eventos', etiqueta: 'Eventos y capacitación' },
     ],
   },
+  blog: {
+    miga: 'Blog',
+    titulo: 'Normativa cubana, explicada en claro',
+    entradilla:
+      'Lo que cambia en materia contable, legal y de trámites en Cuba, y qué implica para quien opera aquí desde fuera.',
+    buscar: 'Buscar en el blog',
+    buscarPlaceholder: 'Ej: nómina, MIPYME, Schengen',
+    botonBuscar: 'Buscar',
+    categorias: 'Categorías',
+    todas: 'Todas',
+    destacado: 'Destacado',
+    leerArticulo: 'Leer artículo →',
+    ultimas: 'Últimas entradas',
+    articulos: (n) => `${n} ${n === 1 ? 'artículo' : 'artículos'}`,
+    sinResultados: 'No hay artículos que coincidan con esa búsqueda.',
+    anterior: 'Anterior',
+    siguiente: 'Siguiente',
+    imagenDestacada: 'imagen destacada 16:11',
+    imagen: 'imagen 16:10',
+    minutos: (n) => `${n} min`,
+    resenasEtiqueta: 'Reseñas de clientes',
+    resenasTitulo: 'Lo que dicen quienes ya operan con nosotros',
+    resenasNota:
+      'Las reseñas viven dentro del blog. Se filtran por servicio recibido y todas pasan por aprobación antes de publicarse.',
+    filtrarServicio: 'Filtrar por servicio',
+    todos: 'Todos',
+    dejarResena: 'Deje su reseña',
+    dejarResenaTexto:
+      'Si ha trabajado con nosotros, cuéntelo. Publicamos su nombre y país tal como los escriba aquí.',
+    moderacionTitulo: 'Moderación previa',
+    moderacionResena:
+      'Su reseña no se publica al enviarla. La revisa un administrador y aparece solo si la aprueba.',
+    moderacionComentario:
+      'Ningún comentario se publica sin la aprobación de un administrador. No verá el suyo en la página al enviarlo.',
+    nombre: 'Nombre',
+    pais: 'País',
+    servicioRecibido: 'Servicio recibido',
+    valoracion: 'Valoración',
+    deCinco: (n) => `${n} de 5`,
+    suResena: 'Su reseña',
+    enviarRevision: 'Enviar para revisión',
+    enviando: 'Enviando…',
+    resenaEnviada:
+      'Gracias. Su reseña ha quedado pendiente de revisión; si se aprueba, aparecerá aquí.',
+    sinResenas: 'Todavía no hay reseñas publicadas.',
+    enEsteArticulo: 'En este artículo',
+    compartir: 'Compartir',
+    copiarEnlace: 'Enlace',
+    enlaceCopiado: 'Enlace copiado',
+    avisoTitulo: 'Aviso',
+    aviso:
+      'Este contenido es informativo y no constituye asesoría jurídica ni contable. La normativa cubana cambia y cada caso tiene particularidades. Antes de tomar una decisión, consulte su situación concreta con nosotros o con un profesional.',
+    ctaTitulo: '¿Le afecta esto a su empresa?',
+    ctaTexto: 'Cuéntenos su caso y le decimos qué implica en concreto.',
+    comentarios: 'Comentarios',
+    publicados: (n) => `${n} ${n === 1 ? 'publicado' : 'publicados'}`,
+    sinComentarios: 'Aún no hay comentarios publicados en este artículo.',
+    dejarComentario: 'Deje un comentario',
+    correoNoPublica: 'Correo (no se publica)',
+    comentario: 'Comentario',
+    comentarioEnviado:
+      'Gracias. Su comentario ha quedado pendiente de revisión; si se aprueba, aparecerá aquí.',
+    autorEquipo: 'Autor',
+    relacionados: 'Artículos relacionados',
+    volverAlBlog: '← Volver al blog',
+    noEncontrado: 'Ese artículo no existe',
+    noEncontradoTexto:
+      'Puede que se haya retirado o que la dirección esté mal escrita. Estos son los últimos publicados.',
+    vacioEtiqueta: 'Aún no hay artículos',
+    vacioTitulo: 'Estamos preparando el primero.',
+    vacioTexto:
+      'Publicaremos análisis de la normativa contable y legal cubana, cambios regulatorios y guías de trámites. Si hay algo concreto que necesita entender, dígalo y probablemente sea nuestro primer artículo.',
+    proponerTema: 'Proponer un tema',
+    verServicios: 'Ver servicios',
+    categoriasPrevistas: 'Categorías previstas',
+  },
   servicios: {
     migaInicio: 'Inicio',
     migaServicios: 'Servicios',
@@ -268,7 +413,7 @@ const EN: Textos = {
     inicio: 'Home',
     servicios: 'Services',
     nosotros: 'About us',
-    resenas: 'Reviews',
+    tramites: 'Paperwork and visas',
     blog: 'Blog',
     contacto: 'Contact',
     agendar: 'Book a consultation',
@@ -368,6 +513,82 @@ const EN: Textos = {
       { valor: 'Trámites y visas', etiqueta: 'Paperwork, documents and visas' },
       { valor: 'Eventos', etiqueta: 'Events and training' },
     ],
+  },
+  blog: {
+    miga: 'Blog',
+    titulo: 'Cuban regulations, explained plainly',
+    entradilla:
+      'What changes in accounting, law and paperwork in Cuba, and what it means for those operating here from abroad.',
+    buscar: 'Search the blog',
+    buscarPlaceholder: 'e.g. payroll, MIPYME, Schengen',
+    botonBuscar: 'Search',
+    categorias: 'Categories',
+    todas: 'All',
+    destacado: 'Featured',
+    leerArticulo: 'Read article →',
+    ultimas: 'Latest posts',
+    articulos: (n) => `${n} ${n === 1 ? 'article' : 'articles'}`,
+    sinResultados: 'No articles match that search.',
+    anterior: 'Previous',
+    siguiente: 'Next',
+    imagenDestacada: 'featured image 16:11',
+    imagen: 'image 16:10',
+    minutos: (n) => `${n} min`,
+    resenasEtiqueta: 'Client reviews',
+    resenasTitulo: 'What clients already operating with us say',
+    resenasNota:
+      'Reviews live inside the blog. They are filtered by the service received and every one is approved before publication.',
+    filtrarServicio: 'Filter by service',
+    todos: 'All',
+    dejarResena: 'Leave your review',
+    dejarResenaTexto:
+      'If you have worked with us, say so. We publish your name and country exactly as you write them here.',
+    moderacionTitulo: 'Reviewed before publishing',
+    moderacionResena:
+      'Your review is not published when you send it. An administrator reviews it and it appears only if approved.',
+    moderacionComentario:
+      'No comment is published without an administrator approving it. You will not see yours on the page when you send it.',
+    nombre: 'Name',
+    pais: 'Country',
+    servicioRecibido: 'Service received',
+    valoracion: 'Rating',
+    deCinco: (n) => `${n} of 5`,
+    suResena: 'Your review',
+    enviarRevision: 'Send for review',
+    enviando: 'Sending…',
+    resenaEnviada:
+      'Thank you. Your review is pending approval; if approved, it will appear here.',
+    sinResenas: 'No reviews published yet.',
+    enEsteArticulo: 'In this article',
+    compartir: 'Share',
+    copiarEnlace: 'Link',
+    enlaceCopiado: 'Link copied',
+    avisoTitulo: 'Notice',
+    aviso:
+      'This content is informative and does not constitute legal or accounting advice. Cuban regulations change and every case has its particulars. Before deciding, discuss your specific situation with us or with a professional.',
+    ctaTitulo: 'Does this affect your company?',
+    ctaTexto: 'Tell us about your case and we will tell you what it means in practice.',
+    comentarios: 'Comments',
+    publicados: (n) => `${n} published`,
+    sinComentarios: 'No comments published on this article yet.',
+    dejarComentario: 'Leave a comment',
+    correoNoPublica: 'Email (not published)',
+    comentario: 'Comment',
+    comentarioEnviado:
+      'Thank you. Your comment is pending approval; if approved, it will appear here.',
+    autorEquipo: 'Author',
+    relacionados: 'Related articles',
+    volverAlBlog: '← Back to the blog',
+    noEncontrado: 'That article does not exist',
+    noEncontradoTexto:
+      'It may have been withdrawn, or the address may be misspelled. These are the latest published.',
+    vacioEtiqueta: 'No articles yet',
+    vacioTitulo: 'We are preparing the first one.',
+    vacioTexto:
+      'We will publish analysis of Cuban accounting and legal regulations, regulatory changes and paperwork guides. If there is something specific you need to understand, say so and it will probably be our first article.',
+    proponerTema: 'Suggest a topic',
+    verServicios: 'See services',
+    categoriasPrevistas: 'Planned categories',
   },
   servicios: {
     migaInicio: 'Home',

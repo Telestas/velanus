@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { NavigationProps, ScreenId } from './types';
-import { currentScreen, pathForScreen } from './router';
+import { articuloDeRuta, currentScreen, pathForScreen } from './router';
 import { aplicarSeo } from './seo';
 import { useIdioma } from './i18n/idioma';
 import { PrototypeController } from './components/PrototypeController';
@@ -17,6 +17,8 @@ import { NosotrosDesktopScreen } from './components/NosotrosDesktopScreen';
 import { CasosDesktopScreen } from './components/CasosDesktopScreen';
 import { pantallaDeLinea } from './components/servicios/LineaScreen';
 import { AdminScreen } from './components/AdminScreen';
+import { BlogScreen } from './components/blog/BlogScreen';
+import { ArticuloScreen } from './components/blog/ArticuloScreen';
 import { DiagnosticModal } from './components/DiagnosticModal';
 
 const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
@@ -30,6 +32,8 @@ const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   'servicios-eventos': pantallaDeLinea('servicios-eventos'),
   'nosotros-desktop': NosotrosDesktopScreen,
   'casos-desktop': CasosDesktopScreen,
+  blog: BlogScreen,
+  'blog-articulo': ArticuloScreen,
   admin: AdminScreen,
 };
 
@@ -47,28 +51,42 @@ const mostrarBarraDePrototipo = (): boolean =>
 export default function App() {
   const idioma = useIdioma();
   const [screen, setScreen] = useState<ScreenId>(currentScreen);
+  // Parte variable de la ruta; hoy solo el slug del artículo del blog.
+  const [parametro, setParametro] = useState<string | undefined>(() =>
+    articuloDeRuta(window.location.pathname),
+  );
   const [transitionDirection, setTransitionDirection] = useState<'push' | 'push_back'>('push');
   const [diagnosticModalOpen, setDiagnosticModalOpen] = useState(false);
 
   // Título, descripción y canónica dependen de la pantalla, no del documento.
   useEffect(() => {
-    aplicarSeo(screen, idioma);
-  }, [screen, idioma]);
+    aplicarSeo(screen, idioma, parametro);
+  }, [screen, idioma, parametro]);
 
   // El botón atrás del navegador debe cambiar de pantalla, no salir del sitio.
   useEffect(() => {
     const onPopState = () => {
       setTransitionDirection('push_back');
       setScreen(currentScreen());
+      setParametro(articuloDeRuta(window.location.pathname));
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  const handleNavigate = (target: ScreenId, transitionType: 'push' | 'push_back' = 'push') => {
+  const handleNavigate = (
+    target: ScreenId,
+    transitionType: 'push' | 'push_back' = 'push',
+    nuevoParametro?: string,
+  ) => {
     setTransitionDirection(transitionType);
     setScreen(target);
-    window.history.pushState({ screen: target }, '', pathForScreen(target));
+    setParametro(nuevoParametro);
+    window.history.pushState(
+      { screen: target, parametro: nuevoParametro },
+      '',
+      pathForScreen(target, nuevoParametro),
+    );
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -109,7 +127,7 @@ export default function App() {
       <div className="flex-grow relative overflow-x-hidden">
         <AnimatePresence mode="wait" custom={transitionDirection}>
           <motion.div
-            key={screen}
+            key={`${screen}:${parametro ?? ''}`}
             custom={transitionDirection}
             variants={screenVariants}
             initial="initial"
@@ -121,6 +139,7 @@ export default function App() {
               currentScreen={screen}
               onNavigate={handleNavigate}
               openDiagnosticModal={() => setDiagnosticModalOpen(true)}
+              parametro={parametro}
             />
           </motion.div>
         </AnimatePresence>

@@ -1,4 +1,5 @@
 import { db } from '../firebase';
+import { consultar, crearDocumento, DocumentoRest } from './rest';
 
 /**
  * Acceso a los datos del blog: entradas, preguntas frecuentes y comentarios.
@@ -24,6 +25,12 @@ export interface Entrada {
   fecha: string;
   minutos: number;
   publicada: boolean;
+  /** Sale en grande arriba del listado. Solo la más reciente marcada. */
+  destacada: boolean;
+  /** URL de la imagen de cabecera; vacío deja el marcador de la maqueta. */
+  imagen: string;
+  /** Cargo del autor, para la ficha del artículo. */
+  autorCargo: string;
 }
 
 export interface Pregunta {
@@ -41,11 +48,16 @@ export interface Comentario {
   /** Slug de la entrada comentada. */
   entrada: string;
   nombre: string;
+  /** No se publica: solo sirve para que el admin pueda responder. */
+  correo: string;
   texto: string;
   /** uid anónimo de quien comentó; lo exige la regla de creación. */
   autor: string;
   creado: Date | null;
-  oculto: boolean;
+  /** Moderación previa: nace en false y solo el admin lo aprueba. */
+  aprobado: boolean;
+  /** Respuesta del equipo, que se pinta bajo el comentario. */
+  respuesta: string;
 }
 
 const conId = <T>(id: string, datos: Record<string, unknown>): T =>
@@ -59,22 +71,30 @@ const conId = <T>(id: string, datos: Record<string, unknown>): T =>
  * El filtro `publicada == true` no es cosmético: sin él, la consulta pediría
  * también los borradores y las reglas la rechazarían entera.
  */
+const aEntrada = ({ id, datos }: DocumentoRest): Entrada => ({
+  id,
+  titulo: String(datos.titulo ?? ''),
+  slug: String(datos.slug ?? ''),
+  categoria: String(datos.categoria ?? ''),
+  resumen: String(datos.resumen ?? ''),
+  cuerpo: String(datos.cuerpo ?? ''),
+  autor: String(datos.autor ?? ''),
+  autorCargo: String(datos.autorCargo ?? ''),
+  fecha: String(datos.fecha ?? ''),
+  minutos: Number(datos.minutos ?? 0),
+  publicada: datos.publicada === true,
+  destacada: datos.destacada === true,
+  imagen: String(datos.imagen ?? ''),
+});
+
 export const entradasPublicadas = async (limite?: number): Promise<Entrada[]> => {
-  const { collection, getDocs, limit, orderBy, query, where } = await import(
-    'firebase/firestore'
-  );
-
-  const restricciones = [
-    where('publicada', '==', true),
-    orderBy('fecha', 'desc'),
-    ...(limite ? [limit(limite)] : []),
-  ];
-
-  const resultado = await getDocs(
-    query(collection(await db(), 'entradas'), ...restricciones),
-  );
-
-  return resultado.docs.map((d) => conId<Entrada>(d.id, d.data()));
+  const documentos = await consultar({
+    coleccion: 'entradas',
+    donde: [{ campo: 'publicada', valor: true }],
+    ordenar: { campo: 'fecha', direccion: 'DESCENDING' },
+    limite,
+  });
+  return documentos.map(aEntrada);
 };
 
 /** Todas las entradas, borradores incluidos. Solo funciona siendo admin. */
@@ -87,12 +107,15 @@ export const todasLasEntradas = async (): Promise<Entrada[]> => {
 };
 
 export const entradaPorSlug = async (slug: string): Promise<Entrada | null> => {
-  const { collection, getDocs, limit, query, where } = await import('firebase/firestore');
-  const resultado = await getDocs(
-    query(collection(await db(), 'entradas'), where('slug', '==', slug), limit(1)),
-  );
-  const [documento] = resultado.docs;
-  return documento ? conId<Entrada>(documento.id, documento.data()) : null;
+  const [documento] = await consultar({
+    coleccion: 'entradas',
+    donde: [
+      { campo: 'publicada', valor: true },
+      { campo: 'slug', valor: slug },
+    ],
+    limite: 1,
+  });
+  return documento ? aEntrada(documento) : null;
 };
 
 export const guardarEntrada = async (
@@ -166,35 +189,43 @@ export const borrarPregunta = async (id: string): Promise<void> => {
 
 /* ------------------------------ comentarios ----------------------------- */
 
+/** El SDK devuelve Timestamp; la API REST, una fecha ya convertida. */
+const aFecha = (valor: unknown): Date | null => {
+  if (valor instanceof Date) return valor;
+  if (valor && typeof (valor as { toDate?: unknown }).toDate === 'function') {
+    return (valor as { toDate: () => Date }).toDate();
+  }
+  return null;
+};
+
 const aComentario = (id: string, datos: Record<string, unknown>): Comentario => ({
   id,
   entrada: String(datos.entrada ?? ''),
   nombre: String(datos.nombre ?? ''),
+  correo: String(datos.correo ?? ''),
   texto: String(datos.texto ?? ''),
   autor: String(datos.autor ?? ''),
-  oculto: datos.oculto === true,
-  // `creado` llega como Timestamp; en el instante justo tras escribir es null.
-  creado:
-    datos.creado && typeof (datos.creado as { toDate?: unknown }).toDate === 'function'
-      ? (datos.creado as { toDate: () => Date }).toDate()
-      : null,
+  aprobado: datos.aprobado === true,
+  respuesta: String(datos.respuesta ?? ''),
+  creado: aFecha(datos.creado),
 });
 
-/** Comentarios visibles de una entrada, del más antiguo al más nuevo. */
+/**
+ * Comentarios aprobados de una entrada, del más antiguo al más nuevo.
+ *
+ * El filtro `aprobado == true` es obligatorio: sin él la consulta pediría
+ * también los pendientes de moderar y las reglas la rechazarían entera.
+ */
 export const comentariosDe = async (slug: string): Promise<Comentario[]> => {
-  const { collection, getDocs, orderBy, query, where } = await import(
-    'firebase/firestore'
-  );
-  const resultado = await getDocs(
-    query(
-      collection(await db(), 'comentarios'),
-      where('entrada', '==', slug),
-      orderBy('creado', 'asc'),
-    ),
-  );
-  return resultado.docs
-    .map((d) => aComentario(d.id, d.data()))
-    .filter((comentario) => !comentario.oculto);
+  const documentos = await consultar({
+    coleccion: 'comentarios',
+    donde: [
+      { campo: 'entrada', valor: slug },
+      { campo: 'aprobado', valor: true },
+    ],
+    ordenar: { campo: 'creado', direccion: 'ASCENDING' },
+  });
+  return documentos.map(({ id, datos }) => aComentario(id, datos));
 };
 
 /** Todos los comentarios para moderarlos, los ocultos incluidos. */
@@ -207,36 +238,39 @@ export const todosLosComentarios = async (): Promise<Comentario[]> => {
 };
 
 /**
- * Publica un comentario.
+ * Envía un comentario a la cola de moderación.
  *
- * Firma con una sesión anónima si no hay ninguna: la regla exige un uid para
- * poder atribuir el comentario, pero al lector no se le pide registrarse.
+ * No se publica al enviarlo, y la pantalla lo dice antes y después: es lo que
+ * evita el «he comentado y no sale». Va por REST para no cargar el SDK en una
+ * página que lee cualquiera.
  */
 export const comentar = async (
   slug: string,
   nombre: string,
+  correo: string,
   texto: string,
 ): Promise<void> => {
-  const { auth } = await import('../firebase');
-  const { signInAnonymously } = await import('firebase/auth');
-  const { addDoc, collection, serverTimestamp } = await import('firebase/firestore');
-
-  const sesion = await auth();
-  const usuario = sesion.currentUser ?? (await signInAnonymously(sesion)).user;
-
-  await addDoc(collection(await db(), 'comentarios'), {
+  await crearDocumento('comentarios', (uid) => ({
     entrada: slug,
     nombre: nombre.trim(),
+    correo: correo.trim(),
     texto: texto.trim(),
-    autor: usuario.uid,
-    oculto: false,
-    creado: serverTimestamp(),
-  });
+    autor: uid,
+    aprobado: false,
+    creado: new Date(),
+  }));
 };
 
-export const ocultarComentario = async (id: string, oculto: boolean): Promise<void> => {
+/** Aprobar es lo que publica el comentario; retirar la aprobación lo esconde. */
+export const aprobarComentario = async (id: string, aprobado: boolean): Promise<void> => {
   const { doc, updateDoc } = await import('firebase/firestore');
-  await updateDoc(doc(await db(), 'comentarios', id), { oculto });
+  await updateDoc(doc(await db(), 'comentarios', id), { aprobado });
+};
+
+/** Respuesta del equipo bajo un comentario ya aprobado. */
+export const responderComentario = async (id: string, respuesta: string): Promise<void> => {
+  const { doc, updateDoc } = await import('firebase/firestore');
+  await updateDoc(doc(await db(), 'comentarios', id), { respuesta: respuesta.trim() });
 };
 
 export const borrarComentario = async (id: string): Promise<void> => {

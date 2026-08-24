@@ -2,5 +2,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /casos
 
 Sitemap: https://velanus.com/sitemap.xml
