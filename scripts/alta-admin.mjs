@@ -66,7 +66,7 @@ const altaOBusqueda = async (token) => {
 
   if (alta.ok) {
     console.log(`Cuenta creada: ${correo}`);
-    return alta.cuerpo.localId;
+    return { uid: alta.cuerpo.localId, nueva: true };
   }
 
   const error = alta.cuerpo?.error?.message ?? '';
@@ -89,7 +89,7 @@ const altaOBusqueda = async (token) => {
       process.exit(1);
     }
     console.log(`La cuenta ya existía: ${correo}`);
-    return uid;
+    return { uid, nueva: false };
   }
 
   if (error.startsWith('CONFIGURATION_NOT_FOUND') || error.startsWith('OPERATION_NOT_ALLOWED')) {
@@ -139,7 +139,17 @@ const enviarEnlaceDeContrasena = async () => {
 };
 
 const token = tokenDeLaCli();
-const uid = await altaOBusqueda(token);
+const { uid, nueva } = await altaOBusqueda(token);
 await marcarComoAdmin(token, uid);
-await enviarEnlaceDeContrasena();
-console.log('\nListo. Entre en /admin con ese correo y la contraseña que elija.');
+
+/*
+ * Solo se manda el enlace cuando la cuenta se acaba de crear: si ya existía,
+ * su dueño ya tiene contraseña y recibir un correo de recuperación sin haberlo
+ * pedido confunde (y parece un intento de robo de cuenta).
+ */
+if (nueva) {
+  await enviarEnlaceDeContrasena();
+  console.log('\nListo. Entre en /admin con ese correo y la contraseña que elija.');
+} else {
+  console.log('\nListo. Entre en /admin con ese correo y su contraseña.');
+}
