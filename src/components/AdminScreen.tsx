@@ -4,6 +4,7 @@ import { useSesion } from '../admin/useSesion';
 import { Acceso } from './admin/Acceso';
 import { PanelApariencia } from './admin/PanelApariencia';
 import { PanelComentarios } from './admin/PanelComentarios';
+import { PanelConsultas } from './admin/PanelConsultas';
 import { PanelEntradas } from './admin/PanelEntradas';
 import { PanelPreguntas } from './admin/PanelPreguntas';
 import { Boton } from './admin/piezas';
@@ -16,9 +17,10 @@ import { Boton } from './admin/piezas';
  * las reglas de `firestore.rules`, que se aplican en el servidor de Google —si
  * alguien se saltara este componente, sus escrituras seguirían rechazándose.
  */
-type Pestana = 'apariencia' | 'entradas' | 'preguntas' | 'comentarios';
+type Pestana = 'apariencia' | 'consultas' | 'entradas' | 'preguntas' | 'comentarios';
 
 const PESTANAS: { id: Pestana; label: string }[] = [
+  { id: 'consultas', label: 'Consultas' },
   { id: 'entradas', label: 'Artículos' },
   { id: 'preguntas', label: 'Preguntas' },
   { id: 'comentarios', label: 'Comentarios' },
@@ -27,7 +29,8 @@ const PESTANAS: { id: Pestana; label: string }[] = [
 
 export const AdminScreen: React.FC<NavigationProps> = ({ onNavigate }) => {
   const { sesion, entrar, salir, enviarRecuperacion } = useSesion();
-  const [pestana, setPestana] = useState<Pestana>('entradas');
+  // Las consultas son lo primero que hay que mirar: son clientes esperando.
+  const [pestana, setPestana] = useState<Pestana>('consultas');
 
   if (sesion.estado === 'cargando') {
     return (
@@ -96,6 +99,7 @@ export const AdminScreen: React.FC<NavigationProps> = ({ onNavigate }) => {
       </header>
 
       <main className="max-w-[1100px] mx-auto px-6 md:px-10 py-12">
+        {pestana === 'consultas' && <PanelConsultas />}
         {pestana === 'entradas' && <PanelEntradas />}
         {pestana === 'preguntas' && <PanelPreguntas />}
         {pestana === 'comentarios' && <PanelComentarios />}

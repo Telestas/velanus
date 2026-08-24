@@ -6,6 +6,8 @@ import {
   WHATSAPP_DISPLAY,
   whatsappLink,
 } from '../../config';
+import { guardarConsulta } from '../../data/consultas';
+import { mensajeDeError } from '../../firebase';
 
 /**
  * Piezas que comparten las cuatro maquetas de la home (oscura y clara, en
@@ -163,16 +165,19 @@ interface FormularioProps {
 /**
  * Formulario de contacto.
  *
- * El sitio es estático y no hay a dónde enviar un POST, así que el botón
- * compone la consulta y abre WhatsApp con el texto ya escrito. Es un desvío
- * deliberado de la maqueta, que dibujaba un envío convencional: se avisa bajo
- * el botón para que nadie crea que el mensaje ya salió.
+ * Guarda la consulta en Firestore y, además, ofrece abrir WhatsApp con el
+ * texto ya redactado. El orden importa: primero se registra —así la consulta
+ * no se pierde aunque el visitante nunca llegue a mandar el mensaje— y solo
+ * después se le propone el atajo.
  */
 export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo }) => {
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [pais, setPais] = useState('');
   const [mensaje, setMensaje] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+  const [error, setError] = useState('');
 
   const oscuro = tono === 'oscuro';
 
@@ -183,9 +188,8 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
   }`;
   const etiqueta = `text-sm font-bold ${oscuro ? 'text-[#FAFAFA]' : 'text-[#000000]'}`;
 
-  const enviar = (e: React.FormEvent) => {
-    e.preventDefault();
-    const texto = [
+  const textoWhatsApp = () =>
+    [
       'Consulta desde velanus.com',
       nombre && `Nombre: ${nombre}`,
       correo && `Correo: ${correo}`,
@@ -194,8 +198,53 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
     ]
       .filter(Boolean)
       .join('\n');
-    window.open(whatsappLink(texto), '_blank', 'noopener');
+
+  const enviar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEnviando(true);
+    setError('');
+
+    try {
+      await guardarConsulta({
+        nombre,
+        correo,
+        pais,
+        mensaje,
+        origen: 'contacto-home',
+      });
+      setEnviado(true);
+    } catch (fallo) {
+      setError(
+        `${mensajeDeError(fallo)} Escríbanos por WhatsApp y lo atendemos igual.`,
+      );
+    } finally {
+      setEnviando(false);
+    }
   };
+
+  if (enviado) {
+    return (
+      <div className="flex flex-col gap-4">
+        <span className={`text-xl font-bold ${oscuro ? 'text-[#FAFAFA]' : 'text-[#000000]'}`}>
+          Consulta recibida.
+        </span>
+        <p className={`text-base leading-relaxed ${oscuro ? 'text-[#B9B7B2]' : 'text-[#4A4A4A]'}`}>
+          Gracias, {nombre.trim() || 'gracias'}. Le respondemos en menos de 24 h hábiles.
+          Si prefiere no esperar, adelántenos el caso por WhatsApp.
+        </p>
+        <a
+          href={whatsappLink(textoWhatsApp())}
+          target="_blank"
+          rel="noopener"
+          className={`py-4 px-6 text-[17px] font-bold text-center transition-opacity hover:opacity-90 ${
+            oscuro ? 'bg-[#F9A600] text-[#000000]' : 'bg-[#000000] text-[#F9A600]'
+          }`}
+        >
+          Adelantar por WhatsApp
+        </a>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={enviar} className="flex flex-col gap-5">
@@ -252,18 +301,22 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
         />
       </div>
 
+      {error && (
+        <p className={`text-sm ${oscuro ? 'text-[#F9A600]' : 'text-[#8A5800]'}`}>{error}</p>
+      )}
+
       <button
         type="submit"
-        className={`py-4 text-[17px] font-bold transition-opacity hover:opacity-90 ${
+        disabled={enviando}
+        className={`py-4 text-[17px] font-bold transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed ${
           oscuro ? 'bg-[#F9A600] text-[#000000]' : 'bg-[#000000] text-[#F9A600]'
         }`}
       >
-        Enviar consulta
+        {enviando ? 'Enviando…' : 'Enviar consulta'}
       </button>
 
       <span className={`text-sm ${oscuro ? 'text-[#B9B7B2]' : 'text-[#4A4A4A]'}`}>
-        Se abrirá WhatsApp ({WHATSAPP_DISPLAY}) con su consulta ya redactada. También
-        puede escribir a {CONTACT_EMAIL}.
+        También puede escribirnos por WhatsApp ({WHATSAPP_DISPLAY}) o a {CONTACT_EMAIL}.
       </span>
     </form>
   );

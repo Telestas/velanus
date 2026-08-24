@@ -1,0 +1,6 @@
+# https://velanus.com
+User-agent: *
+Allow: /
+Disallow: /admin
+
+Sitemap: https://velanus.com/sitemap.xml

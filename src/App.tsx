@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { NavigationProps, ScreenId } from './types';
 import { currentScreen, pathForScreen } from './router';
+import { aplicarSeo } from './seo';
 import { PrototypeController } from './components/PrototypeController';
 import { HomeDesktopScreen } from './components/HomeDesktopScreen';
 import { HomeMovilScreen } from './components/HomeMovilScreen';
@@ -32,10 +33,26 @@ const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   admin: AdminScreen,
 };
 
+/**
+ * La barra de prototipo es andamiaje de desarrollo: salta entre pantallas y las
+ * nombra «Pantalla 1», «Servicio A»… Un visitante de velanus.com no debe verla
+ * nunca. Sale en `npm run dev` y, en producción, solo si se pide a propósito
+ * con `?proto=1` (para poder enseñar el prototipo al cliente).
+ */
+const mostrarBarraDePrototipo = (): boolean =>
+  import.meta.env.DEV ||
+  (typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).has('proto'));
+
 export default function App() {
   const [screen, setScreen] = useState<ScreenId>(currentScreen);
   const [transitionDirection, setTransitionDirection] = useState<'push' | 'push_back'>('push');
   const [diagnosticModalOpen, setDiagnosticModalOpen] = useState(false);
+
+  // Título, descripción y canónica dependen de la pantalla, no del documento.
+  useEffect(() => {
+    aplicarSeo(screen);
+  }, [screen]);
 
   // El botón atrás del navegador debe cambiar de pantalla, no salir del sitio.
   useEffect(() => {
@@ -82,9 +99,10 @@ export default function App() {
   const ActiveScreen = SCREENS[screen];
 
   return (
-    <div className="min-h-screen bg-[#0a0c0a] text-[#e3e3df] flex flex-col font-sans selection:bg-[#f3ac20] selection:text-[#432c00]">
-      {/* Top Prototype Navigation Controller Bar */}
-      <PrototypeController currentScreen={screen} onNavigate={handleNavigate} />
+    <div className="min-h-screen bg-[#FAFAFA] text-[#000000] flex flex-col font-sans selection:bg-[#F9A600] selection:text-[#000000]">
+      {mostrarBarraDePrototipo() && (
+        <PrototypeController currentScreen={screen} onNavigate={handleNavigate} />
+      )}
 
       {/* Screen Render Canvas with Motion Transitions */}
       <div className="flex-grow relative overflow-x-hidden">

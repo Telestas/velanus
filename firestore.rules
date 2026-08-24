@@ -81,6 +81,29 @@ service cloud.firestore {
       allow delete: if esAdmin();
     }
 
+    /**
+     * Consultas del formulario de diagnóstico y del de contacto.
+     *
+     * Son datos personales de posibles clientes: **nadie puede leerlas salvo
+     * el admin**, ni siquiera quien las escribió. Se crean sin más trámite
+     * —pedir registro para consultar sería perder clientes— con la misma
+     * validación de forma que los comentarios.
+     */
+    match /consultas/{id} {
+      allow read, update, delete: if esAdmin();
+
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(
+             ['nombre', 'empresa', 'telefono', 'correo', 'servicio', 'pais',
+              'mensaje', 'origen', 'creado', 'atendida'])
+        && request.resource.data.keys().hasAll(
+             ['nombre', 'origen', 'creado', 'atendida'])
+        && request.resource.data.atendida == false
+        && request.resource.data.creado == request.time
+        && texto(request.resource.data.nombre, 2, 120)
+        && texto(request.resource.data.origen, 2, 40);
+    }
+
     /** Todo lo demás queda cerrado. */
     match /{document=**} {
       allow read, write: if false;

@@ -128,7 +128,27 @@ Consecuencia conocida y aceptada: `/servicios` y demás rutas **renderizan bien
 pero responden con HTTP 404**. Si el SEO de esas páginas pasa a importar, la
 salida es un hosting con rewrites o generar HTML por ruta.
 
-### Contenido
+#### Color y SEO
+
+La paleta del manual es la única fuente de verdad y vive en `src/index.css`
+(`--vn-negro`, `--vn-ambar`, `--vn-ambar-texto`, `--vn-hueso`). Los antiguos
+`#0a0c0a` / `#f3ac20` eran del prototipo de AI Studio y solo quedan dentro de
+las pantallas todavía sin rediseñar (Casos, `SiteHeader`, `SiteFooter`,
+`DiagnosticModal`). No introducir colores nuevos fuera del manual.
+
+`src/seo.ts` reescribe título, descripción, canónica y tarjetas sociales en
+cada navegación, y marca `/admin` como `noindex`. `index.html` lleva los
+metadatos de la home más el JSON-LD de `LegalService`; `public/robots.txt` y
+`public/sitemap.xml` acompañan.
+
+**Límite conocido:** eso ocurre en el navegador. Google ejecuta JavaScript, pero
+los rastreadores de WhatsApp, Facebook o LinkedIn **no**, así que cualquier
+enlace compartido enseña la tarjeta de la home. Arreglarlo exige HTML por ruta
+—prerenderizado o un hosting con SSR—, la misma conversación pendiente que los
+404 de GitHub Pages. Si se añade una ruta, actualizar `PANTALLAS` y
+`RUTAS_INDEXABLES` en `seo.ts` y `public/sitemap.xml`.
+
+## Contenido
 
 El texto de las pantallas rediseñadas está en `src/content/`: `home.ts`,
 `servicios.ts` y `nosotros.ts`. El de `CasosDesktopScreen` sigue hardcodeado en
@@ -156,8 +176,9 @@ presente:
   cifras y testimonios son inventados y están marcados como tales con avisos en
   pantalla y comentarios `BORRADOR` en el código. No presentarlos como reales ni
   quitar esos avisos sin que el cliente valide el contenido.
-- `PrototypeController` es andamiaje de prototipo (salta entre pantallas) y sigue
-  visible en producción.
+- `PrototypeController` es andamiaje de desarrollo. En producción **no se
+  monta**: solo sale en `npm run dev` o añadiendo `?proto=1` a la URL (para
+  enseñar el prototipo al cliente). No quitar esa guarda de `App.tsx`.
 - El panel de /admin ya escribe en Firestore (artículos, preguntas y moderación
   de comentarios), pero **el sitio público todavía no lee de ahí**: el blog de la
   home sigue mostrando los marcadores de la maqueta y no existe la ruta
@@ -176,11 +197,12 @@ presente:
   renderizar cada pantalla con `renderToString` sobre un build SSR temporal
   (`vite build --ssr`) y comprobar el HTML. Detecta que no revientan y que el
   contenido sale; no sustituye mirar la maqueta en un navegador real.
-- El formulario de contacto de la home no hace POST: compone la consulta y abre
-  WhatsApp con el texto redactado, y lo avisa bajo el botón. Es un desvío
-  deliberado de la maqueta, que dibujaba un envío convencional.
-- El formulario de `DiagnosticModal` no envía nada: solo cambia a estado
-  "enviado" en local. El botón de WhatsApp sí funciona.
+- **Los dos formularios guardan en Firestore** (`consultas`) y solo después
+  ofrecen WhatsApp como atajo. El orden importa: si se invierte, la consulta se
+  pierde cuando el visitante no llega a mandar el mensaje. Si el guardado falla
+  **no se muestra el acuse de recibo**, para no dar por recibido lo que no
+  llegó. Las consultas se leen en la pestaña «Consultas» del panel, que es la
+  que abre por defecto.
 - Las imágenes de `ServiciosDesktopScreen` apuntan a URLs temporales de AI Studio
   (`lh3.googleusercontent.com/aida-public/...`) que pueden caducar.
 

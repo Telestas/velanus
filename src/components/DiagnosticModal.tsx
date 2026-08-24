@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, MessageSquare, Send, Building2, User, Phone, Mail } from 'lucide-react';
 import { whatsappLink } from '../config';
+import { guardarConsulta } from '../data/consultas';
+import { mensajeDeError } from '../firebase';
 
 interface DiagnosticModalProps {
   isOpen: boolean;
@@ -9,6 +11,8 @@ interface DiagnosticModalProps {
 
 export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose }) => {
   const [submitted, setSubmitted] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     nombre: '',
     empresa: '',
@@ -20,13 +24,42 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  /**
+   * Guarda la consulta en Firestore.
+   *
+   * Antes esto solo cambiaba a estado «enviado» sin mandar nada a ninguna
+   * parte: cada persona que rellenaba el formulario se perdía. Si el guardado
+   * falla se dice y NO se muestra el acuse, para no dar por recibido un
+   * mensaje que no llegó.
+   */
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setEnviando(true);
+    setError('');
+
+    try {
+      await guardarConsulta({
+        nombre: formData.nombre,
+        empresa: formData.empresa,
+        telefono: formData.telefono,
+        correo: formData.email,
+        servicio: formData.servicio,
+        mensaje: formData.mensaje,
+        origen: 'diagnostico',
+      });
+      setSubmitted(true);
+    } catch (fallo) {
+      setError(
+        `${mensajeDeError(fallo)} Puede escribirnos por WhatsApp mientras lo arreglamos.`,
+      );
+    } finally {
+      setEnviando(false);
+    }
   };
 
   const handleReset = () => {
     setSubmitted(false);
+    setError('');
     onClose();
   };
 
@@ -145,10 +178,10 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
                   onChange={(e) => setFormData({ ...formData, servicio: e.target.value })}
                   className="w-full bg-[#0a0c0a] border border-[#BA8F31]/30 rounded px-3 py-2.5 text-sm text-[#e3e3df] focus:outline-none focus:border-[#f3ac20]"
                 >
-                  <option value="Contable y legal">Contable y legal (Auditoría, Mypimes, Impuestos)</option>
-                  <option value="Impresión">Impresión Corporativa (Identidad visual, papelería)</option>
-                  <option value="Eventos">Eventos Empresariales (Cumbres, Juntas)</option>
-                  <option value="Trámites">Trámites Oficiales (Licencias, Registros)</option>
+                  <option value="Contabilidad">Contabilidad y teneduría de libros</option>
+                  <option value="Legal corporativo">Asesoría legal corporativa (MIPYME, TCP, CNA, PDL)</option>
+                  <option value="Trámites y visas">Trámites, documentos y visas</option>
+                  <option value="Eventos">Eventos y capacitación</option>
                 </select>
               </div>
 
@@ -165,13 +198,20 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
                 />
               </div>
 
+              {error && (
+                <p className="text-sm text-[#ffcd7f] border-l-2 border-[#f3ac20] pl-3 py-1">
+                  {error}
+                </p>
+              )}
+
               <div className="pt-2 flex flex-col sm:flex-row gap-3">
                 <button
                   type="submit"
-                  className="flex-1 bg-[#f3ac20] text-[#412402] hover:bg-[#ffdeae] font-semibold py-3 px-4 rounded transition-colors text-sm flex items-center justify-center gap-2"
+                  disabled={enviando}
+                  className="flex-1 bg-[#f3ac20] text-[#412402] hover:bg-[#ffdeae] disabled:opacity-60 disabled:cursor-not-allowed font-semibold py-3 px-4 rounded transition-colors text-sm flex items-center justify-center gap-2"
                 >
                   <Send className="w-4 h-4" />
-                  Solicitar Diagnóstico
+                  {enviando ? 'Enviando…' : 'Solicitar Diagnóstico'}
                 </button>
                 <button
                   type="button"
@@ -193,10 +233,18 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
             <p className="text-sm text-[#d6c4ad] max-w-sm mx-auto">
               Gracias, <span className="text-[#ffcd7f] font-semibold">{formData.nombre}</span>. Un especialista institucional de <span className="font-serif">Vela Nus</span> se pondrá en contacto con usted en breve.
             </p>
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+              {/* La consulta ya está guardada; WhatsApp solo acelera la respuesta. */}
+              <button
+                onClick={handleWhatsApp}
+                className="bg-[#f3ac20] text-[#412402] hover:bg-[#ffdeae] font-semibold py-2.5 px-6 rounded transition-colors text-sm flex items-center justify-center gap-2"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Adelantar por WhatsApp
+              </button>
               <button
                 onClick={handleReset}
-                className="bg-[#f3ac20] text-[#412402] hover:bg-[#ffdeae] font-semibold py-2.5 px-6 rounded transition-colors text-sm"
+                className="bg-[#1a1c1a] border border-[#BA8F31] text-[#ffcd7f] hover:bg-[#292a28] font-semibold py-2.5 px-6 rounded transition-colors text-sm"
               >
                 Volver al sitio
               </button>

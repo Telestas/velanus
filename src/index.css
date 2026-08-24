@@ -2,6 +2,17 @@
 
 @layer base {
   :root {
+    /*
+     * Paleta del manual de marca. Es la única fuente de verdad de color del
+     * sitio: negro, ámbar y hueso, más los derivados documentados en la
+     * maqueta. Los antiguos #0a0c0a / #f3ac20 eran del prototipo de AI Studio
+     * y solo siguen vivos en las pantallas aún sin rediseñar.
+     */
+    --vn-negro: #000000;
+    --vn-ambar: #f9a600;
+    --vn-ambar-texto: #8a5800; /* ámbar legible sobre fondo claro (AA) */
+    --vn-hueso: #fafafa;
+
     --font-playfair: 'Playfair Display', Georgia, serif;
     --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     /* Tipografía de marca: Caladea es la sustituta métrica de Cambria. */
@@ -10,8 +21,8 @@
   
   body {
     font-family: var(--font-inter);
-    background-color: #0a0c0a;
-    color: #e3e3df;
+    background-color: var(--vn-hueso);
+    color: var(--vn-negro);
   }
 
   h1, h2, h3, h4, .font-serif, .font-display {
