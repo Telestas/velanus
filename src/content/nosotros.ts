@@ -1,4 +1,5 @@
 import { Idioma } from '../i18n/idioma';
+import { ClaveCifra } from '../data/cifras';
 
 /**
  * Contenido de «Sobre nosotros», en los dos idiomas.
@@ -20,7 +21,7 @@ export interface MiembroEquipo {
 }
 
 export interface CifraFirma {
-  valor: string;
+  clave: ClaveCifra;
   etiqueta: string;
 }
 
@@ -48,10 +49,10 @@ const ES: ContenidoNosotros = {
       '[PÁRRAFO PENDIENTE — historia de la firma: cuándo se funda, por qué, qué la distingue.]',
   },
   cifras: [
-    { valor: '[DATO PENDIENTE]', etiqueta: 'Años operando' },
-    { valor: '[DATO PENDIENTE]', etiqueta: 'Entidades constituidas' },
-    { valor: '[DATO PENDIENTE]', etiqueta: 'Profesionales en el equipo' },
-    { valor: 'Español · Inglés', etiqueta: 'Idiomas de trabajo' },
+    { clave: 'anos', etiqueta: 'Años operando' },
+    { clave: 'entidades', etiqueta: 'Entidades constituidas' },
+    { clave: 'profesionales', etiqueta: 'Profesionales en el equipo' },
+    { clave: 'idiomas', etiqueta: 'Idiomas de trabajo' },
   ],
   reglas: [
     {
@@ -96,10 +97,10 @@ const EN: ContenidoNosotros = {
       '[PARAGRAPH PENDING — the firm’s history: when it was founded, why, what sets it apart.]',
   },
   cifras: [
-    { valor: '[PENDING]', etiqueta: 'Years operating' },
-    { valor: '[PENDING]', etiqueta: 'Entities incorporated' },
-    { valor: '[PENDING]', etiqueta: 'Professionals on the team' },
-    { valor: 'Spanish · English', etiqueta: 'Working languages' },
+    { clave: 'anos', etiqueta: 'Years operating' },
+    { clave: 'entidades', etiqueta: 'Entities incorporated' },
+    { clave: 'profesionales', etiqueta: 'Professionals on the team' },
+    { clave: 'idiomas', etiqueta: 'Working languages' },
   ],
   reglas: [
     {

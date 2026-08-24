@@ -3,6 +3,7 @@ import { NavigationProps } from '../types';
 import { useSesion } from '../admin/useSesion';
 import { Acceso } from './admin/Acceso';
 import { PanelApariencia } from './admin/PanelApariencia';
+import { PanelCifras } from './admin/PanelCifras';
 import { PanelComentarios } from './admin/PanelComentarios';
 import { PanelConsultas } from './admin/PanelConsultas';
 import { PanelEntradas } from './admin/PanelEntradas';
@@ -17,13 +18,20 @@ import { Boton } from './admin/piezas';
  * las reglas de `firestore.rules`, que se aplican en el servidor de Google —si
  * alguien se saltara este componente, sus escrituras seguirían rechazándose.
  */
-type Pestana = 'apariencia' | 'consultas' | 'entradas' | 'preguntas' | 'comentarios';
+type Pestana =
+  | 'apariencia'
+  | 'cifras'
+  | 'consultas'
+  | 'entradas'
+  | 'preguntas'
+  | 'comentarios';
 
 const PESTANAS: { id: Pestana; label: string }[] = [
   { id: 'consultas', label: 'Consultas' },
   { id: 'entradas', label: 'Artículos' },
   { id: 'preguntas', label: 'Preguntas' },
   { id: 'comentarios', label: 'Comentarios' },
+  { id: 'cifras', label: 'Cifras' },
   { id: 'apariencia', label: 'Apariencia' },
 ];
 
@@ -103,6 +111,7 @@ export const AdminScreen: React.FC<NavigationProps> = ({ onNavigate }) => {
         {pestana === 'entradas' && <PanelEntradas />}
         {pestana === 'preguntas' && <PanelPreguntas />}
         {pestana === 'comentarios' && <PanelComentarios />}
+        {pestana === 'cifras' && <PanelCifras />}
         {pestana === 'apariencia' && <PanelApariencia onNavigate={onNavigate} />}
       </main>
     </div>

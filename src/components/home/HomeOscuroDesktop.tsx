@@ -7,6 +7,7 @@ import {
   whatsappLink,
 } from '../../config';
 import { contenidoHome } from '../../content/home';
+import { useCifras, valorDeCifra } from '../../data/cifras';
 import {
   Enlace,
   FormularioContacto,
@@ -33,6 +34,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
   openDiagnosticModal,
 }) => {
   const idioma = useIdioma();
+  const cifrasGuardadas = useCifras();
   const t = textos(idioma);
   const c = contenidoHome(idioma);
 
@@ -121,7 +123,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
       <div className="max-w-[1240px] mx-auto px-6 md:px-12 py-[30px] grid grid-cols-2 lg:grid-cols-4 gap-8">
         {c.cifras.map((cifra) => (
           <div key={cifra.etiqueta} className="flex flex-col gap-1">
-            <span className="text-2xl lg:text-[34px] font-bold leading-none">{cifra.valor}</span>
+            <span className="text-2xl lg:text-[34px] font-bold leading-none">{valorDeCifra(cifra.clave, cifrasGuardadas, idioma)}</span>
             <span className="text-sm tracking-[0.06em] uppercase">{cifra.etiqueta}</span>
           </div>
         ))}

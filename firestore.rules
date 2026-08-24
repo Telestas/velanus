@@ -104,6 +104,19 @@ service cloud.firestore {
         && texto(request.resource.data.origen, 2, 40);
     }
 
+    /**
+     * Ajustes del sitio que la firma edita desde el panel. Hoy solo
+     * `sitio/cifras` (entidades constituidas, clientes atendidos, países de
+     * origen y profesionales en el equipo).
+     *
+     * Lectura pública: son datos de escaparate y los pinta el sitio para
+     * cualquier visitante. Escritura, solo admin.
+     */
+    match /sitio/{documento} {
+      allow read: if true;
+      allow write: if esAdmin();
+    }
+
     /** Todo lo demás queda cerrado. */
     match /{document=**} {
       allow read, write: if false;

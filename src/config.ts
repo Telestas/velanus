@@ -13,6 +13,29 @@ export const CONTACT_EMAIL = 'contacto@velanus.com';
 
 export const CONTACT_CITY = 'La Habana, Cuba';
 
+/** Vela Nus empezó a operar el 2 de agosto de 2023. */
+export const INICIO_OPERACIONES = new Date(2023, 7, 2);
+
+/**
+ * Años completos operando, calculados en cada carga.
+ *
+ * Se calcula en vez de escribirse para que no haya que acordarse de subirlo
+ * cada 2 de agosto —el tipo de dato que se queda desactualizado durante años
+ * en un sitio corporativo.
+ */
+export const anosOperando = (referencia: Date = new Date()): number => {
+  let anos = referencia.getFullYear() - INICIO_OPERACIONES.getFullYear();
+
+  // Aún no ha llegado el aniversario de este año: uno menos.
+  const cumplido =
+    referencia.getMonth() > INICIO_OPERACIONES.getMonth() ||
+    (referencia.getMonth() === INICIO_OPERACIONES.getMonth() &&
+      referencia.getDate() >= INICIO_OPERACIONES.getDate());
+  if (!cumplido) anos -= 1;
+
+  return Math.max(anos, 0);
+};
+
 /** Dirección de la oficina, en dos líneas para los pies de página. */
 export const CONTACT_ADDRESS_LINES = [
   'Infanta entre Peñalver y Sitios,',

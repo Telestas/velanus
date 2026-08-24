@@ -270,7 +270,20 @@ Activar Authentication la primera vez **solo se puede hacer desde la consola**
 
 ## Despliegue
 
-Push a `main` dispara `.github/workflows/deploy.yml` (lint → build →
-`deploy-pages`). Pages está configurado con origen *GitHub Actions*; no hay que
-tocar Settings. Verificar un despliegue con `gh run watch` y luego curl a
-https://velanus.com/.
+**Empujar a `main` ya no despliega**: solo dispara `ci.yml` (lint + build). Lo
+que publica es **etiquetar una versión**:
+
+```bash
+npm version patch --no-git-tag-version   # sube package.json
+git commit -am "Versión 0.0.2" && git push
+git tag v0.0.2 && git push origin v0.0.2 # esto despliega
+```
+
+`deploy.yml` se dispara con `tags: ['v*']` y comprueba que la etiqueta apunta a
+un commit de `main` antes de publicar. `workflow_dispatch` queda como escape
+para redesplegar a mano. Pages está configurado con origen *GitHub Actions*.
+
+Mantener `package.json` y la etiqueta en el mismo número: la etiqueta es lo que
+se despliega, pero el `version` del paquete es lo que se lee al depurar.
+
+Verificar con `gh run watch` y luego curl a https://velanus.com/.

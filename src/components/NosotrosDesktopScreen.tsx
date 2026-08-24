@@ -7,6 +7,7 @@ import {
   WHATSAPP_DISPLAY,
 } from '../config';
 import { contenidoNosotros } from '../content/nosotros';
+import { useCifras, valorDeCifra } from '../data/cifras';
 import { contenidoServicios } from '../content/servicios';
 import { useIdioma } from '../i18n/idioma';
 import { textos } from '../i18n/textos';
@@ -31,6 +32,7 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
   openDiagnosticModal,
 }) => {
   const idioma = useIdioma();
+  const cifrasGuardadas = useCifras();
   const t = textos(idioma);
   const c = contenidoNosotros(idioma);
   const paleta = paletaDe(useVarianteHome());
@@ -80,7 +82,7 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
                 }`}
               >
                 <span className={`text-[26px] font-bold ${paleta.acentoTexto}`}>
-                  {cifra.valor}
+                  {valorDeCifra(cifra.clave, cifrasGuardadas, idioma)}
                 </span>
                 <span className={`text-sm ${paleta.textoSuave}`}>{cifra.etiqueta}</span>
               </div>

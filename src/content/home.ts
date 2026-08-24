@@ -1,4 +1,5 @@
 import { Idioma } from '../i18n/idioma';
+import { ClaveCifra } from '../data/cifras';
 
 /**
  * Contenido de la home, en los dos idiomas del sitio.
@@ -18,7 +19,8 @@ import { Idioma } from '../i18n/idioma';
  */
 
 export interface Cifra {
-  valor: string;
+  /** El valor no se escribe aquí: se resuelve con `valorDeCifra()`. */
+  clave: ClaveCifra;
   etiqueta: string;
   etiquetaMovil: string;
 }
@@ -113,10 +115,10 @@ const ES: ContenidoHome = {
       'Constituimos su MIPYME, llevamos su contabilidad y gestionamos cada trámite, con plazos y honorarios cerrados por escrito.',
   },
   cifras: [
-    { valor: '[DATO PENDIENTE]', etiqueta: 'Años operando en Cuba', etiquetaMovil: 'Años operando' },
-    { valor: '[DATO PENDIENTE]', etiqueta: 'Entidades constituidas', etiquetaMovil: 'Entidades constituidas' },
-    { valor: '[DATO PENDIENTE]', etiqueta: 'Clientes atendidos', etiquetaMovil: 'Clientes atendidos' },
-    { valor: '[PENDIENTE]', etiqueta: 'Países de origen de clientes', etiquetaMovil: 'Países de origen' },
+    { clave: 'anos', etiqueta: 'Años operando en Cuba', etiquetaMovil: 'Años operando' },
+    { clave: 'entidades', etiqueta: 'Entidades constituidas', etiquetaMovil: 'Entidades constituidas' },
+    { clave: 'clientes', etiqueta: 'Clientes atendidos', etiquetaMovil: 'Clientes atendidos' },
+    { clave: 'paises', etiqueta: 'Países de origen de clientes', etiquetaMovil: 'Países de origen' },
   ],
   problemas: [
     {
@@ -299,10 +301,10 @@ const EN: ContenidoHome = {
       'We incorporate your MIPYME, keep your books and handle every filing, with timelines and fees agreed in writing.',
   },
   cifras: [
-    { valor: '[PENDING]', etiqueta: 'Years operating in Cuba', etiquetaMovil: 'Years operating' },
-    { valor: '[PENDING]', etiqueta: 'Entities incorporated', etiquetaMovil: 'Entities incorporated' },
-    { valor: '[PENDING]', etiqueta: 'Clients served', etiquetaMovil: 'Clients served' },
-    { valor: '[PENDING]', etiqueta: 'Countries clients come from', etiquetaMovil: 'Client countries' },
+    { clave: 'anos', etiqueta: 'Years operating in Cuba', etiquetaMovil: 'Years operating' },
+    { clave: 'entidades', etiqueta: 'Entities incorporated', etiquetaMovil: 'Entities incorporated' },
+    { clave: 'clientes', etiqueta: 'Clients served', etiquetaMovil: 'Clients served' },
+    { clave: 'paises', etiqueta: 'Countries clients come from', etiquetaMovil: 'Client countries' },
   ],
   problemas: [
     {
