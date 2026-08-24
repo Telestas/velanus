@@ -76,7 +76,6 @@ export const navHome = (idioma: Idioma): DestinoEnlace[] => {
   return [
     { label: t.inicio, pantalla: 'home-desktop' },
     { label: t.servicios, pantalla: 'servicios-desktop' },
-    { label: t.tramites, pantalla: 'servicios-tramites' },
     { label: t.nosotros, pantalla: 'nosotros-desktop' },
     { label: t.blog, pantalla: 'blog' },
     { label: t.contacto, ancla: 'contacto' },

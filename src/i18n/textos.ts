@@ -10,7 +10,6 @@ export interface Textos {
     inicio: string;
     servicios: string;
     nosotros: string;
-    tramites: string;
     blog: string;
     contacto: string;
     agendar: string;
@@ -203,7 +202,6 @@ const ES: Textos = {
     inicio: 'Inicio',
     servicios: 'Servicios',
     nosotros: 'Nosotros',
-    tramites: 'Trámites y visas',
     blog: 'Blog',
     contacto: 'Contacto',
     agendar: 'Agendar consulta',
@@ -413,7 +411,6 @@ const EN: Textos = {
     inicio: 'Home',
     servicios: 'Services',
     nosotros: 'About us',
-    tramites: 'Paperwork and visas',
     blog: 'Blog',
     contacto: 'Contact',
     agendar: 'Book a consultation',
