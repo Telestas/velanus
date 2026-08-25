@@ -261,7 +261,7 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
       >
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">{t.nav.contacto}</span>
         <h2 className="text-[28px] leading-[1.15] font-bold text-pretty">{c.cta.titulo}</h2>
-        <FormularioContacto tono="oscuro" idPrefijo="claro-movil" />
+        <FormularioContacto tono="oscuro" idPrefijo="claro-movil" onNavigate={onNavigate} />
       </section>
 
       {/* pie claro — contiene el xpath obligatorio //footer//a[contains(text(), 'Servicios')] */}

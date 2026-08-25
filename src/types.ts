@@ -10,6 +10,9 @@ export type ScreenId =
   | 'casos-desktop'
   | 'blog'
   | 'blog-articulo'
+  | 'aviso-legal'
+  | 'privacidad'
+  | 'descargo'
   | 'admin';
 
 export interface NavigationProps {

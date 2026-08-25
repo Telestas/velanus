@@ -90,6 +90,21 @@ const ES: Record<ScreenId, Metadatos> = {
     descripcion:
       'Análisis de la normativa contable, legal y de trámites en Cuba, escrito por Vela Nus Consultores & Asociados.',
   },
+  'aviso-legal': {
+    titulo: `Aviso legal — ${TITULO_BASE}`,
+    descripcion:
+      'Titular del sitio, condiciones de uso y propiedad intelectual de velanus.com.',
+  },
+  privacidad: {
+    titulo: `Política de privacidad — ${TITULO_BASE}`,
+    descripcion:
+      'Qué datos personales recoge velanus.com, para qué, dónde se guardan y cómo ejercer los derechos de acceso, rectificación y supresión.',
+  },
+  descargo: {
+    titulo: `Descargo de responsabilidad — ${TITULO_BASE}`,
+    descripcion:
+      'El contenido de velanus.com es informativo y no constituye asesoría jurídica, contable ni fiscal.',
+  },
   // El panel no debe aparecer en buscadores; se marca con noindex.
   admin: {
     titulo: `Administración — ${TITULO_BASE}`,
@@ -153,6 +168,20 @@ const EN: Record<ScreenId, Metadatos> = {
     descripcion:
       'Analysis of Cuban accounting, legal and paperwork regulations by Vela Nus Consultores & Asociados.',
   },
+  'aviso-legal': {
+    titulo: `Legal notice — ${TITULO_BASE}`,
+    descripcion: 'Site owner, terms of use and intellectual property of velanus.com.',
+  },
+  privacidad: {
+    titulo: `Privacy policy — ${TITULO_BASE}`,
+    descripcion:
+      'What personal data velanus.com collects, what for, where it is stored, and how to exercise your rights of access, rectification and erasure.',
+  },
+  descargo: {
+    titulo: `Disclaimer — ${TITULO_BASE}`,
+    descripcion:
+      'The content of velanus.com is informative and does not constitute legal, accounting or tax advice.',
+  },
   admin: {
     titulo: `Administration — ${TITULO_BASE}`,
     descripcion: '',
@@ -169,6 +198,9 @@ export const RUTAS_INDEXABLES: ScreenId[] = [
   'servicios-eventos',
   'nosotros-desktop',
   'blog',
+  'aviso-legal',
+  'privacidad',
+  'descargo',
 ];
 
 const etiqueta = (selector: string, crear: () => HTMLElement): HTMLElement => {

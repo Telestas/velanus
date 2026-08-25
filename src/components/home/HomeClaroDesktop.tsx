@@ -361,7 +361,7 @@ export const HomeClaroDesktop: React.FC<NavigationProps> = ({
             </span>
           </div>
         </div>
-        <FormularioContacto tono="oscuro" idPrefijo="claro-desktop" />
+        <FormularioContacto tono="oscuro" idPrefijo="claro-desktop" onNavigate={onNavigate} />
       </div>
     </section>
 

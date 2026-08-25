@@ -77,6 +77,9 @@ export interface Textos {
     gracias: string;
     adelantar: string;
     alternativa: (whatsapp: string, correo: string) => string;
+    consentimiento: string;
+    consentimientoEnlace: string;
+    consentimientoFalta: string;
   };
   modal: {
     etiqueta: string;
@@ -140,6 +143,7 @@ export interface Textos {
     enviando: string;
     resenaEnviada: string;
     sinResenas: string;
+    avisoPublicacion: string;
     /* artículo */
     enEsteArticulo: string;
     compartir: string;
@@ -272,6 +276,10 @@ const ES: Textos = {
     adelantar: 'Adelantar por WhatsApp',
     alternativa: (whatsapp, correo) =>
       `También puede escribirnos por WhatsApp (${whatsapp}) o a ${correo}.`,
+    consentimiento:
+      'He leído y acepto que Vela Nus trate mis datos para responder a esta consulta, según la',
+    consentimientoEnlace: 'política de privacidad',
+    consentimientoFalta: 'Para enviar la consulta hay que aceptar la política de privacidad.',
   },
   modal: {
     etiqueta: 'Asesoría institucional',
@@ -347,6 +355,8 @@ const ES: Textos = {
     resenaEnviada:
       'Gracias. Su reseña ha quedado pendiente de revisión; si se aprueba, aparecerá aquí.',
     sinResenas: 'Todavía no hay reseñas publicadas.',
+    avisoPublicacion:
+      'Si se aprueba, se publicarán su nombre y su país tal como los ha escrito. No incluya datos que no quiera que se lean en público.',
     enEsteArticulo: 'En este artículo',
     compartir: 'Compartir',
     copiarEnlace: 'Enlace',
@@ -482,6 +492,10 @@ const EN: Textos = {
     adelantar: 'Continue on WhatsApp',
     alternativa: (whatsapp, correo) =>
       `You can also reach us on WhatsApp (${whatsapp}) or at ${correo}.`,
+    consentimiento:
+      'I have read and accept that Vela Nus processes my data to answer this enquiry, under the',
+    consentimientoEnlace: 'privacy policy',
+    consentimientoFalta: 'You need to accept the privacy policy before sending the enquiry.',
   },
   modal: {
     etiqueta: 'Institutional advice',
@@ -556,6 +570,8 @@ const EN: Textos = {
     resenaEnviada:
       'Thank you. Your review is pending approval; if approved, it will appear here.',
     sinResenas: 'No reviews published yet.',
+    avisoPublicacion:
+      'If approved, your name and country will be published exactly as you wrote them. Do not include anything you would not want read in public.',
     enEsteArticulo: 'In this article',
     compartir: 'Share',
     copiarEnlace: 'Link',

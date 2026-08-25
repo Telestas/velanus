@@ -18,6 +18,7 @@ import { CasosDesktopScreen } from './components/CasosDesktopScreen';
 import { pantallaDeLinea } from './components/servicios/LineaScreen';
 import { AdminScreen } from './components/AdminScreen';
 import { BlogScreen } from './components/blog/BlogScreen';
+import { pantallaLegal } from './components/LegalScreen';
 import { ArticuloScreen } from './components/blog/ArticuloScreen';
 import { DiagnosticModal } from './components/DiagnosticModal';
 
@@ -34,6 +35,9 @@ const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   'casos-desktop': CasosDesktopScreen,
   blog: BlogScreen,
   'blog-articulo': ArticuloScreen,
+  'aviso-legal': pantallaLegal('aviso-legal'),
+  privacidad: pantallaLegal('privacidad'),
+  descargo: pantallaLegal('descargo'),
   admin: AdminScreen,
 };
 

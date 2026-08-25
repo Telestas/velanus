@@ -47,6 +47,19 @@ export const CONTACT_SCHEDULE = 'Lun–Vie, 9:00–17:00';
 /** Zona horaria, tal y como se muestra al visitante. */
 export const CONTACT_TIMEZONE = 'Hora de Cuba (UTC-4)';
 
+/**
+ * Meses que se conservan las consultas antes de revisarlas para borrado.
+ *
+ * ⚠️ PENDIENTE DE APROBACIÓN JURÍDICA: 24 meses es una propuesta razonable,
+ * no una decisión tomada. Cuando el equipo jurídico fije el plazo, cambiarlo
+ * aquí y en la política de privacidad (`src/content/legal.ts`), que deben decir
+ * lo mismo.
+ *
+ * No hay borrado automático: sin Cloud Functions (exigen plan Blaze) no puede
+ * haberlo. El panel marca las que superan el plazo para que se revisen a mano.
+ */
+export const MESES_CONSERVACION = 24;
+
 /** Construye un enlace de WhatsApp con un mensaje opcional ya redactado. */
 export const whatsappLink = (message?: string): string => {
   const base = `https://wa.me/${WHATSAPP_NUMBER}`;

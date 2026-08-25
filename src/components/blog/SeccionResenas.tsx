@@ -4,6 +4,7 @@ import { contenidoServicios } from '../../content/servicios';
 import { useIdioma } from '../../i18n/idioma';
 import { textos } from '../../i18n/textos';
 import { ANCHO, Paleta } from '../marca/paleta';
+import { Consentimiento } from '../home/comunes';
 import { AvisoModeracion, Estrellas } from './piezas';
 
 /**
@@ -133,6 +134,7 @@ const FormularioResena: React.FC<{ paleta: Paleta }> = ({ paleta }) => {
   const [servicio, setServicio] = useState(lineas[0].titulo);
   const [estrellas, setEstrellas] = useState(5);
   const [texto, setTexto] = useState('');
+  const [acepta, setAcepta] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [enviada, setEnviada] = useState(false);
   const [error, setError] = useState('');
@@ -141,6 +143,12 @@ const FormularioResena: React.FC<{ paleta: Paleta }> = ({ paleta }) => {
 
   const enviar = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!acepta) {
+      setError(textos(idioma).formulario.consentimientoFalta);
+      return;
+    }
+
     setEnviando(true);
     setError('');
     try {
@@ -260,6 +268,18 @@ const FormularioResena: React.FC<{ paleta: Paleta }> = ({ paleta }) => {
               className={`${campo} resize-y`}
             />
           </div>
+
+          {/* Lo que se va a publicar, dicho antes de enviarlo. */}
+          <p className={`text-sm leading-[1.55] ${paleta.textoTenue}`}>
+            {t.blog.avisoPublicacion}
+          </p>
+
+          <Consentimiento
+            idioma={idioma}
+            aceptado={acepta}
+            onCambio={setAcepta}
+            oscuro={paleta.logo === 'ambar'}
+          />
 
           {error && <p className={`text-sm ${paleta.acentoTexto}`}>{error}</p>}
 

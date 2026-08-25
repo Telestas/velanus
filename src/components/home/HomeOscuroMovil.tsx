@@ -258,7 +258,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       <section id="contacto" className="bg-[#F9A600] text-[#000000] px-5 py-11 flex flex-col gap-[18px]">
         <h2 className="text-[29px] leading-[1.15] font-bold text-pretty">{c.cta.titulo}</h2>
         <div className="bg-[#FAFAFA] px-5 py-6">
-          <FormularioContacto tono="claro" idPrefijo="oscuro-movil" />
+          <FormularioContacto tono="claro" idPrefijo="oscuro-movil" onNavigate={onNavigate} />
         </div>
         <span className="text-[15px]">{t.formulario.alternativa(WHATSAPP_DISPLAY, CONTACT_EMAIL)}</span>
       </section>

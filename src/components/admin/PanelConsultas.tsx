@@ -5,6 +5,7 @@ import {
   consultas as leerConsultas,
   marcarAtendida,
 } from '../../data/consultas';
+import { MESES_CONSERVACION } from '../../config';
 import { mensajeDeError } from '../../firebase';
 import { Aviso, Boton } from './piezas';
 
@@ -66,6 +67,15 @@ export const PanelConsultas: React.FC = () => {
   const visibles = verAtendidas ? lista : lista.filter((c) => !c.atendida);
   const pendientes = lista.filter((c) => !c.atendida).length;
 
+  /*
+   * Conservación: sin Cloud Functions no hay borrado automático, así que se
+   * señalan las que ya superaron el plazo para poder revisarlas y borrarlas.
+   */
+  const limite = new Date();
+  limite.setMonth(limite.getMonth() - MESES_CONSERVACION);
+  const caducada = (consulta: Consulta) => !!consulta.creado && consulta.creado < limite;
+  const caducadas = lista.filter(caducada).length;
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -88,6 +98,14 @@ export const PanelConsultas: React.FC = () => {
       </div>
 
       {error && <Aviso>{error}</Aviso>}
+
+      {caducadas > 0 && (
+        <Aviso>
+          {caducadas} {caducadas === 1 ? 'consulta supera' : 'consultas superan'} los{' '}
+          {MESES_CONSERVACION} meses de conservación. Revíselas y bórrelas: guardar datos
+          personales más tiempo del declarado en la política de privacidad no se sostiene.
+        </Aviso>
+      )}
       {cargando && <p className="text-base text-[#4A4A4A]">Cargando…</p>}
       {!cargando && visibles.length === 0 && (
         <p className="text-base text-[#4A4A4A]">
@@ -111,6 +129,11 @@ export const PanelConsultas: React.FC = () => {
                     Atendida
                   </span>
                 )}
+                {caducada(consulta) && (
+                  <span className="text-xs font-bold uppercase tracking-[0.14em] border border-[#8A5800] text-[#8A5800] px-2 py-1">
+                    Fuera de plazo
+                  </span>
+                )}
                 <span className="text-sm text-[#767676]">
                   {consulta.creado
                     ? consulta.creado.toLocaleString('es-ES', {
@@ -119,6 +142,7 @@ export const PanelConsultas: React.FC = () => {
                       })
                     : 'sin fecha'}{' '}
                   · {consulta.origen}
+                  {consulta.avisoVersion ? ` · aviso ${consulta.avisoVersion}` : ''}
                 </span>
               </div>
 

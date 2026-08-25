@@ -1,4 +1,5 @@
 import { db } from '../firebase';
+import { VERSION_AVISO } from '../content/legal';
 
 /**
  * Consultas que llegan por los formularios del sitio.
@@ -24,9 +25,11 @@ export interface Consulta {
   origen: string;
   creado: Date | null;
   atendida: boolean;
+  /** Versión de la política de privacidad que aceptó al enviar. */
+  avisoVersion: string;
 }
 
-export type ConsultaNueva = Omit<Consulta, 'id' | 'creado' | 'atendida'>;
+export type ConsultaNueva = Omit<Consulta, 'id' | 'creado' | 'atendida' | 'avisoVersion'>;
 
 /**
  * Guarda una consulta.
@@ -48,6 +51,9 @@ export const guardarConsulta = async (consulta: ConsultaNueva): Promise<void> =>
     nombre: consulta.nombre.trim(),
     origen: consulta.origen,
     atendida: false,
+    // Qué versión de la política aceptó, no solo que aceptó algo.
+    consentimiento: true,
+    avisoVersion: VERSION_AVISO,
     creado: serverTimestamp(),
   };
 
@@ -78,6 +84,7 @@ export const consultas = async (): Promise<Consulta[]> => {
       mensaje: datos.mensaje ? String(datos.mensaje) : undefined,
       origen: String(datos.origen ?? ''),
       atendida: datos.atendida === true,
+      avisoVersion: String(datos.avisoVersion ?? ''),
       creado:
         datos.creado && typeof (datos.creado as { toDate?: unknown }).toDate === 'function'
           ? (datos.creado as { toDate: () => Date }).toDate()

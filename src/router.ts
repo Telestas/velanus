@@ -23,6 +23,9 @@ const SCREEN_SLUGS: Record<ScreenId, string> = {
   blog: 'blog',
   // La parte variable la añade `pathForScreen`; aquí solo consta el prefijo.
   'blog-articulo': 'blog',
+  'aviso-legal': 'aviso-legal',
+  privacidad: 'privacidad',
+  descargo: 'descargo',
   admin: 'admin',
 };
 
@@ -76,6 +79,9 @@ const SCREEN_ORDER: ScreenId[] = [
   'casos-desktop',
   'blog',
   'blog-articulo',
+  'aviso-legal',
+  'privacidad',
+  'descargo',
   'admin',
 ];
 

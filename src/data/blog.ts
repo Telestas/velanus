@@ -1,5 +1,6 @@
 import { db } from '../firebase';
 import { consultar, crearDocumento, DocumentoRest } from './rest';
+import { VERSION_AVISO } from '../content/legal';
 
 /**
  * Acceso a los datos del blog: entradas, preguntas frecuentes y comentarios.
@@ -257,6 +258,8 @@ export const comentar = async (
     texto: texto.trim(),
     autor: uid,
     aprobado: false,
+    consentimiento: true,
+    avisoVersion: VERSION_AVISO,
     creado: new Date(),
   }));
 };

@@ -1,5 +1,6 @@
 import { db } from '../firebase';
 import { consultar, crearDocumento } from './rest';
+import { VERSION_AVISO } from '../content/legal';
 
 /**
  * Reseñas de clientes.
@@ -68,6 +69,8 @@ export const enviarResena = async (resena: ResenaNueva): Promise<void> => {
     texto: resena.texto.trim(),
     autor: uid,
     aprobada: false,
+    consentimiento: true,
+    avisoVersion: VERSION_AVISO,
     creado: new Date(),
   }));
 };

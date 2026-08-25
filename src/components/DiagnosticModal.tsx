@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, CheckCircle2, MessageSquare, Send, Building2, User, Phone, Mail } from 'lucide-react';
 import { whatsappLink } from '../config';
 import { guardarConsulta } from '../data/consultas';
+import { Consentimiento } from './home/comunes';
 import { mensajeDeError } from '../firebase';
 import { useIdioma } from '../i18n/idioma';
 import { textos } from '../i18n/textos';
@@ -15,6 +16,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
   const idioma = useIdioma();
   const t = textos(idioma).modal;
   const [submitted, setSubmitted] = useState(false);
+  const [acepta, setAcepta] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -38,6 +40,12 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!acepta) {
+      setError(textos(idioma).formulario.consentimientoFalta);
+      return;
+    }
+
     setEnviando(true);
     setError('');
 
@@ -202,6 +210,13 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
                   className="w-full bg-[#0a0c0a] border border-[#BA8F31]/30 rounded px-3 py-2 text-sm text-[#e3e3df] placeholder-[#514534] focus:outline-none focus:border-[#f3ac20]"
                 />
               </div>
+
+              <Consentimiento
+                idioma={idioma}
+                aceptado={acepta}
+                onCambio={setAcepta}
+                oscuro
+              />
 
               {error && (
                 <p className="text-sm text-[#ffcd7f] border-l-2 border-[#f3ac20] pl-3 py-1">

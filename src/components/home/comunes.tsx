@@ -104,9 +104,9 @@ export const pieFirma = (idioma: Idioma): DestinoEnlace[] => {
 export const pieLegal = (idioma: Idioma): DestinoEnlace[] => {
   const t = textos(idioma).pie;
   return [
-    { label: t.avisoLegal, pendiente: true },
-    { label: t.privacidad, pendiente: true },
-    { label: t.disclaimer, pendiente: true },
+    { label: t.avisoLegal, pantalla: 'aviso-legal' },
+    { label: t.privacidad, pantalla: 'privacidad' },
+    { label: t.disclaimer, pantalla: 'descargo' },
   ];
 };
 
@@ -163,6 +163,62 @@ export const Enlace: React.FC<EnlaceProps> = ({
   );
 };
 
+interface ConsentimientoProps {
+  idioma: Idioma;
+  aceptado: boolean;
+  onCambio: (aceptado: boolean) => void;
+  /** Para navegar a la política sin recargar; si falta, va como enlace normal. */
+  onNavigate?: (target: ScreenId, transitionType?: 'push' | 'push_back') => void;
+  oscuro?: boolean;
+}
+
+/**
+ * Casilla de consentimiento.
+ *
+ * No es decorativa: sin marcarla no se envía, y las reglas de Firestore
+ * rechazan cualquier escritura que no traiga `consentimiento: true` y la
+ * versión del aviso aceptada. Así queda constancia de qué texto aceptó cada
+ * persona, que es lo que hay que poder demostrar después.
+ */
+export const Consentimiento: React.FC<ConsentimientoProps> = ({
+  idioma,
+  aceptado,
+  onCambio,
+  onNavigate,
+  oscuro = false,
+}) => {
+  const t = textos(idioma).formulario;
+
+  return (
+    <label className="flex gap-3 items-start cursor-pointer">
+      <input
+        type="checkbox"
+        required
+        checked={aceptado}
+        onChange={(e) => onCambio(e.target.checked)}
+        className="w-5 h-5 mt-0.5 flex-none accent-[#F9A600]"
+      />
+      <span className={`text-sm leading-[1.55] ${oscuro ? 'text-[#B9B7B2]' : 'text-[#4A4A4A]'}`}>
+        {t.consentimiento}{' '}
+        <a
+          href={pathForScreen('privacidad')}
+          onClick={(e) => {
+            if (!onNavigate) return;
+            e.preventDefault();
+            onNavigate('privacidad');
+          }}
+          className={`font-bold underline underline-offset-2 ${
+            oscuro ? 'text-[#F9A600]' : 'text-[#8A5800]'
+          }`}
+        >
+          {t.consentimientoEnlace}
+        </a>
+        .
+      </span>
+    </label>
+  );
+};
+
 /** Mensaje ya redactado con el que se abre WhatsApp desde los CTA del hero. */
 export const mensajeConsulta = (idioma: Idioma): string =>
   idioma === 'en'
@@ -174,6 +230,7 @@ interface FormularioProps {
   tono: 'claro' | 'oscuro';
   /** Sufijo para los id de los campos; hay varios formularios por sitio. */
   idPrefijo: string;
+  onNavigate?: (target: ScreenId, transitionType?: 'push' | 'push_back') => void;
 }
 
 /**
@@ -184,13 +241,18 @@ interface FormularioProps {
  * no se pierde aunque el visitante nunca llegue a mandar el mensaje— y solo
  * después se le propone el atajo.
  */
-export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo }) => {
+export const FormularioContacto: React.FC<FormularioProps> = ({
+  tono,
+  idPrefijo,
+  onNavigate,
+}) => {
   const idioma = useIdioma();
   const t = textos(idioma).formulario;
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [pais, setPais] = useState('');
   const [mensaje, setMensaje] = useState('');
+  const [acepta, setAcepta] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [error, setError] = useState('');
@@ -217,6 +279,12 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
 
   const enviar = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!acepta) {
+      setError(t.consentimientoFalta);
+      return;
+    }
+
     setEnviando(true);
     setError('');
 
@@ -316,6 +384,14 @@ export const FormularioContacto: React.FC<FormularioProps> = ({ tono, idPrefijo 
           className={`${campo} resize-y`}
         />
       </div>
+
+      <Consentimiento
+        idioma={idioma}
+        aceptado={acepta}
+        onCambio={setAcepta}
+        onNavigate={onNavigate}
+        oscuro={oscuro}
+      />
 
       {error && (
         <p className={`text-sm ${oscuro ? 'text-[#F9A600]' : 'text-[#8A5800]'}`}>{error}</p>

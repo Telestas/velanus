@@ -79,9 +79,11 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(
              ['entrada', 'nombre', 'correo', 'texto', 'creado', 'autor',
-              'aprobado', 'respuesta'])
+              'aprobado', 'respuesta', 'consentimiento', 'avisoVersion'])
         && request.resource.data.keys().hasAll(
-             ['entrada', 'nombre', 'texto', 'creado', 'autor', 'aprobado'])
+             ['entrada', 'nombre', 'texto', 'creado', 'autor', 'aprobado',
+              'consentimiento', 'avisoVersion'])
+        && request.resource.data.consentimiento == true
         && request.resource.data.autor == request.auth.uid
         && request.resource.data.aprobado == false
         && fechaRazonable(request.resource.data.creado)
@@ -106,10 +108,11 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(
              ['nombre', 'pais', 'servicio', 'estrellas', 'texto', 'creado',
-              'autor', 'aprobada'])
+              'autor', 'aprobada', 'consentimiento', 'avisoVersion'])
         && request.resource.data.keys().hasAll(
              ['nombre', 'servicio', 'estrellas', 'texto', 'creado', 'autor',
-              'aprobada'])
+              'aprobada', 'consentimiento', 'avisoVersion'])
+        && request.resource.data.consentimiento == true
         && request.resource.data.autor == request.auth.uid
         && request.resource.data.aprobada == false
         && fechaRazonable(request.resource.data.creado)
@@ -137,12 +140,21 @@ service cloud.firestore {
     match /consultas/{id} {
       allow read, update, delete: if esAdmin();
 
+      /*
+       * `consentimiento` y `avisoVersion` no son decorativos: guardan que la
+       * persona aceptó la política y **qué versión del texto** aceptó. Sin eso
+       * no se puede demostrar nada más adelante, así que la regla los exige.
+       */
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(
              ['nombre', 'empresa', 'telefono', 'correo', 'servicio', 'pais',
-              'mensaje', 'origen', 'creado', 'atendida'])
+              'mensaje', 'origen', 'creado', 'atendida', 'consentimiento',
+              'avisoVersion'])
         && request.resource.data.keys().hasAll(
-             ['nombre', 'origen', 'creado', 'atendida'])
+             ['nombre', 'origen', 'creado', 'atendida', 'consentimiento',
+              'avisoVersion'])
+        && request.resource.data.consentimiento == true
+        && texto(request.resource.data.avisoVersion, 4, 20)
         && request.resource.data.atendida == false
         && request.resource.data.creado == request.time
         && texto(request.resource.data.nombre, 2, 120)

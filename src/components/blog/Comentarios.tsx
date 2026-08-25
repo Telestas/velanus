@@ -3,6 +3,7 @@ import { Comentario, comentar, comentariosDe } from '../../data/blog';
 import { useIdioma } from '../../i18n/idioma';
 import { textos } from '../../i18n/textos';
 import { Paleta } from '../marca/paleta';
+import { Consentimiento } from '../home/comunes';
 import { AvisoModeracion } from './piezas';
 
 /**
@@ -20,6 +21,7 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [texto, setTexto] = useState('');
+  const [acepta, setAcepta] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [error, setError] = useState('');
@@ -32,6 +34,12 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
 
   const enviar = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!acepta) {
+      setError(t.formulario.consentimientoFalta);
+      return;
+    }
+
     setEnviando(true);
     setError('');
     try {
@@ -158,6 +166,13 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
                 className={`${campo} resize-y`}
               />
             </div>
+
+            <Consentimiento
+              idioma={idioma}
+              aceptado={acepta}
+              onCambio={setAcepta}
+              oscuro={paleta.logo === 'ambar'}
+            />
 
             {error && <p className={`text-sm ${paleta.acentoTexto}`}>{error}</p>}
 

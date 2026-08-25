@@ -353,7 +353,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
           </div>
         </div>
         <div className="bg-[#FAFAFA] p-9">
-          <FormularioContacto tono="claro" idPrefijo="oscuro-desktop" />
+          <FormularioContacto tono="claro" idPrefijo="oscuro-desktop" onNavigate={onNavigate} />
         </div>
       </div>
     </section>
