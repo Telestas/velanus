@@ -119,8 +119,14 @@ a partir de `import.meta.env.BASE_URL`, así que **si cambia el dominio hay que
 tocar `vite.config.ts`, `public/CNAME` y el ajuste de Pages**.
 
 TLS lo termina Cloudflare; GitHub no emite certificado para el dominio (por eso
-`https_enforced` está en `false` en la API de Pages). El redirect a HTTPS y el
-modo SSL se gestionan desde Cloudflare, no desde GitHub.
+`https_enforced` está en `false` en la API de Pages). El redirect a HTTPS, el
+modo SSL y **las cabeceras de seguridad** se gestionan desde Cloudflare, no
+desde GitHub, porque Pages no permite configurarlas.
+
+Las cabeceras están documentadas en `docs/cabeceras-seguridad.md`, con la CSP
+completa y el porqué de cada directiva. **Al añadir cualquier recurso externo
+—analítica, un mapa, un vídeo, una fuente de un CDN— hay que añadir su host a
+`connect-src`/`script-src` o dejará de cargar en silencio.**
 
 Pages es estático y no sabe de rutas: el plugin `spaFallback` copia `index.html`
 a `404.html` al terminar el build para que los deep links arranquen la SPA.
