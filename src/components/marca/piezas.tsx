@@ -43,10 +43,11 @@ interface BandaCtaProps {
 }
 
 /**
- * Banda ámbar de cierre. Es la misma en los dos tonos: el ámbar es fondo, no
- * texto, así que no hace falta oscurecerlo.
+ * Banda ámbar de cierre. La banda es la misma en los tres tonos —el ámbar es
+ * fondo, no texto, así que no hace falta oscurecerlo—; lo único que cambia es
+ * el relleno del botón, que sale de `paleta.tinta`.
  */
-export const BandaCta: React.FC<BandaCtaProps> = ({ titulo, boton, mensaje }) => (
+export const BandaCta: React.FC<BandaCtaProps> = ({ titulo, boton, mensaje, paleta }) => (
   <section className="bg-[#F9A600] text-[#000000]">
     <div className={`${ANCHO} py-14 flex items-center justify-between gap-12 flex-wrap`}>
       <h2 className="text-[28px] md:text-[34px] leading-[1.15] font-bold max-w-[680px] text-pretty">
@@ -57,7 +58,7 @@ export const BandaCta: React.FC<BandaCtaProps> = ({ titulo, boton, mensaje }) =>
           href={whatsappLink(mensaje)}
           target="_blank"
           rel="noopener"
-          className="text-[17px] font-bold text-[#F9A600] bg-[#000000] px-7 py-4 text-center hover:bg-[#333333] transition-colors"
+          className={`text-[17px] font-bold text-[#F9A600] ${paleta.tinta} px-7 py-4 text-center transition-colors`}
         >
           {boton}
         </a>

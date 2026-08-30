@@ -19,11 +19,17 @@ import { PieSitio } from '../marca/PieSitio';
 import { useIdioma } from '../../i18n/idioma';
 import { textos } from '../../i18n/textos';
 import { paletaDe } from '../marca/paleta';
+import { useVarianteHome } from './useVariante';
 
 /**
- * Home, dirección «modo oscuro» (1a en la maqueta): portada negra a página
- * completa, cifras sobre banda ámbar, servicios en tarjetas y proceso
- * vertical.
+ * Home, dirección «modo oscuro» (1a en la maqueta): portada a página completa,
+ * cifras sobre banda ámbar, servicios en tarjetas y proceso vertical.
+ *
+ * Pinta también la dirección «azul» (1c), que es exactamente esta retícula con
+ * el negro sustituido por azul marino: las superficies oscuras salen de
+ * `paletaDe(variante)` en vez de estar escritas aquí. Las superficies claras
+ * —tarjetas de servicio, banda ámbar, proceso— son idénticas en ambas y sí van
+ * literales.
  *
  * Como el resto de pantallas del proyecto, es autocontenida: trae su propia
  * cabecera y su propio pie.
@@ -34,6 +40,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
   openDiagnosticModal,
 }) => {
   const idioma = useIdioma();
+  const paleta = paletaDe(useVarianteHome());
   const cifrasGuardadas = useCifras();
   const t = textos(idioma);
   const c = contenidoHome(idioma);
@@ -41,7 +48,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
   return (
     <div className="bg-[#FAFAFA] text-[#000000] font-marca">
     {/* cabecera */}
-    <header className="bg-[#000000] text-[#FAFAFA]">
+    <header className={`${paleta.fondo} ${paleta.texto}`}>
       <div className="max-w-[1240px] mx-auto px-6 md:px-12 min-h-[84px] py-4 flex items-center justify-between gap-8 flex-wrap">
         <LogoVelaNus tono="ambar" alto={44} conBajada />
 
@@ -77,7 +84,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
     </header>
 
     {/* portada */}
-    <section className="bg-[#000000] text-[#FAFAFA] relative overflow-hidden">
+    <section className={`${paleta.fondo} ${paleta.texto} relative overflow-hidden`}>
       {/* Anillos ámbar de la maqueta: decoración, invisible para lectores. */}
       <div aria-hidden className="pointer-events-none">
         <div className="absolute -right-[120px] -top-20 w-[520px] h-[520px] rounded-full border border-[#F9A600]/30" />
@@ -93,7 +100,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
           <h1 className="text-[38px] md:text-[62px] leading-[1.08] font-bold tracking-[-0.01em] text-pretty">
             {c.heroOscuro.titulo}
           </h1>
-          <p className="text-lg md:text-[21px] leading-[1.55] text-[#E8E7E4] max-w-[660px] text-pretty">
+          <p className={`text-lg md:text-[21px] leading-[1.55] ${paleta.textoFuerte} max-w-[660px] text-pretty`}>
             {c.heroOscuro.entradilla}
           </p>
           <div className="flex items-center gap-4 flex-wrap mt-2">
@@ -108,10 +115,10 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
             <Enlace
               destino={{ label: t.home.verServicios, pantalla: 'servicios-desktop' }}
               onNavigate={onNavigate}
-              className="text-[17px] text-[#FAFAFA] border border-[#6E6E6E] px-7 py-4 hover:border-[#F9A600] transition-colors"
+              className={`text-[17px] border px-7 py-4 transition-colors ${paleta.botonSecundario}`}
             />
           </div>
-          <p className="text-sm text-[#B9B7B2] mt-1.5">
+          <p className={`text-sm ${paleta.textoSuave} mt-1.5`}>
             {t.home.respuesta24h} · {CONTACT_TIMEZONE} · {CONTACT_EMAIL}
           </p>
         </div>
@@ -257,7 +264,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
     </section>
 
     {/* reseñas — BORRADOR: sin texto aprobado por los clientes */}
-    <section id="resenas" className="bg-[#000000] text-[#FAFAFA]">
+    <section id="resenas" className={`${paleta.fondo} ${paleta.texto}`}>
       <div className="max-w-[1240px] mx-auto px-6 md:px-12 py-20 lg:py-24">
         <div className="flex justify-between items-end gap-10 mb-11 flex-wrap">
           <div className="flex flex-col gap-3.5">
@@ -279,25 +286,25 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
           {c.resenas.map((resena) => (
             <div
               key={resena.procedencia}
-              className="border border-[#333333] p-8 flex flex-col gap-5"
+              className={`border ${paleta.borde} p-8 flex flex-col gap-5`}
             >
               <div className="flex gap-1" aria-hidden>
                 {Array.from({ length: 5 }).map((_, i) => (
                   <span key={i} className="w-3.5 h-3.5 bg-[#F9A600]" />
                 ))}
               </div>
-              <p className="text-lg leading-relaxed text-[#E8E7E4] italic">{resena.cita}</p>
+              <p className={`text-lg leading-relaxed ${paleta.textoFuerte} italic`}>{resena.cita}</p>
               <div className="flex items-center gap-3.5 mt-auto">
-                <div className="w-11 h-11 flex-none bg-[repeating-linear-gradient(135deg,#1C1C1C_0_6px,#232323_6px_12px)]" />
+                <div className={`w-11 h-11 flex-none ${paleta.avatar}`} />
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[15px] font-bold">{resena.autor}</span>
-                  <span className="text-[13px] text-[#B9B7B2]">{resena.procedencia}</span>
+                  <span className={`text-[13px] ${paleta.textoSuave}`}>{resena.procedencia}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <p className="mt-6 text-sm text-[#B9B7B2]">{c.avisoResenas}</p>
+        <p className={`mt-6 text-sm ${paleta.textoSuave}`}>{c.avisoResenas}</p>
       </div>
     </section>
 
@@ -353,12 +360,17 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
           </div>
         </div>
         <div className="bg-[#FAFAFA] p-9">
-          <FormularioContacto tono="claro" idPrefijo="oscuro-desktop" onNavigate={onNavigate} />
+          <FormularioContacto
+            tono="claro"
+            idPrefijo="oscuro-desktop"
+            onNavigate={onNavigate}
+            paleta={paleta}
+          />
         </div>
       </div>
     </section>
 
-    <PieSitio paleta={paletaDe('oscuro')} onNavigate={onNavigate} />
+    <PieSitio paleta={paleta} onNavigate={onNavigate} />
   </div>
   );
 };

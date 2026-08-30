@@ -3,6 +3,7 @@ import { NavigationProps } from '../types';
 import { HomeClaroMovil } from './home/HomeClaroMovil';
 import { HomeOscuroMovil } from './home/HomeOscuroMovil';
 import { useVarianteHome } from './home/useVariante';
+import { paletaDe } from './marca/paleta';
 
 /**
  * Home móvil.
@@ -10,16 +11,20 @@ import { useVarianteHome } from './home/useVariante';
  * No es la home de escritorio encogida: es la maqueta de 390 px, con sus
  * propios titulares y textos cortos, dibujada dentro de un marco de teléfono
  * para poder enseñarla desde el escritorio. Igual que la de escritorio, tiene
- * dos direcciones y aquí solo se elige cuál se pinta.
+ * tres direcciones y aquí solo se elige cuál se pinta; `azul` y `oscuro`
+ * comparten componente y se diferencian por la paleta.
  */
 export const HomeMovilScreen: React.FC<NavigationProps> = (props) => {
   const variante = useVarianteHome();
+  const paleta = paletaDe(variante);
 
   return (
     <div className="min-h-screen bg-[#DEDEDC] flex flex-col items-center py-4 sm:py-8">
       {/* Marco del teléfono: andamiaje de prototipo, no forma parte del sitio. */}
       <div className="w-full max-w-[420px] bg-[#FAFAFA] border border-[#B9B7B2] sm:rounded-[36px] shadow-2xl overflow-hidden">
-        <div className="bg-[#000000] px-6 py-2 flex items-center justify-between text-[11px] text-[#B9B7B2]">
+        <div
+          className={`${paleta.fondo} ${paleta.textoSuave} px-6 py-2 flex items-center justify-between text-[11px]`}
+        >
           <span>9:41</span>
           <span className="text-[10px] uppercase tracking-wider text-[#F9A600] font-bold">
             Vela Nus · vista móvil

@@ -34,12 +34,14 @@ export const PanelApariencia: React.FC<PanelAparienciaProps> = ({ onNavigate }) 
       <div className="flex flex-col gap-3">
         <h2 className="text-[26px] font-bold">Apariencia</h2>
         <p className="text-[17px] leading-relaxed text-[#4A4A4A]">
-          El sitio está implementado en las dos direcciones que entregó el diseño. Aquí se
-          elige cuál se pinta, en la home y en las páginas interiores.
+          El sitio está implementado en las tres direcciones que entregó el diseño. Aquí
+          se elige cuál se pinta, en la home y en las páginas interiores. El modo azul es
+          una <strong>propuesta</strong>: ese azul no está en el manual de identidad, sale
+          del fondo del logo.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
         {HOME_VARIANTS.map((variante) => {
           const esActiva = variante.id === activa;
 
@@ -61,14 +63,7 @@ export const PanelApariencia: React.FC<PanelAparienciaProps> = ({ onNavigate }) 
                   </span>
                 )}
               </div>
-              <span
-                className={`h-24 border ${
-                  variante.id === 'oscuro'
-                    ? 'bg-[#000000] border-[#000000]'
-                    : 'bg-[#FAFAFA] border-[#E4E4E4]'
-                } flex items-end p-3`}
-                aria-hidden
-              >
+              <span className={`h-24 border ${variante.muestra} flex items-end p-3`} aria-hidden>
                 <span className="w-16 h-2 bg-[#F9A600] block" />
               </span>
               <span className="text-base leading-relaxed text-[#4A4A4A]">
@@ -102,7 +97,8 @@ export const PanelApariencia: React.FC<PanelAparienciaProps> = ({ onNavigate }) 
         </code>
         <p className="text-base leading-relaxed text-[#4A4A4A]">
           También puede enseñar una variante añadiendo{' '}
-          <code className="font-mono text-[15px]">?tema=claro</code> o{' '}
+          <code className="font-mono text-[15px]">?tema=azul</code>,{' '}
+          <code className="font-mono text-[15px]">?tema=claro</code> u{' '}
           <code className="font-mono text-[15px]">?tema=oscuro</code> a cualquier URL.
         </p>
       </section>

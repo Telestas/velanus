@@ -22,12 +22,17 @@ import {
   pieFirma,
   pieLegal,
 } from './comunes';
+import { paletaDe } from '../marca/paleta';
+import { useVarianteHome } from './useVariante';
 
 /**
  * Home móvil, dirección «modo oscuro» (1a de la maqueta, columna de 390 px).
  *
  * No es la home de escritorio encogida: la maqueta trae titulares y textos más
  * cortos, por eso tira de las variantes `…Movil` del contenido.
+ *
+ * Pinta también la dirección «azul» (1c): mismo diseño con el negro sustituido
+ * por azul marino, así que las superficies oscuras salen de la paleta.
  */
 export const HomeOscuroMovil: React.FC<NavigationProps> = ({
   currentScreen,
@@ -35,6 +40,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
   openDiagnosticModal,
 }) => {
   const idioma = useIdioma();
+  const paleta = paletaDe(useVarianteHome());
   const cifrasGuardadas = useCifras();
   const t = textos(idioma);
   const c = contenidoHome(idioma);
@@ -43,7 +49,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
   return (
     <div className="bg-[#FAFAFA] text-[#000000] font-marca">
       {/* cabecera */}
-      <div className="bg-[#000000] text-[#FAFAFA] px-5 py-4 flex items-center justify-between">
+      <div className={`${paleta.fondo} ${paleta.texto} px-5 py-4 flex items-center justify-between`}>
         <LogoVelaNus tono="ambar" alto={32} />
         <div className="flex items-center gap-3">
           <button
@@ -59,8 +65,8 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
 
       {/* menú desplegable — contiene el xpath obligatorio //nav//a[contains(text(), 'Servicios')] */}
       <nav
-        className={`bg-[#000000] text-[#FAFAFA] overflow-hidden transition-all duration-300 ${
-          menuAbierto ? 'max-h-96 py-4 border-t border-[#333333]' : 'max-h-0 py-0'
+        className={`${paleta.fondo} ${paleta.texto} overflow-hidden transition-all duration-300 ${
+          menuAbierto ? `max-h-96 py-4 border-t ${paleta.borde}` : 'max-h-0 py-0'
         }`}
       >
         <div className="px-5 flex flex-col gap-3">
@@ -77,14 +83,14 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       </nav>
 
       {/* portada */}
-      <section className="bg-[#000000] text-[#FAFAFA] px-5 pt-10 pb-11 flex flex-col gap-5">
+      <section className={`${paleta.fondo} ${paleta.texto} px-5 pt-10 pb-11 flex flex-col gap-5`}>
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">
           {c.heroOscuro.antetituloMovil}
         </span>
         <h1 className="text-[33px] leading-[1.14] font-bold text-pretty">
           {c.heroOscuro.tituloMovil}
         </h1>
-        <p className="text-[17px] leading-[1.55] text-[#E8E7E4]">
+        <p className={`text-[17px] leading-[1.55] ${paleta.textoFuerte}`}>
           {c.heroOscuro.entradillaMovil}
         </p>
         <a
@@ -97,11 +103,11 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
         </a>
         <button
           onClick={openDiagnosticModal}
-          className="block text-center text-[17px] text-[#FAFAFA] border border-[#6E6E6E] py-4"
+          className={`block text-center text-[17px] border py-4 ${paleta.botonSecundario}`}
         >
           {t.nav.agendar}
         </button>
-        <p className="text-[13px] text-[#B9B7B2]">{t.home.respuesta24hCorto} · {CONTACT_TIMEZONE}</p>
+        <p className={`text-[13px] ${paleta.textoSuave}`}>{t.home.respuesta24hCorto} · {CONTACT_TIMEZONE}</p>
       </section>
 
       {/* cifras — BORRADOR: pendientes de confirmación */}
@@ -198,25 +204,25 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       </section>
 
       {/* reseñas — BORRADOR: sin texto aprobado */}
-      <section id="resenas" className="bg-[#000000] text-[#FAFAFA] px-5 py-12 flex flex-col gap-4">
+      <section id="resenas" className={`${paleta.fondo} ${paleta.texto} px-5 py-12 flex flex-col gap-4`}>
         <span className="text-[11px] tracking-[0.18em] uppercase text-[#F9A600]">
           {t.home.resenasEtiqueta}
         </span>
         <h2 className="text-[28px] leading-[1.18] font-bold mb-2">
           {t.home.resenasTitulo}
         </h2>
-        <div className="border border-[#333333] px-5 py-6 flex flex-col gap-3.5">
+        <div className={`border ${paleta.borde} px-5 py-6 flex flex-col gap-3.5`}>
           <div className="flex gap-1" aria-hidden>
             {Array.from({ length: 5 }).map((_, i) => (
               <span key={i} className="w-3 h-3 bg-[#F9A600]" />
             ))}
           </div>
-          <p className="text-base leading-relaxed text-[#E8E7E4] italic">{c.resenas[0].cita}</p>
+          <p className={`text-base leading-relaxed ${paleta.textoFuerte} italic`}>{c.resenas[0].cita}</p>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 flex-none bg-[repeating-linear-gradient(135deg,#1C1C1C_0_6px,#232323_6px_12px)]" />
+            <div className={`w-9 h-9 flex-none ${paleta.avatar}`} />
             <div className="flex flex-col">
               <span className="text-sm font-bold">{c.resenas[0].autor}</span>
-              <span className="text-xs text-[#B9B7B2]">{c.resenas[0].procedencia}</span>
+              <span className={`text-xs ${paleta.textoSuave}`}>{c.resenas[0].procedencia}</span>
             </div>
           </div>
         </div>
@@ -258,18 +264,23 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
       <section id="contacto" className="bg-[#F9A600] text-[#000000] px-5 py-11 flex flex-col gap-[18px]">
         <h2 className="text-[29px] leading-[1.15] font-bold text-pretty">{c.cta.titulo}</h2>
         <div className="bg-[#FAFAFA] px-5 py-6">
-          <FormularioContacto tono="claro" idPrefijo="oscuro-movil" onNavigate={onNavigate} />
+          <FormularioContacto
+            tono="claro"
+            idPrefijo="oscuro-movil"
+            onNavigate={onNavigate}
+            paleta={paleta}
+          />
         </div>
         <span className="text-[15px]">{t.formulario.alternativa(WHATSAPP_DISPLAY, CONTACT_EMAIL)}</span>
       </section>
 
       {/* pie — contiene el xpath obligatorio //footer//a[contains(text(), 'Servicios')] */}
-      <footer className="bg-[#000000] text-[#FAFAFA] px-5 pt-11 pb-8 flex flex-col gap-6">
+      <footer className={`${paleta.fondo} ${paleta.texto} px-5 pt-11 pb-8 flex flex-col gap-6`}>
         <LogoVelaNus tono="ambar" alto={32} />
 
         <div className="flex flex-col gap-2.5">
           <span className="text-[11px] tracking-[0.16em] uppercase text-[#F9A600]">Contacto</span>
-          <span className="text-[15px] text-[#B9B7B2] leading-relaxed">
+          <span className={`text-[15px] ${paleta.textoSuave} leading-relaxed`}>
             {CONTACT_ADDRESS_LINES[0]}
             <br />
             {CONTACT_ADDRESS_LINES[1]}
@@ -277,7 +288,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
           <span className="text-[15px]">
             {WHATSAPP_DISPLAY} · {CONTACT_EMAIL}
           </span>
-          <span className="text-sm text-[#B9B7B2] leading-normal">
+          <span className={`text-sm ${paleta.textoSuave} leading-normal`}>
             {CONTACT_SCHEDULE} · {CONTACT_TIMEZONE}
           </span>
         </div>
@@ -301,12 +312,12 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
               key={destino.label}
               destino={destino}
               onNavigate={onNavigate}
-              className="text-[15px] text-[#B9B7B2]"
+              className={`text-[15px] ${paleta.textoSuave}`}
             />
           ))}
         </div>
 
-        <span className="text-[13px] text-[#767676] border-t border-[#333333] pt-5">
+        <span className={`text-[13px] ${paleta.textoTenue} border-t ${paleta.borde} pt-5`}>
           {t.pie.derechos}
         </span>
       </footer>

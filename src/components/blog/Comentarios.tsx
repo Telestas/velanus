@@ -171,7 +171,7 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
               idioma={idioma}
               aceptado={acepta}
               onCambio={setAcepta}
-              oscuro={paleta.logo === 'ambar'}
+              paleta={paleta.logo === 'ambar' ? paleta : undefined}
             />
 
             {error && <p className={`text-sm ${paleta.acentoTexto}`}>{error}</p>}

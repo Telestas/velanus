@@ -376,7 +376,7 @@ export const ArticuloScreen: React.FC<NavigationProps> = ({
             </div>
             <button
               onClick={openDiagnosticModal}
-              className="text-base font-bold text-[#F9A600] bg-[#000000] px-6 py-4 flex-none hover:bg-[#333333] transition-colors"
+              className={`text-base font-bold text-[#F9A600] ${paleta.tinta} px-6 py-4 flex-none transition-colors`}
             >
               {t.nav.agendar}
             </button>

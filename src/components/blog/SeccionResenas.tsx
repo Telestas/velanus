@@ -278,7 +278,7 @@ const FormularioResena: React.FC<{ paleta: Paleta }> = ({ paleta }) => {
             idioma={idioma}
             aceptado={acepta}
             onCambio={setAcepta}
-            oscuro={paleta.logo === 'ambar'}
+            paleta={paleta.logo === 'ambar' ? paleta : undefined}
           />
 
           {error && <p className={`text-sm ${paleta.acentoTexto}`}>{error}</p>}

@@ -9,6 +9,7 @@ import {
 import { guardarConsulta } from '../../data/consultas';
 import { mensajeDeError } from '../../firebase';
 import { Idioma, useIdioma } from '../../i18n/idioma';
+import { Paleta, PALETA_NEGRA } from '../marca/paleta';
 import { textos } from '../../i18n/textos';
 
 /**
@@ -169,7 +170,11 @@ interface ConsentimientoProps {
   onCambio: (aceptado: boolean) => void;
   /** Para navegar a la política sin recargar; si falta, va como enlace normal. */
   onNavigate?: (target: ScreenId, transitionType?: 'push' | 'push_back') => void;
-  oscuro?: boolean;
+  /**
+   * Sobre fondo oscuro, la paleta que toca (negra o azul). Si falta, se pinta
+   * sobre claro.
+   */
+  paleta?: Paleta;
 }
 
 /**
@@ -185,7 +190,7 @@ export const Consentimiento: React.FC<ConsentimientoProps> = ({
   aceptado,
   onCambio,
   onNavigate,
-  oscuro = false,
+  paleta,
 }) => {
   const t = textos(idioma).formulario;
 
@@ -198,7 +203,7 @@ export const Consentimiento: React.FC<ConsentimientoProps> = ({
         onChange={(e) => onCambio(e.target.checked)}
         className="w-5 h-5 mt-0.5 flex-none accent-[#F9A600]"
       />
-      <span className={`text-sm leading-[1.55] ${oscuro ? 'text-[#B9B7B2]' : 'text-[#4A4A4A]'}`}>
+      <span className={`text-sm leading-[1.55] ${paleta ? paleta.textoSuave : 'text-[#4A4A4A]'}`}>
         {t.consentimiento}{' '}
         <a
           href={pathForScreen('privacidad')}
@@ -208,7 +213,7 @@ export const Consentimiento: React.FC<ConsentimientoProps> = ({
             onNavigate('privacidad');
           }}
           className={`font-bold underline underline-offset-2 ${
-            oscuro ? 'text-[#F9A600]' : 'text-[#8A5800]'
+            paleta ? paleta.acentoTexto : 'text-[#8A5800]'
           }`}
         >
           {t.consentimientoEnlace}
@@ -230,6 +235,8 @@ interface FormularioProps {
   tono: 'claro' | 'oscuro';
   /** Sufijo para los id de los campos; hay varios formularios por sitio. */
   idPrefijo: string;
+  /** De dónde sale el relleno oscuro del botón de envío. Por defecto, negro. */
+  paleta?: Paleta;
   onNavigate?: (target: ScreenId, transitionType?: 'push' | 'push_back') => void;
 }
 
@@ -245,6 +252,7 @@ export const FormularioContacto: React.FC<FormularioProps> = ({
   tono,
   idPrefijo,
   onNavigate,
+  paleta = PALETA_NEGRA,
 }) => {
   const idioma = useIdioma();
   const t = textos(idioma).formulario;
@@ -390,7 +398,7 @@ export const FormularioContacto: React.FC<FormularioProps> = ({
         aceptado={acepta}
         onCambio={setAcepta}
         onNavigate={onNavigate}
-        oscuro={oscuro}
+        paleta={oscuro ? PALETA_NEGRA : undefined}
       />
 
       {error && (
@@ -401,7 +409,7 @@ export const FormularioContacto: React.FC<FormularioProps> = ({
         type="submit"
         disabled={enviando}
         className={`py-4 text-[17px] font-bold transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed ${
-          oscuro ? 'bg-[#F9A600] text-[#000000]' : 'bg-[#000000] text-[#F9A600]'
+          oscuro ? 'bg-[#F9A600] text-[#000000]' : `${paleta.tinta} text-[#F9A600]`
         }`}
       >
         {enviando ? t.enviando : t.enviar}

@@ -23,14 +23,14 @@ interface PieProps {
  *
  * Las maquetas de Servicios y Nosotros lo describen como «pie de página
  * idéntico al de la home», así que es literalmente el mismo componente: en
- * tono oscuro va sobre negro con el logo ámbar, y en claro sobre #F1F1F0 con
- * el logo negro.
+ * tono oscuro va sobre el fondo de la paleta (negro o azul marino) con el logo
+ * ámbar, y en claro sobre #F1F1F0 con el logo negro.
  */
 export const PieSitio: React.FC<PieProps> = ({ paleta, onNavigate }) => {
   const idioma = useIdioma();
   const t = textos(idioma).pie;
   const oscuro = paleta.logo === 'ambar';
-  const fondo = oscuro ? 'bg-[#000000] text-[#FAFAFA]' : 'bg-[#F1F1F0] text-[#000000]';
+  const fondo = oscuro ? `${paleta.fondo} ${paleta.texto}` : 'bg-[#F1F1F0] text-[#000000]';
   const enlace = `text-[15px] ${paleta.textoSuave} ${paleta.acentoHover} transition-colors`;
 
   return (

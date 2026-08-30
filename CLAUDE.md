@@ -45,12 +45,17 @@ textos cortos que trae la maqueta de 390 px.
 Nosotros— usan `src/components/marca/`: `CabeceraSitio`, `PieSitio` y las
 piezas de `piezas.tsx` (miga de pan, banda CTA, titulares de sección).
 
-### Tono: una retícula, dos paletas
+### Tono: una retícula, tres paletas
 
-Servicios y Nosotros son en la maqueta la misma retícula pintada con dos
+Servicios y Nosotros son en la maqueta la misma retícula pintada con distintas
 paletas, así que se pintan **una vez** y reciben la paleta desde
 `src/components/marca/paleta.ts` (`paletaDe(variante)`). Cambiar un color es
-cambiarlo ahí, no en cada pantalla.
+cambiarlo ahí, no en cada pantalla. Desde que existe el tono azul, la home
+oscura hace lo mismo.
+
+`paleta.tinta` es aparte de `paleta.fondo` a propósito: es el relleno de los
+botones que van **sobre la banda ámbar**, y ahí el tono claro sigue queriendo
+negro aunque su fondo de página sea `#FAFAFA`.
 
 Ojo con Tailwind: las clases se descubren escaneando el código fuente, así que
 una clase compuesta en tiempo de ejecución (`` hover:${paleta.acentoTexto} ``)
@@ -62,29 +67,42 @@ sola plantilla —`servicios/LineaScreen.tsx`— con los datos de
 `src/content/servicios.ts`. Añadir una línea es añadir un objeto ahí, su
 `ScreenId` y su entrada en `SCREENS`.
 
-### La home tiene dos direcciones visuales
+### La home tiene tres direcciones visuales
 
-El diseño entregó dos direcciones completas para la home y las dos están
+El diseño entregó tres direcciones completas para la home y las tres están
 implementadas, en escritorio y en móvil:
 
 - `oscuro` (1a): portada negra a página completa, cifras sobre banda ámbar,
   servicios en tarjetas, proceso vertical.
 - `claro` (1b): portada clara y editorial con las cifras en panel negro,
   problemas sobre negro, servicios en filas, proceso horizontal.
+- `azul` (1c): **exactamente la retícula de 1a** con el negro sustituido por
+  azul marino `#0B1036`. Es la variante por defecto.
+
+Como 1c es 1a repintada, **no hay `HomeAzul*.tsx`**: la pintan
+`HomeOscuroDesktop` / `HomeOscuroMovil`, que sacan las superficies oscuras de
+`paletaDe(variante)` en vez de llevarlas escritas. Tocar un color del tema azul
+es tocar `AZUL` en `src/components/marca/paleta.ts`, nunca las pantallas. Ojo al
+añadir superficie oscura a esas dos pantallas: si se escribe `bg-[#000000]` a
+mano, se queda negra también en azul.
+
+El azul **no está en el manual de identidad** —sale del fondo del logo— y va
+marcado como propuesta en /admin hasta que el cliente lo apruebe.
 
 `HomeDesktopScreen` y `HomeMovilScreen` ya no pintan nada: solo eligen variante
 y delegan en `src/components/home/`. Cuál se pinta lo decide `src/theme.ts`, en
-este orden: `?tema=claro|oscuro` en la URL → lo elegido en /admin (localStorage
-de ese navegador) → `DEFAULT_HOME_VARIANT`.
+este orden: `?tema=azul|claro|oscuro` en la URL → lo elegido en /admin
+(localStorage de ese navegador) → `DEFAULT_HOME_VARIANT`.
 
 **Cambiar lo que ven todos los visitantes es cambiar `DEFAULT_HOME_VARIANT` y
-desplegar.** /admin no publica nada: el sitio es estático y no hay dónde
+desplegar** (y, si cambia el color de la portada, el `theme-color` de
+`index.html`). /admin no publica nada: el sitio es estático y no hay dónde
 guardar la elección; sirve para enseñar una u otra dirección. La propia pantalla
 lo dice, no quitar ese aviso.
 
 Los textos de la home viven en `src/content/home.ts`, no en el JSX: la misma
-home se pinta cuatro veces (dos direcciones × escritorio/móvil) y así no se
-desincronizan. Las variantes móviles usan los campos `…Movil`.
+home se pinta varias veces (tres direcciones × escritorio/móvil, con `azul` y
+`oscuro` compartiendo componente) y así no se desincronizan. Las variantes móviles usan los campos `…Movil`.
 
 ### Routing
 
@@ -158,7 +176,8 @@ pendiente que los 404 y las tarjetas sociales.
 ### Color, tipografía y SEO
 
 La paleta del manual es la única fuente de verdad y vive en `src/index.css`
-(`--vn-negro`, `--vn-ambar`, `--vn-ambar-texto`, `--vn-hueso`). Los antiguos
+(`--vn-negro`, `--vn-ambar`, `--vn-ambar-texto`, `--vn-hueso`). El azul marino del tema `azul` (`#0B1036` y derivados) es una **propuesta**
+fuera del manual, documentada en `paleta.ts`. Los antiguos
 `#0a0c0a` / `#f3ac20` eran del prototipo de AI Studio y solo quedan dentro de
 las pantallas todavía sin rediseñar (Casos, `SiteHeader`, `SiteFooter`,
 `DiagnosticModal`). No introducir colores nuevos fuera del manual.

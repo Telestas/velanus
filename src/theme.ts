@@ -1,14 +1,20 @@
 /**
  * Variante visual de la home.
  *
- * El diseño entregó dos direcciones completas para la misma home:
+ * El diseño entregó tres direcciones completas para la misma home:
  *
  * - `oscuro` (1a en la maqueta): portada negra a página completa, servicios en
  *   tarjetas, proceso vertical. Ancla de autoridad.
  * - `claro` (1b): portada clara y editorial con las cifras integradas,
  *   servicios en filas, proceso horizontal.
+ * - `azul` (1c): la retícula de 1a sobre azul marino #0B1036, el azul del
+ *   fondo del logo. Mismo sistema, base marina.
  *
- * Ambas están implementadas. Cuál se sirve se decide así, de más a menos
+ * `azul` y `oscuro` comparten componentes: son la misma maqueta con distinta
+ * paleta oscura, así que se pintan una vez y reciben el tono desde
+ * `src/components/marca/paleta.ts`.
+ *
+ * Las tres están implementadas. Cuál se sirve se decide así, de más a menos
  * prioridad:
  *
  * 1. `?tema=claro|oscuro` en la URL (para enseñar una u otra sin tocar nada).
@@ -20,23 +26,38 @@
  * visitantes hay que cambiar `DEFAULT_HOME_VARIANT` y desplegar.
  */
 
-export type HomeVariant = 'oscuro' | 'claro';
+export type HomeVariant = 'oscuro' | 'claro' | 'azul';
 
 /** La variante que ve cualquier visitante que no haya elegido otra cosa. */
-export const DEFAULT_HOME_VARIANT: HomeVariant = 'oscuro';
+export const DEFAULT_HOME_VARIANT: HomeVariant = 'azul';
 
-export const HOME_VARIANTS: { id: HomeVariant; label: string; description: string }[] = [
+export const HOME_VARIANTS: {
+  id: HomeVariant;
+  label: string;
+  description: string;
+  /** Clases de la muestra de color que enseña /admin. */
+  muestra: string;
+}[] = [
+  {
+    id: 'azul',
+    label: 'Modo azul',
+    description:
+      'La retícula del modo oscuro sobre azul marino #0B1036, el azul del fondo del logo. PROPUESTA: el azul no está en el manual de identidad.',
+    muestra: 'bg-[#0B1036] border-[#0B1036]',
+  },
   {
     id: 'oscuro',
     label: 'Modo oscuro',
     description:
       'Portada negra a página completa, cifras sobre banda ámbar, servicios en tarjetas y proceso vertical.',
+    muestra: 'bg-[#000000] border-[#000000]',
   },
   {
     id: 'claro',
     label: 'Modo claro',
     description:
       'Portada clara y editorial con las cifras en un panel negro, servicios en filas y proceso horizontal.',
+    muestra: 'bg-[#FAFAFA] border-[#E4E4E4]',
   },
 ];
 
@@ -46,7 +67,7 @@ const STORAGE_KEY = 'velanus:home-variant';
 const CHANGE_EVENT = 'velanus:home-variant-change';
 
 const isVariant = (value: unknown): value is HomeVariant =>
-  value === 'oscuro' || value === 'claro';
+  value === 'oscuro' || value === 'claro' || value === 'azul';
 
 /** Variante forzada por la URL, si la hay. */
 const variantFromQuery = (): HomeVariant | null => {
