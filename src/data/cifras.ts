@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { anosOperando } from '../config';
 import { Idioma } from '../i18n/idioma';
+import { tokenAppCheck } from '../firebase';
 
 /**
  * Cifras de escaparate que la firma edita desde el panel.
@@ -51,7 +52,10 @@ const CLAVES: (keyof Cifras)[] = ['entidades', 'clientes', 'paises', 'profesiona
  */
 export const leerCifras = async (): Promise<Cifras> => {
   try {
-    const respuesta = await fetch(RUTA);
+    const token = await tokenAppCheck();
+    const respuesta = await fetch(RUTA, {
+      headers: { 'X-Firebase-AppCheck': token },
+    });
     if (!respuesta.ok) return CIFRAS_VACIAS;
 
     const campos = (await respuesta.json())?.fields ?? {};
