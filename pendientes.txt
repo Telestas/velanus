@@ -1,18 +1,16 @@
 Revisión completa. Empiezo por lo que encontré comprobando, no leyendo.
 
 🟠 Importantes
-1. App Check está preparado pero aún no exigido. reCAPTCHA Enterprise está activo, la clave está limitada a velanus.com/www/localhost, la app está registrada y tanto el SDK como las llamadas REST ya envían el token. Falta autorización explícita para desplegar v0.2.2, comprobar el tráfico real y pasar Firestore e Identity Toolkit de UNENFORCED a ENFORCED; hacerlo antes del despliegue rompería formularios y acceso al panel.
+1. Ninguna cabecera de seguridad en producción: sin CSP, HSTS, X-Content-Type-Options, Referrer-Policy ni Permissions-Policy. La configuración —actualizada para App Check— está documentada en docs/cabeceras-seguridad.md. Wrangler ya tiene sesión y puede leer la zona, pero su OAuth solo concede `zone:read`: Cloudflare devuelve 403 al editar Rulesets y HSTS. Hace falta un API Token limitado a velanus.com con permisos Zone Settings:Edit y Transform Rules/Rulesets:Edit. (Lo bueno: HTTP ya redirige a HTTPS con 301.)
 
-2. Ninguna cabecera de seguridad en producción: sin CSP, HSTS, X-Content-Type-Options, Referrer-Policy ni Permissions-Policy. La configuración —actualizada para App Check— está documentada en docs/cabeceras-seguridad.md, pero Cloudflare CLI no tiene sesión ni hay token de API disponible. Hace falta ejecutar `wrangler login`; después se puede aplicar y verificar. (Lo bueno: HTTP ya redirige a HTTPS con 301.)
+2. Las rutas profundas del blog siguen devolviendo HTTP 404 aunque el listado público, los artículos y el formulario de comentarios ya están implementados. En navegación interna funcionan, pero una visita directa a /blog/{slug} recibe un 404 del hosting y no posiciona correctamente.
 
-3. Las rutas profundas del blog siguen devolviendo HTTP 404 aunque el listado público, los artículos y el formulario de comentarios ya están implementados. En navegación interna funcionan, pero una visita directa a /blog/{slug} recibe un 404 del hosting y no posiciona correctamente.
-
-4. No hay analítica de visitas activa en producción: no se carga el beacon de Cloudflare. El panel de /admin ya permite analizar las consultas recibidas, pero todavía no se puede saber cuántos visitantes entran ni de dónde vienen.
+3. No hay analítica de visitas activa en producción: no se carga el beacon de Cloudflare. El panel de /admin ya permite analizar las consultas recibidas, pero todavía no se puede saber cuántos visitantes entran ni de dónde vienen.
 
 🟡 Medias
-5. Marcadores [PENDIENTE] por todo el sitio en producción: las cuatro cifras de la home, tres reseñas, tres fichas de blog, todos los plazos de las cuatro subpáginas, ocho respuestas de FAQ, la historia de la firma, el equipo entero y las credenciales. Es honesto, pero un visitante ve un sitio a medio hacer.
+4. Marcadores [PENDIENTE] por todo el sitio en producción: las cuatro cifras de la home, tres reseñas, tres fichas de blog, todos los plazos de las cuatro subpáginas, ocho respuestas de FAQ, la historia de la firma, el equipo entero y las credenciales. Es honesto, pero un visitante ve un sitio a medio hacer.
 
-6. La cobertura de tests acaba de empezar: ya se comprueban el router —incluido el 404— y el documento que generan los formularios de contacto y diagnóstico, y CI los ejecuta antes de compilar. Faltan pruebas de integración con el emulador de Firestore, interacción real con los formularios, comentarios, reseñas y navegación en navegador.
+5. La cobertura de tests acaba de empezar: ya se comprueban el router —incluido el 404— y el documento que generan los formularios de contacto y diagnóstico, y CI los ejecuta antes de compilar. Faltan pruebas de integración con el emulador de Firestore, interacción real con los formularios, comentarios, reseñas y navegación en navegador.
 
 🟢 Menores
 Bundle inicial de unos 122 KB gzip. Para conexiones cubanas se puede adelgazar más.
@@ -21,10 +19,10 @@ El favicon es el logo apaisado de 2.584 px: en la pestaña se ve minúsculo y ap
 Sin monitorización: nadie avisa si el sitio se cae o si la cuota de Firestore se dispara.
 El admin no tiene segundo factor (Spark no lo ofrece): una contraseña es todo lo que separa a alguien del panel.
 Lo que yo haría, en este orden
-Ahora: autorizar el despliegue de v0.2.2 para terminar App Check e iniciar sesión en Cloudflare para aplicar las cabeceras.
+Ahora: crear un API Token de Cloudflare con permisos de edición de Zone Settings y Rulesets para aplicar las cabeceras.
 Después: mover el frontend a Firebase Hosting para resolver los 404 HTTP de las rutas profundas, las tarjetas sociales y el /en/ del idioma; activar la analítica.
 De esa lista puedo hacer ahora mismo, sin que hagas nada: ampliar los tests y arreglar el favicon.
 
-Necesitan una acción tuya: autorizar el despliegue v0.2.2 y ejecutar `wrangler login`. También queda decidir si movemos el hosting.
+Necesitan una acción tuya: crear el API Token de Cloudflare. También queda decidir si movemos el hosting.
 
 ¿Por dónde empiezo?

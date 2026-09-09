@@ -274,7 +274,10 @@ Límites del plan Spark que condicionan el diseño:
   Los comentarios se validan por forma (sesión anónima obligatoria, campos
   exactos, longitudes) y se moderan a posteriori desde el panel. App Check usa
   reCAPTCHA Enterprise: el proveedor ya está configurado y el cliente manda
-  tokens; no activar `ENFORCED` hasta desplegar y comprobar esa versión.
+  tokens. Firestore e Identity Toolkit están en `ENFORCED`; en Spark,
+  Authentication todavía permite crear una sesión anónima sin acreditación,
+  pero esa sesión no puede leer ni escribir Firestore sin un token App Check
+  válido.
 - **Cloud Storage pide facturación**, así que las imágenes de los artículos van
   en el repo o en un servicio externo, no en Firebase.
 - Si algún día hace falta código en servidor, el hueco gratis es Cloudflare
