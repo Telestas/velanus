@@ -1,4 +1,5 @@
 import type { FirebaseApp } from 'firebase/app';
+import type { AppCheck } from 'firebase/app-check';
 import type { Auth } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 
@@ -23,7 +24,11 @@ const CONFIG = {
   appId: '1:782711438062:web:1d78d4ef8c7185a58451ff',
 };
 
+/** Clave pública de reCAPTCHA Enterprise, restringida a los dominios del sitio. */
+const APP_CHECK_SITE_KEY = '6LcpD7MtAAAAADuTVH-5yRkhWkUHvYXBC5uaXMjL';
+
 let appPromesa: Promise<FirebaseApp> | null = null;
+let appCheckPromesa: Promise<AppCheck> | null = null;
 
 const app = async (): Promise<FirebaseApp> => {
   if (!appPromesa) {
@@ -35,12 +40,37 @@ const app = async (): Promise<FirebaseApp> => {
   return appPromesa;
 };
 
+/**
+ * Protege tanto el SDK como las llamadas REST públicas. La renovación
+ * automática evita que una pestaña abierta más de una hora pierda acceso.
+ */
+const appCheck = async (): Promise<AppCheck> => {
+  if (!appCheckPromesa) {
+    appCheckPromesa = Promise.all([app(), import('firebase/app-check')]).then(
+      ([aplicacion, { initializeAppCheck, ReCaptchaEnterpriseProvider }]) =>
+        initializeAppCheck(aplicacion, {
+          provider: new ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY),
+          isTokenAutoRefreshEnabled: true,
+        }),
+    );
+  }
+  return appCheckPromesa;
+};
+
+/** Token para las llamadas que deliberadamente no usan el SDK de Firestore. */
+export const tokenAppCheck = async (forzar = false): Promise<string> => {
+  const { getToken } = await import('firebase/app-check');
+  return (await getToken(await appCheck(), forzar)).token;
+};
+
 export const db = async (): Promise<Firestore> => {
+  await appCheck();
   const { getFirestore } = await import('firebase/firestore');
   return getFirestore(await app());
 };
 
 export const auth = async (): Promise<Auth> => {
+  await appCheck();
   const { getAuth } = await import('firebase/auth');
   return getAuth(await app());
 };

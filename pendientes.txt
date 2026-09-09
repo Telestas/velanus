@@ -1,24 +1,18 @@
 Revisión completa. Empiezo por lo que encontré comprobando, no leyendo.
 
 🟠 Importantes
-1. App Check sigue sin exigirse. Confirmado por API: UNENFORCED en Firestore y en Identity Toolkit. Cualquiera puede abrir la consola del navegador y escribir consultas o comentarios; con 20.000 escrituras/día de cuota, un bot te deja el sitio sin base de datos y el panel inservible.
+1. App Check está preparado pero aún no exigido. reCAPTCHA Enterprise está activo, la clave está limitada a velanus.com/www/localhost, la app está registrada y tanto el SDK como las llamadas REST ya envían el token. Falta autorización explícita para desplegar v0.2.2, comprobar el tráfico real y pasar Firestore e Identity Toolkit de UNENFORCED a ENFORCED; hacerlo antes del despliegue rompería formularios y acceso al panel.
 
-2. Ninguna cabecera de seguridad en producción: sin CSP, HSTS, X-Content-Type-Options, Referrer-Policy ni Permissions-Policy. La configuración está documentada en docs/cabeceras-seguridad.md, pero falta aplicarla en Cloudflare. Comprobado de nuevo el 9 de septiembre de 2026. (Lo bueno: HTTP ya redirige a HTTPS con 301.)
+2. Ninguna cabecera de seguridad en producción: sin CSP, HSTS, X-Content-Type-Options, Referrer-Policy ni Permissions-Policy. La configuración —actualizada para App Check— está documentada en docs/cabeceras-seguridad.md, pero Cloudflare CLI no tiene sesión ni hay token de API disponible. Hace falta ejecutar `wrangler login`; después se puede aplicar y verificar. (Lo bueno: HTTP ya redirige a HTTPS con 301.)
 
 3. Las rutas profundas del blog siguen devolviendo HTTP 404 aunque el listado público, los artículos y el formulario de comentarios ya están implementados. En navegación interna funcionan, pero una visita directa a /blog/{slug} recibe un 404 del hosting y no posiciona correctamente.
 
 4. No hay analítica de visitas activa en producción: no se carga el beacon de Cloudflare. El panel de /admin ya permite analizar las consultas recibidas, pero todavía no se puede saber cuántos visitantes entran ni de dónde vienen.
 
 🟡 Medias
-5. El modal de diagnóstico todavía usa el lenguaje visual antiguo verde/dorado con Playfair. Es el CTA principal del sitio: se abre desde una página con el manual de marca y aparece con la piel del prototipo.
+5. Marcadores [PENDIENTE] por todo el sitio en producción: las cuatro cifras de la home, tres reseñas, tres fichas de blog, todos los plazos de las cuatro subpáginas, ocho respuestas de FAQ, la historia de la firma, el equipo entero y las credenciales. Es honesto, pero un visitante ve un sitio a medio hacer.
 
-6. Accesibilidad: aún quedan campos con outline-none y sin focus-visible —quien navega con teclado no ve dónde está—, y varias pantallas rediseñadas no tienen <main> ni enlace de «saltar al contenido». Las transiciones ya respetan prefers-reduced-motion.
-
-7. Marcadores [PENDIENTE] por todo el sitio en producción: las cuatro cifras de la home, tres reseñas, tres fichas de blog, todos los plazos de las cuatro subpáginas, ocho respuestas de FAQ, la historia de la firma, el equipo entero y las credenciales. Es honesto, pero un visitante ve un sitio a medio hacer.
-
-8. Una URL desconocida abre la home en silencio (soft 404), sin decir que esa página no existe.
-
-9. La cobertura de tests acaba de empezar: ya se comprueban el router y el documento que generan los formularios de contacto y diagnóstico, y CI los ejecuta antes de compilar. Faltan pruebas de integración con el emulador de Firestore, interacción real con los formularios, comentarios, reseñas y navegación en navegador.
+6. La cobertura de tests acaba de empezar: ya se comprueban el router —incluido el 404— y el documento que generan los formularios de contacto y diagnóstico, y CI los ejecuta antes de compilar. Faltan pruebas de integración con el emulador de Firestore, interacción real con los formularios, comentarios, reseñas y navegación en navegador.
 
 🟢 Menores
 Bundle inicial de unos 122 KB gzip. Para conexiones cubanas se puede adelgazar más.
@@ -27,10 +21,10 @@ El favicon es el logo apaisado de 2.584 px: en la pestaña se ve minúsculo y ap
 Sin monitorización: nadie avisa si el sitio se cae o si la cuota de Firestore se dispara.
 El admin no tiene segundo factor (Spark no lo ofrece): una contraseña es todo lo que separa a alguien del panel.
 Lo que yo haría, en este orden
-Esta semana: App Check y cabeceras en Cloudflare.
-Después: mover el frontend a Firebase Hosting para resolver los 404, las tarjetas sociales y el /en/ del idioma; activar la analítica y unificar el estilo del modal.
-De esa lista puedo hacer ahora mismo, sin que hagas nada: ampliar los tests y arreglar el foco, <main> y el favicon.
+Ahora: autorizar el despliegue de v0.2.2 para terminar App Check e iniciar sesión en Cloudflare para aplicar las cabeceras.
+Después: mover el frontend a Firebase Hosting para resolver los 404 HTTP de las rutas profundas, las tarjetas sociales y el /en/ del idioma; activar la analítica.
+De esa lista puedo hacer ahora mismo, sin que hagas nada: ampliar los tests y arreglar el favicon.
 
-Necesitan decisión tuya: si movemos el hosting.
+Necesitan una acción tuya: autorizar el despliegue v0.2.2 y ejecutar `wrangler login`. También queda decidir si movemos el hosting.
 
 ¿Por dónde empiezo?

@@ -24,7 +24,7 @@ peticiones entrantes**, que añada (*Set static*) estas cinco cabeceras:
 ### Content-Security-Policy
 
 ```
-default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseappcheck.googleapis.com https://www.google.com/recaptcha/; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
 ```
 
 Por qué cada parte, para poder mantenerla:
@@ -32,8 +32,8 @@ Por qué cada parte, para poder mantenerla:
 - **`script-src`** — todo el JavaScript propio se sirve desde el propio
   dominio; no hay CDN. La única excepción es
   `https://static.cloudflareinsights.com`, el beacon de Cloudflare Web Analytics
-  (ver §3). El JSON-LD de `index.html` no es JavaScript ejecutable, así que no
-  lo bloquea.
+  (ver §3), y los scripts de reCAPTCHA Enterprise que usa Firebase App Check.
+  El JSON-LD de `index.html` no es JavaScript ejecutable, así que no lo bloquea.
 - **`style-src` con `'unsafe-inline'`** — React escribe dos atributos `style` en
   línea (la altura del logo). Sin esto, el logo se descoloca. Quitando esos dos
   casos se podría endurecer.
@@ -42,15 +42,18 @@ Por qué cada parte, para poder mantenerla:
   por URL desde el panel y pueden estar en un servicio externo, porque Cloud
   Storage exige facturación. Si algún día todas las imágenes viven en el repo,
   esto se puede reducir a `'self' data:`.
-- **`connect-src`** — los tres únicos hosts con los que habla el sitio:
+- **`connect-src`** — los hosts con los que habla el sitio:
   Firestore (contenido y formularios), Identity Toolkit (sesión anónima al
-  enviar algo y acceso al panel) y Secure Token (renovación de sesión del panel).
+  enviar algo y acceso al panel), Secure Token (renovación de sesión del panel)
+  y Firebase App Check/reCAPTCHA Enterprise (tokens contra abuso).
   La analítica **no** aparece aquí a propósito: con inyección automática el
   beacon manda las medidas a `/cdn-cgi/rum`, que es el mismo origen y lo cubre
   `'self'`. Si algún día se embebe el script a mano en `index.html`, pasa a
   mandarlas a `https://cloudflareinsights.com` y **hay que añadir ese host**.
 - **`frame-ancestors 'none'`** — nadie puede meter el sitio en un iframe.
   `X-Frame-Options: DENY` es lo mismo para navegadores antiguos.
+- **`frame-src`** — permite únicamente el marco invisible de reCAPTCHA
+  Enterprise que genera las acreditaciones de App Check.
 
 **Si se añade cualquier cosa externa** —analítica, un mapa, un vídeo incrustado,
 un tipo de letra de un CDN— hay que añadir su host aquí o dejará de cargar

@@ -12,6 +12,7 @@ export type ScreenId =
   | 'aviso-legal'
   | 'privacidad'
   | 'descargo'
+  | 'not-found'
   | 'admin';
 
 export interface NavigationProps {

@@ -22,7 +22,7 @@ import { ScreenId } from '../types';
  * a cada consulta para poder demostrar qué versión aceptó cada persona.
  */
 
-export const VERSION_AVISO = '2026-08-30';
+export const VERSION_AVISO = '2026-09-09';
 
 export interface Apartado {
   titulo: string;
@@ -113,6 +113,7 @@ const ES: ContenidoLegal = {
             '- Comentarios en el blog: nombre, correo electrónico y el texto del comentario. El correo no se publica: sirve para poder responderle.',
             '- Reseñas: nombre, país, servicio recibido, valoración y texto.',
             '- Al enviar cualquiera de esos formularios se crea una sesión anónima que asigna un identificador técnico. No lleva su nombre ni permite identificarle fuera de este sistema; sirve para atribuir cada envío y frenar abusos.',
+            '- Firebase App Check y reCAPTCHA Enterprise analizan señales técnicas de la visita para distinguir personas de tráfico automatizado y proteger los formularios y la base de datos frente a abusos.',
           ],
         },
         {
@@ -134,6 +135,7 @@ const ES: ContenidoLegal = {
           parrafos: [
             'Los datos se guardan en Cloud Firestore, un servicio de Google, en servidores situados en Estados Unidos (región us-east1). El acceso está restringido por reglas de seguridad: las consultas solo pueden leerlas las cuentas administradoras de la firma.',
             'Además intervienen, sin acceder al contenido de las consultas: Cloudflare, que gestiona el dominio y filtra el tráfico, y GitHub, que aloja los archivos del sitio. Ambos registran datos técnicos de conexión, como la dirección IP.',
+            'Google también presta Firebase App Check y reCAPTCHA Enterprise para prevenir fraude y abuso. Estos servicios reciben señales técnicas del navegador y de la conexión, pero no el contenido que usted escribe en los formularios.',
             'Si usted pulsa el botón de WhatsApp, la conversación pasa a ese servicio y se rige por las condiciones de Meta.',
             '[PENDIENTE — garantías que amparan la transferencia internacional de datos a Estados Unidos, si resulta aplicable el RGPD.]',
           ],
@@ -156,7 +158,7 @@ const ES: ContenidoLegal = {
         {
           titulo: 'Almacenamiento en su navegador',
           parrafos: [
-            'Este sitio no usa cookies: ni de análisis ni publicitarias. La medición de visitas descrita arriba funciona sin ellas. Guarda dos preferencias en el almacenamiento local de su navegador, únicamente para que la página funcione como usted espera:',
+            'Este sitio no usa cookies publicitarias ni de analítica. reCAPTCHA Enterprise puede usar almacenamiento técnico estrictamente necesario para proteger los formularios frente a abusos. Además, guardamos dos preferencias en el almacenamiento local de su navegador para que la página funcione como usted espera:',
             '- el idioma en el que prefiere leer el sitio,',
             '- y la variante visual elegida, si alguien la ha cambiado desde el panel de administración.',
             'Puede borrarlas en cualquier momento desde la configuración de su navegador. No se comparten con nadie.',
@@ -277,6 +279,7 @@ const EN: ContenidoLegal = {
             '- Blog comments: name, email and the comment text. The email is not published: it lets us reply to you.',
             '- Reviews: name, country, service received, rating and text.',
             '- Sending any of those forms creates an anonymous session with a technical identifier. It does not carry your name and cannot identify you outside this system; it attributes each submission and helps curb abuse.',
+            '- Firebase App Check and reCAPTCHA Enterprise analyse technical signals from the visit to distinguish people from automated traffic and protect forms and the database against abuse.',
           ],
         },
         {
@@ -298,6 +301,7 @@ const EN: ContenidoLegal = {
           parrafos: [
             'Data is stored in Cloud Firestore, a Google service, on servers located in the United States (region us-east1). Access is restricted by security rules: enquiries can only be read by the firm’s administrator accounts.',
             'Also involved, without access to the content of enquiries: Cloudflare, which manages the domain and filters traffic, and GitHub, which hosts the site files. Both log technical connection data such as the IP address.',
+            'Google also provides Firebase App Check and reCAPTCHA Enterprise to prevent fraud and abuse. These services receive technical browser and connection signals, but not the content you type into forms.',
             'If you press the WhatsApp button, the conversation moves to that service and is governed by Meta’s terms.',
             '[PENDING — safeguards covering the international transfer of data to the United States, if the GDPR applies.]',
           ],
@@ -320,7 +324,7 @@ const EN: ContenidoLegal = {
         {
           titulo: 'Storage in your browser',
           parrafos: [
-            'This site uses no cookies at all: neither analytics nor advertising. The visit measurement described above works without them. It stores two preferences in your browser’s local storage, solely so the page behaves as you expect:',
+            'This site uses no advertising or analytics cookies. reCAPTCHA Enterprise may use technical storage that is strictly necessary to protect forms against abuse. We also keep two preferences in your browser’s local storage so the page behaves as you expect:',
             '- the language you prefer to read the site in,',
             '- and the visual variant selected, if someone has changed it from the admin panel.',
             'You can clear them at any time from your browser settings. They are not shared with anyone.',

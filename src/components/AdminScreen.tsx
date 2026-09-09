@@ -112,7 +112,7 @@ export const AdminScreen: React.FC<NavigationProps> = ({ onNavigate }) => {
         </nav>
       </header>
 
-      <main className="max-w-[1100px] mx-auto px-6 md:px-10 py-12">
+      <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-12">
         {pestana === 'consultas' && <PanelConsultas />}
         {pestana === 'entradas' && <PanelEntradas />}
         {pestana === 'preguntas' && <PanelPreguntas />}
@@ -121,7 +121,7 @@ export const AdminScreen: React.FC<NavigationProps> = ({ onNavigate }) => {
         {pestana === 'cifras' && <PanelCifras />}
         {pestana === 'analitica' && <PanelAnalitica />}
         {pestana === 'apariencia' && <PanelApariencia onNavigate={onNavigate} />}
-      </main>
+      </div>
     </div>
   );
 };

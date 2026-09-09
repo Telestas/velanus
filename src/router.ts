@@ -25,6 +25,7 @@ const SCREEN_SLUGS: Record<ScreenId, string> = {
   'aviso-legal': 'aviso-legal',
   privacidad: 'privacidad',
   descargo: 'descargo',
+  'not-found': '404',
   admin: 'admin',
 };
 
@@ -36,7 +37,7 @@ export const pathForScreen = (screen: ScreenId, parametro?: string): string =>
     ? `${BASE}blog/${parametro}`
     : BASE + SCREEN_SLUGS[screen];
 
-/** Resuelve la pantalla a partir de la URL; si no coincide, cae en la home. */
+/** Resuelve la pantalla a partir de la URL; si no coincide, muestra un 404. */
 const slugDeRuta = (pathname: string): string =>
   pathname
     .slice(pathname.startsWith(BASE) ? BASE.length : 0)
@@ -52,7 +53,7 @@ export const screenForPath = (pathname: string): ScreenId => {
     (screen) => screen !== 'blog-articulo' && SCREEN_SLUGS[screen] === slug,
   );
 
-  return match ?? 'home-desktop';
+  return match ?? 'not-found';
 };
 
 /** Slug del artículo que pide la URL, si es que pide uno. */

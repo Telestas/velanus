@@ -259,7 +259,8 @@ GitHub Pages**; de Firebase se usan solo Firestore y Authentication.
   escribir desde el navegador**, ni siendo admin: se siembra con
   `node scripts/alta-admin.mjs correo@ejemplo.com`, que usa el token de
   `firebase login`. Así nadie se asciende a sí mismo.
-- Colecciones: `entradas` (blog), `preguntas` (FAQ), `comentarios`, `admins`.
+- Colecciones: `entradas` (blog), `preguntas` (FAQ), `comentarios`, `resenas`,
+  `consultas`, `sitio` y `admins`.
 - El SDK se carga con `import()` dinámico desde `src/firebase.ts`: pesa ~170 kB
   gzip y no debe caer en el bundle de la home. No importarlo de forma estática.
 - La configuración web de `src/firebase.ts` **no es secreta** (es pública por
@@ -270,9 +271,10 @@ Límites del plan Spark que condicionan el diseño:
 
 - **Cloud Functions exige Blaze.** No hay código en servidor: ni moderación
   automática de comentarios, ni límites de frecuencia, ni envío de correos.
-  Los comentarios se validan solo por forma (sesión anónima obligatoria, campos
-  exactos, longitudes) y se moderan a posteriori desde el panel. **App Check
-  está pendiente** y es la defensa que falta contra bots.
+  Los comentarios se validan por forma (sesión anónima obligatoria, campos
+  exactos, longitudes) y se moderan a posteriori desde el panel. App Check usa
+  reCAPTCHA Enterprise: el proveedor ya está configurado y el cliente manda
+  tokens; no activar `ENFORCED` hasta desplegar y comprobar esa versión.
 - **Cloud Storage pide facturación**, así que las imágenes de los artículos van
   en el repo o en un servicio externo, no en Firebase.
 - Si algún día hace falta código en servidor, el hueco gratis es Cloudflare

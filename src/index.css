@@ -26,6 +26,11 @@
     color: var(--vn-negro);
   }
 
+  :focus-visible {
+    outline: 3px solid var(--vn-ambar) !important;
+    outline-offset: 3px;
+  }
+
   h1, h2, h3, h4, .font-serif, .font-display {
     font-family: var(--font-playfair);
   }

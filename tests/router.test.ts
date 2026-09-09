@@ -17,7 +17,7 @@ test('resuelve artículos y conserva su slug', () => {
   assert.equal(articuloDeRuta('/blog/cambio-fiscal'), 'cambio-fiscal');
 });
 
-test('una ruta retirada o desconocida vuelve a la home', () => {
-  assert.equal(screenForPath('/casos'), 'home-desktop');
-  assert.equal(screenForPath('/no-existe'), 'home-desktop');
+test('una ruta retirada o desconocida muestra la pantalla 404', () => {
+  assert.equal(screenForPath('/casos'), 'not-found');
+  assert.equal(screenForPath('/no-existe'), 'not-found');
 });

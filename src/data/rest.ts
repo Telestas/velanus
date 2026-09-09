@@ -14,6 +14,8 @@
  * aplica exactamente como el SDK.
  */
 
+import { tokenAppCheck } from '../firebase';
+
 const PROYECTO = 'velanus-12056';
 const API_KEY = 'AIzaSyDIIF6UQ715FhV0_jRRILbAkwyaY41Hv_c';
 const BASE = `https://firestore.googleapis.com/v1/projects/${PROYECTO}/databases/(default)/documents`;
@@ -103,9 +105,13 @@ export const consultar = async ({
   };
 
   try {
+    const token = await tokenAppCheck();
     const respuesta = await fetch(`${BASE}:runQuery?key=${API_KEY}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Firebase-AppCheck': token,
+      },
       body: JSON.stringify({ structuredQuery }),
     });
     if (!respuesta.ok) return [];
@@ -125,11 +131,15 @@ export const consultar = async ({
  * cuando pulsa «enviar».
  */
 const sesionAnonima = async (): Promise<string> => {
+  const token = await tokenAppCheck();
   const respuesta = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Firebase-AppCheck': token,
+      },
       body: JSON.stringify({ returnSecureToken: true }),
     },
   );
@@ -145,6 +155,7 @@ export const crearDocumento = async (
   datos: (uid: string) => Record<string, unknown>,
 ): Promise<void> => {
   const { idToken, localId } = JSON.parse(await sesionAnonima());
+  const appCheckToken = await tokenAppCheck();
 
   const campos = Object.fromEntries(
     Object.entries(datos(localId)).map(([clave, valor]) => [clave, aCampo(valor)]),
@@ -155,6 +166,7 @@ export const crearDocumento = async (
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${idToken}`,
+      'X-Firebase-AppCheck': appCheckToken,
     },
     body: JSON.stringify({ fields: campos }),
   });

@@ -19,6 +19,7 @@ import { BlogScreen } from './components/blog/BlogScreen';
 import { pantallaLegal } from './components/LegalScreen';
 import { ArticuloScreen } from './components/blog/ArticuloScreen';
 import { DiagnosticModal } from './components/DiagnosticModal';
+import { NotFoundScreen } from './components/NotFoundScreen';
 
 const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   'home-desktop': HomeDesktopScreen,
@@ -35,6 +36,7 @@ const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   'aviso-legal': pantallaLegal('aviso-legal'),
   privacidad: pantallaLegal('privacidad'),
   descargo: pantallaLegal('descargo'),
+  'not-found': NotFoundScreen,
   admin: AdminScreen,
 };
 
@@ -123,14 +125,33 @@ export default function App() {
 
   const ActiveScreen = SCREENS[screen];
 
+  const saltarAlContenido = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const contenido = document.querySelector<HTMLElement>(
+      '.vn-route-view > * > :not(.vn-site-header)',
+    );
+    if (!contenido) return;
+    contenido.tabIndex = -1;
+    contenido.focus({ preventScroll: true });
+    contenido.scrollIntoView({ block: 'start' });
+  };
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-[#000000] flex flex-col font-sans selection:bg-[#F9A600] selection:text-[#000000]">
+      <a
+        href="#contenido-principal"
+        onClick={saltarAlContenido}
+        className="fixed left-4 top-4 z-[200] -translate-y-24 bg-[#F9A600] text-[#000000] px-4 py-3 font-bold focus:translate-y-0 transition-transform"
+      >
+        {idioma === 'en' ? 'Skip to content' : 'Saltar al contenido'}
+      </a>
+
       {mostrarBarraDePrototipo() && (
         <PrototypeController currentScreen={screen} onNavigate={handleNavigate} />
       )}
 
       {/* La cabecera no se anima: solo entran los bloques de contenido. */}
-      <div className="flex-grow relative overflow-x-hidden">
+      <main id="contenido-principal" tabIndex={-1} className="flex-grow relative overflow-x-hidden">
         <div key={`${screen}:${parametro ?? ''}`} className="vn-route-view w-full min-h-full">
           <ActiveScreen
             currentScreen={screen}
@@ -139,7 +160,7 @@ export default function App() {
             parametro={parametro}
           />
         </div>
-      </div>
+      </main>
 
       {/* Interactive Modal */}
       <DiagnosticModal

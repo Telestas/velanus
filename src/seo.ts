@@ -100,6 +100,10 @@ const ES: Record<ScreenId, Metadatos> = {
     descripcion:
       'El contenido de velanus.com es informativo y no constituye asesoría jurídica, contable ni fiscal.',
   },
+  'not-found': {
+    titulo: `Página no encontrada — ${TITULO_BASE}`,
+    descripcion: 'La dirección solicitada no existe en velanus.com.',
+  },
   // El panel no debe aparecer en buscadores; se marca con noindex.
   admin: {
     titulo: `Administración — ${TITULO_BASE}`,
@@ -172,6 +176,10 @@ const EN: Record<ScreenId, Metadatos> = {
     descripcion:
       'The content of velanus.com is informative and does not constitute legal, accounting or tax advice.',
   },
+  'not-found': {
+    titulo: `Page not found — ${TITULO_BASE}`,
+    descripcion: 'The requested address does not exist on velanus.com.',
+  },
   admin: {
     titulo: `Administration — ${TITULO_BASE}`,
     descripcion: '',
@@ -219,7 +227,11 @@ export const aplicarSeo = (
   if (typeof document === 'undefined') return;
 
   const { titulo, descripcion } = (idioma === 'en' ? EN : ES)[pantalla];
-  const url = `${DOMINIO}${pathForScreen(pantalla, parametro)}`;
+  const ruta =
+    pantalla === 'not-found' && typeof window !== 'undefined'
+      ? window.location.pathname
+      : pathForScreen(pantalla, parametro);
+  const url = `${DOMINIO}${ruta}`;
 
   document.title = titulo;
   meta('name', 'description', descripcion);
@@ -239,7 +251,7 @@ export const aplicarSeo = (
   meta('name', 'twitter:description', descripcion);
 
   // El panel de administración no pinta nada en un buscador.
-  const sinIndexar = pantalla === 'admin';
+  const sinIndexar = pantalla === 'admin' || pantalla === 'not-found';
   meta('name', 'robots', sinIndexar ? 'noindex, nofollow' : 'index, follow');
 };
 
