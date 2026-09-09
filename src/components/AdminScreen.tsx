@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavigationProps } from '../types';
 import { useSesion } from '../admin/useSesion';
 import { Acceso } from './admin/Acceso';
+import { PanelAnalitica } from './admin/PanelAnalitica';
 import { PanelApariencia } from './admin/PanelApariencia';
 import { PanelCifras } from './admin/PanelCifras';
 import { PanelComentarios } from './admin/PanelComentarios';
@@ -20,6 +21,7 @@ import { Boton } from './admin/piezas';
  * alguien se saltara este componente, sus escrituras seguirían rechazándose.
  */
 type Pestana =
+  | 'analitica'
   | 'apariencia'
   | 'cifras'
   | 'consultas'
@@ -35,6 +37,7 @@ const PESTANAS: { id: Pestana; label: string }[] = [
   { id: 'comentarios', label: 'Comentarios' },
   { id: 'resenas', label: 'Reseñas' },
   { id: 'cifras', label: 'Cifras' },
+  { id: 'analitica', label: 'Analítica' },
   { id: 'apariencia', label: 'Apariencia' },
 ];
 
@@ -75,7 +78,7 @@ export const AdminScreen: React.FC<NavigationProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-[#000000] font-marca">
-      <header className="border-b border-[#E4E4E4]">
+      <header className="vn-site-header border-b border-[#E4E4E4]">
         <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-6 flex items-center justify-between gap-6 flex-wrap">
           <div className="flex flex-col gap-1">
             <span className="text-[13px] tracking-[0.2em] uppercase text-[#8A5800]">
@@ -116,6 +119,7 @@ export const AdminScreen: React.FC<NavigationProps> = ({ onNavigate }) => {
         {pestana === 'comentarios' && <PanelComentarios />}
         {pestana === 'resenas' && <PanelResenas />}
         {pestana === 'cifras' && <PanelCifras />}
+        {pestana === 'analitica' && <PanelAnalitica />}
         {pestana === 'apariencia' && <PanelApariencia onNavigate={onNavigate} />}
       </main>
     </div>

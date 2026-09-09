@@ -25,7 +25,6 @@ const TABS: ScreenTab[] = [
   { id: 'servicios-tramites', label: 'Servicio C', icon: Monitor, title: 'Servicios: trámites y visas' },
   { id: 'servicios-eventos', label: 'Servicio D', icon: Monitor, title: 'Servicios: eventos y capacitación' },
   { id: 'nosotros-desktop', label: 'Nosotros', icon: Monitor, title: 'Pantalla 4: Nosotros Desktop' },
-  { id: 'casos-desktop', label: 'Casos', icon: Monitor, title: 'Pantalla 5: Casos Desktop' },
   { id: 'admin', label: 'Admin', icon: SlidersHorizontal, title: 'Administración: apariencia de la home' },
 ];
 

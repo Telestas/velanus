@@ -32,6 +32,32 @@ export interface Consulta {
 export type ConsultaNueva = Omit<Consulta, 'id' | 'creado' | 'atendida' | 'avisoVersion'>;
 
 /**
+ * Construye exactamente el documento que se enviará a Firestore. Mantener esta
+ * parte pura permite comprobar el contrato del formulario sin escribir datos
+ * reales durante los tests.
+ */
+export const prepararConsulta = (
+  consulta: ConsultaNueva,
+  creado: unknown,
+): Record<string, unknown> => {
+  const datos: Record<string, unknown> = {
+    nombre: consulta.nombre.trim(),
+    origen: consulta.origen,
+    atendida: false,
+    consentimiento: true,
+    avisoVersion: VERSION_AVISO,
+    creado,
+  };
+
+  for (const clave of ['empresa', 'telefono', 'correo', 'servicio', 'pais', 'mensaje'] as const) {
+    const valor = consulta[clave]?.trim();
+    if (valor) datos[clave] = valor.slice(0, 2000);
+  }
+
+  return datos;
+};
+
+/**
  * Guarda una consulta.
  *
  * Firma con una sesión anónima si no hay ninguna: las reglas exigen estar
@@ -47,20 +73,7 @@ export const guardarConsulta = async (consulta: ConsultaNueva): Promise<void> =>
 
   // Firestore rechaza `undefined`, y las reglas solo aceptan las claves
   // declaradas: se envían únicamente los campos con contenido.
-  const datos: Record<string, unknown> = {
-    nombre: consulta.nombre.trim(),
-    origen: consulta.origen,
-    atendida: false,
-    // Qué versión de la política aceptó, no solo que aceptó algo.
-    consentimiento: true,
-    avisoVersion: VERSION_AVISO,
-    creado: serverTimestamp(),
-  };
-
-  for (const clave of ['empresa', 'telefono', 'correo', 'servicio', 'pais', 'mensaje'] as const) {
-    const valor = consulta[clave]?.trim();
-    if (valor) datos[clave] = valor.slice(0, 2000);
-  }
+  const datos = prepararConsulta(consulta, serverTimestamp());
 
   await addDoc(collection(await db(), 'consultas'), datos);
 };

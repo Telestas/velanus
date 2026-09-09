@@ -39,7 +39,7 @@ export const HomeClaroDesktop: React.FC<NavigationProps> = ({
   return (
     <div className="bg-[#FAFAFA] text-[#000000] font-marca">
     {/* cabecera: banda de servicio + navegación */}
-    <header className="bg-[#FAFAFA] border-b border-[#E4E4E4]">
+    <header className="vn-site-header bg-[#FAFAFA] border-b border-[#E4E4E4]">
       <div className="max-w-[1240px] mx-auto px-6 md:px-12 min-h-[52px] py-2 hidden md:flex items-center justify-between gap-6 text-[13px] text-[#4A4A4A] border-b border-[#EFEFED]">
         <span>La Habana, Cuba · {t.home.idiomaAviso}</span>
         <div className="flex items-center gap-6">
@@ -270,7 +270,7 @@ export const HomeClaroDesktop: React.FC<NavigationProps> = ({
           {t.home.resenasTituloClaro}
         </h2>
         <Enlace
-          destino={{ label: t.home.dejarResena, pantalla: 'casos-desktop' }}
+          destino={{ label: t.home.dejarResena, pantalla: 'blog', ancla: 'resenas' }}
           onNavigate={onNavigate}
           className="text-base font-bold border-b-2 border-[#F9A600] pb-1"
         />

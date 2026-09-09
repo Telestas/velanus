@@ -19,7 +19,6 @@ const SCREEN_SLUGS: Record<ScreenId, string> = {
   'servicios-tramites': 'servicios/tramites-y-visas',
   'servicios-eventos': 'servicios/eventos',
   'nosotros-desktop': 'nosotros',
-  'casos-desktop': 'casos',
   blog: 'blog',
   // La parte variable la añade `pathForScreen`; aquí solo consta el prefijo.
   'blog-articulo': 'blog',
@@ -30,7 +29,7 @@ const SCREEN_SLUGS: Record<ScreenId, string> = {
 };
 
 /** BASE_URL siempre trae barra final ('/velanus/' o '/'). */
-const BASE = import.meta.env.BASE_URL;
+const BASE = import.meta.env?.BASE_URL ?? '/';
 
 export const pathForScreen = (screen: ScreenId, parametro?: string): string =>
   screen === 'blog-articulo' && parametro
@@ -65,29 +64,3 @@ export const articuloDeRuta = (pathname: string): string | undefined => {
 /** Pantalla correspondiente a la URL actual del navegador. */
 export const currentScreen = (): ScreenId =>
   screenForPath(window.location.pathname);
-
-/** Orden lógico del sitio; solo se usa para animar hacia el lado correcto. */
-const SCREEN_ORDER: ScreenId[] = [
-  'home-desktop',
-  'home-movil',
-  'servicios-desktop',
-  'servicios-contabilidad',
-  'servicios-legal',
-  'servicios-tramites',
-  'servicios-eventos',
-  'nosotros-desktop',
-  'casos-desktop',
-  'blog',
-  'blog-articulo',
-  'aviso-legal',
-  'privacidad',
-  'descargo',
-  'admin',
-];
-
-/** Ir "hacia atrás" en el orden anima con push_back; hacia adelante, push. */
-export const directionTo = (
-  from: ScreenId,
-  to: ScreenId,
-): 'push' | 'push_back' =>
-  SCREEN_ORDER.indexOf(to) < SCREEN_ORDER.indexOf(from) ? 'push_back' : 'push';

@@ -33,16 +33,15 @@ conviene no romperlos sin motivo.
 
 Cada pantalla es un componente autocontenido que renderiza la página **entera**,
 cabecera y pie incluidos. `App.tsx` no aporta layout: solo resuelve qué pantalla
-toca, la anima con `motion` y monta `DiagnosticModal`. Todas reciben el mismo
+toca, anima únicamente el contenido inferior y monta `DiagnosticModal`. Todas reciben el mismo
 contrato `NavigationProps` (`currentScreen`, `onNavigate`, `openDiagnosticModal`).
 
 `home-movil` no es la versión responsive de `home-desktop`: es una maqueta
 aparte que dibuja un marco de teléfono con barra de estado simulada y usa los
 textos cortos que trae la maqueta de 390 px.
 
-`CasosDesktopScreen` es la única que sigue usando `SiteHeader` y `SiteFooter`
-(el lenguaje visual antiguo). Las pantallas rediseñadas —home, Servicios y
-Nosotros— usan `src/components/marca/`: `CabeceraSitio`, `PieSitio` y las
+Las pantallas rediseñadas —home, Servicios y Nosotros— usan
+`src/components/marca/`: `CabeceraSitio`, `PieSitio` y las
 piezas de `piezas.tsx` (miga de pan, banda CTA, titulares de sección).
 
 ### Tono: una retícula, tres paletas
@@ -108,18 +107,16 @@ home se pinta varias veces (tres direcciones × escritorio/móvil, con `azul` y
 
 `src/router.ts` es un router propio sobre la History API (no hay `react-router`).
 `ScreenId` en `src/types.ts` es la fuente de verdad; el router mapea cada id a un
-slug y `SCREEN_ORDER` decide solo hacia qué lado anima la transición.
+slug.
 
 **Añadir una pantalla exige tocar cinco sitios**, y TypeScript solo avisa de los
 dos primeros:
 
 1. `ScreenId` en `src/types.ts`
-2. `SCREEN_SLUGS` y `SCREEN_ORDER` en `src/router.ts`
+2. `SCREEN_SLUGS` en `src/router.ts`
 3. el mapa `SCREENS` en `src/App.tsx`
 4. `TABS` en `PrototypeController.tsx`
-5. `NAV_LINKS` / `FOOTER_LINKS` en `SiteHeader.tsx` / `SiteFooter.tsx`, si va en el
-   menú de las pantallas interiores, y `NAV_HOME` / `PIE_*` en
-   `src/components/home/comunes.tsx` si va en el de la home
+5. `navHome` / `pie*` en `src/components/home/comunes.tsx`, si va en el menú
 
 `admin` (la pantalla de apariencia) está a propósito fuera de los menús del
 sitio: solo se llega por /admin o por la barra de prototipo.
@@ -179,8 +176,7 @@ La paleta del manual es la única fuente de verdad y vive en `src/index.css`
 (`--vn-negro`, `--vn-ambar`, `--vn-ambar-texto`, `--vn-hueso`). El azul marino del tema `azul` (`#0B1036` y derivados) es una **propuesta**
 fuera del manual, documentada en `paleta.ts`. Los antiguos
 `#0a0c0a` / `#f3ac20` eran del prototipo de AI Studio y solo quedan dentro de
-las pantallas todavía sin rediseñar (Casos, `SiteHeader`, `SiteFooter`,
-`DiagnosticModal`). No introducir colores nuevos fuera del manual.
+`DiagnosticModal`. No introducir colores nuevos fuera del manual.
 
 Las fuentes están **autoalojadas** en `public/fonts` (Caladea, Inter y Playfair,
 subconjunto latino, 360 kB): desde Cuba, pedirlas a los CDN de Google añade dos
@@ -203,10 +199,7 @@ enlace compartido enseña la tarjeta de la home. Arreglarlo exige HTML por ruta
 ## Contenido
 
 El texto de las pantallas rediseñadas está en `src/content/`: `home.ts`,
-`servicios.ts` y `nosotros.ts`. El de `CasosDesktopScreen` sigue hardcodeado en
-el JSX; `ServiceItem` y `Testimonial` existen en
-`types.ts` pero no los usa nadie — si se externaliza ese contenido, ahí está el
-punto de partida.
+`servicios.ts` y `nosotros.ts`.
 
 Los datos de contacto están centralizados en `src/config.ts` (`WHATSAPP_NUMBER`,
 `whatsappLink()`, `mailtoLink()`, email, ciudad, dirección, horario). No volver a
@@ -224,22 +217,17 @@ Los logos están en `public/` y se referencian vía `import.meta.env.BASE_URL`.
 Es un prototipo en curso, no un sitio terminado. Al tocar estas zonas, tenerlo
 presente:
 
-- `NosotrosDesktopScreen` y `CasosDesktopScreen` son **borradores**: textos,
-  cifras y testimonios son inventados y están marcados como tales con avisos en
-  pantalla y comentarios `BORRADOR` en el código. No presentarlos como reales ni
-  quitar esos avisos sin que el cliente valide el contenido.
+- `NosotrosDesktopScreen` es un **borrador**: sus textos y cifras están marcados
+  como tales. No presentarlos como reales ni quitar esos avisos sin que el
+  cliente valide el contenido.
 - `PrototypeController` es andamiaje de desarrollo. En producción **no se
   monta**: solo sale en `npm run dev` o añadiendo `?proto=1` a la URL (para
   enseñar el prototipo al cliente). No quitar esa guarda de `App.tsx`.
-- El panel de /admin ya escribe en Firestore (artículos, preguntas y moderación
-  de comentarios), pero **el sitio público todavía no lee de ahí**: el blog de la
-  home sigue mostrando los marcadores de la maqueta y no existe la ruta
-  `/blog/{slug}` ni el formulario de comentarios. Es lo siguiente.
+- El panel de /admin escribe en Firestore y el blog público lee de ahí; existen
+  el listado, `/blog/{slug}`, comentarios y reseñas moderadas.
 - Home, Servicios (índice y cuatro subpáginas) y Nosotros están rediseñadas con
-  el manual de marca. **`CasosDesktopScreen`, `SiteHeader`, `SiteFooter` y
-  `DiagnosticModal` siguen con el lenguaje visual anterior** (verde/dorado,
-  Playfair). Entrar en Casos desde cualquier otra pantalla se nota. Es lo
-  siguiente.
+  el manual de marca. `DiagnosticModal` todavía conserva el lenguaje visual
+  anterior (verde/dorado, Playfair).
 - Las pantallas rediseñadas están llenas de marcadores que el cliente aún no ha
   rellenado y que **no hay que inventar**: cifras, reseñas y entradas del blog en
   la home; `[PLAZO PENDIENTE]` y varias respuestas de las FAQ en Servicios;

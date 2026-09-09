@@ -39,7 +39,7 @@ export const CabeceraSitio: React.FC<CabeceraProps> = ({
   const t = textos(idioma);
 
   return (
-    <header className={`${paleta.fondo} ${paleta.texto} ${borde ? `border-b ${paleta.borde}` : ''}`}>
+    <header className={`vn-site-header ${paleta.fondo} ${paleta.texto} ${borde ? `border-b ${paleta.borde}` : ''}`}>
       {banda && (
         <div
           className={`${ANCHO} min-h-[52px] py-2 hidden md:flex items-center justify-between gap-6 text-[13px] ${paleta.textoSuave} border-b ${paleta.borde}`}
@@ -88,4 +88,3 @@ export const CabeceraSitio: React.FC<CabeceraProps> = ({
     </header>
   );
 };
-

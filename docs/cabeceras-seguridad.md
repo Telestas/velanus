@@ -24,14 +24,16 @@ peticiones entrantes**, que añada (*Set static*) estas cinco cabeceras:
 ### Content-Security-Policy
 
 ```
-default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
 ```
 
 Por qué cada parte, para poder mantenerla:
 
-- **`script-src 'self'`** — todo el JavaScript se sirve desde el propio dominio.
-  No hay CDN ni etiquetas de terceros. El JSON-LD de `index.html` no es
-  JavaScript ejecutable, así que no lo bloquea.
+- **`script-src`** — todo el JavaScript propio se sirve desde el propio
+  dominio; no hay CDN. La única excepción es
+  `https://static.cloudflareinsights.com`, el beacon de Cloudflare Web Analytics
+  (ver §3). El JSON-LD de `index.html` no es JavaScript ejecutable, así que no
+  lo bloquea.
 - **`style-src` con `'unsafe-inline'`** — React escribe dos atributos `style` en
   línea (la altura del logo). Sin esto, el logo se descoloca. Quitando esos dos
   casos se podría endurecer.
@@ -43,6 +45,10 @@ Por qué cada parte, para poder mantenerla:
 - **`connect-src`** — los tres únicos hosts con los que habla el sitio:
   Firestore (contenido y formularios), Identity Toolkit (sesión anónima al
   enviar algo y acceso al panel) y Secure Token (renovación de sesión del panel).
+  La analítica **no** aparece aquí a propósito: con inyección automática el
+  beacon manda las medidas a `/cdn-cgi/rum`, que es el mismo origen y lo cubre
+  `'self'`. Si algún día se embebe el script a mano en `index.html`, pasa a
+  mandarlas a `https://cloudflareinsights.com` y **hay que añadir ese host**.
 - **`frame-ancestors 'none'`** — nadie puede meter el sitio en un iframe.
   `X-Frame-Options: DENY` es lo mismo para navegadores antiguos.
 
@@ -61,7 +67,30 @@ ya lo hubieran cargado no podrían entrar hasta que expire. Con el certificado d
 Cloudflare gestionado no es un riesgo real, pero por eso se deja `preload`
 desactivado hasta que el montaje lleve un tiempo estable.
 
-## 3. Comprobación
+## 3. Analítica (Cloudflare → Web Analytics)
+
+Se activa **desde el panel de Cloudflare, con inyección automática**, no desde
+el repositorio: así el beacon no entra en el bundle y se puede quitar sin
+desplegar. Es gratis, no usa cookies y no guarda la IP del visitante, por eso el
+sitio no necesita banner de consentimiento.
+
+Lo único que hay que tocar aquí es `script-src`, como se explica arriba.
+
+Sus límites, para no buscar en el panel lo que nunca va a estar: **no hay
+eventos personalizados ni embudos**, **no registra las query strings** (así que
+las campañas por UTM no se ven, aunque los *referrers* sí), muestrea el tráfico
+en periodos de más de 24 h y retiene 6 meses.
+
+La otra mitad del embudo —cuántas de esas visitas acaban en consulta— no sale de
+aquí: se calcula en la pestaña «Analítica» de /admin agregando la colección
+`consultas` de Firestore, que ya guarda `origen` y `creado` en cada envío.
+
+**Al activarlo hay que revisar la política de privacidad.** El texto de
+`src/content/legal.ts` describe esta medición y `VERSION_AVISO` se subió por
+ello; si se desactiva la analítica, hay que quitar esos párrafos y volver a
+subir la versión.
+
+## 4. Comprobación
 
 ```bash
 curl -sI https://velanus.com/ | grep -iE "content-security|x-content-type|referrer-policy|permissions-policy|x-frame|strict-transport"
@@ -74,6 +103,9 @@ Y después, **en un navegador**, con la consola abierta:
    hosts usa (Identity Toolkit y Secure Token) y donde primero se notaría un
    error en `connect-src`.
 3. Enviar el formulario de contacto desde la home.
+4. Si la analítica está activada, comprobar que `beacon.min.js` carga sin error
+   de CSP y que la visita aparece en el panel de Cloudflare. Es justo el tipo de
+   recurso externo que falla en silencio.
 
 Si algo falla, el error de la consola dice exactamente qué directiva lo bloqueó.
 Para revertir, basta con desactivar la regla en Cloudflare: no hay nada

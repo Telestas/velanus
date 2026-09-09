@@ -22,7 +22,7 @@ import { ScreenId } from '../types';
  * a cada consulta para poder demostrar qué versión aceptó cada persona.
  */
 
-export const VERSION_AVISO = '2026-08-25';
+export const VERSION_AVISO = '2026-08-30';
 
 export interface Apartado {
   titulo: string;
@@ -107,7 +107,8 @@ const ES: ContenidoLegal = {
         {
           titulo: 'Qué datos recogemos y para qué',
           parrafos: [
-            'Solo tratamos lo que usted nos escribe. No hay analítica, ni píxeles publicitarios, ni perfilado, ni cesión de datos con fines comerciales.',
+            'Solo tratamos lo que usted nos escribe. No hay píxeles publicitarios, ni perfilado, ni cesión de datos con fines comerciales.',
+            '- Medición de visitas: usamos Cloudflare Web Analytics, que cuenta las visitas de forma agregada y sin cookies. No guarda su dirección IP, no crea ningún identificador que le siga entre sitios ni entre visitas, y no permite reconocerle. Solo nos dice cuántas personas entran, a qué páginas y desde qué país y sitio llegan.',
             '- Formularios de consulta y de diagnóstico: nombre, empresa, teléfono, correo electrónico, país desde el que opera y el mensaje que escriba. Se usan para responder a su consulta y, si llega a serlo, para gestionar la relación como cliente.',
             '- Comentarios en el blog: nombre, correo electrónico y el texto del comentario. El correo no se publica: sirve para poder responderle.',
             '- Reseñas: nombre, país, servicio recibido, valoración y texto.',
@@ -155,7 +156,7 @@ const ES: ContenidoLegal = {
         {
           titulo: 'Almacenamiento en su navegador',
           parrafos: [
-            'Este sitio no usa cookies de análisis ni publicitarias. Guarda dos preferencias en el almacenamiento local de su navegador, únicamente para que la página funcione como usted espera:',
+            'Este sitio no usa cookies: ni de análisis ni publicitarias. La medición de visitas descrita arriba funciona sin ellas. Guarda dos preferencias en el almacenamiento local de su navegador, únicamente para que la página funcione como usted espera:',
             '- el idioma en el que prefiere leer el sitio,',
             '- y la variante visual elegida, si alguien la ha cambiado desde el panel de administración.',
             'Puede borrarlas en cualquier momento desde la configuración de su navegador. No se comparten con nadie.',
@@ -270,7 +271,8 @@ const EN: ContenidoLegal = {
         {
           titulo: 'What we collect and what for',
           parrafos: [
-            'We only process what you write to us. There is no analytics, no advertising pixels, no profiling and no sharing of data for commercial purposes.',
+            'We only process what you write to us. There are no advertising pixels, no profiling and no sharing of data for commercial purposes.',
+            '- Visit measurement: we use Cloudflare Web Analytics, which counts visits in aggregate and without cookies. It does not store your IP address, does not create any identifier that follows you across sites or across visits, and cannot recognise you. It only tells us how many people arrive, which pages they read, and which country and site they come from.',
             '- Enquiry and assessment forms: name, company, phone, email, the country you operate from, and the message you write. Used to answer your enquiry and, if it becomes one, to manage the client relationship.',
             '- Blog comments: name, email and the comment text. The email is not published: it lets us reply to you.',
             '- Reviews: name, country, service received, rating and text.',
@@ -318,7 +320,7 @@ const EN: ContenidoLegal = {
         {
           titulo: 'Storage in your browser',
           parrafos: [
-            'This site uses no analytics or advertising cookies. It stores two preferences in your browser’s local storage, solely so the page behaves as you expect:',
+            'This site uses no cookies at all: neither analytics nor advertising. The visit measurement described above works without them. It stores two preferences in your browser’s local storage, solely so the page behaves as you expect:',
             '- the language you prefer to read the site in,',
             '- and the visual variant selected, if someone has changed it from the admin panel.',
             'You can clear them at any time from your browser settings. They are not shared with anyone.',

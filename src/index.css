@@ -58,3 +58,22 @@
   -webkit-text-fill-color: transparent;
 }
 
+/*
+ * Al cambiar de ruta, la cabecera conserva su posición y solo entra el
+ * contenido inferior. No se usa opacidad para evitar el destello blanco que
+ * producía la transición de pantalla completa.
+ */
+@keyframes vn-content-enter {
+  from { transform: translateY(10px); }
+  to { transform: translateY(0); }
+}
+
+.vn-route-view > * > :not(.vn-site-header) {
+  animation: vn-content-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-route-view > * > :not(.vn-site-header) {
+    animation: none;
+  }
+}

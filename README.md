@@ -19,10 +19,20 @@ npm run dev      # http://localhost:3000
 Otros comandos:
 
 - `npm run lint` — typecheck con `tsc --noEmit`
+- `npm test` — pruebas automáticas de rutas y formularios
 - `npm run build` — build de producción en `dist/`
 - `npm run preview` — sirve el build local
+- `npm run backup` — copia las colecciones de Firestore a `backups/`
 
 No hace falta ningún archivo `.env`: el proyecto no usa variables de entorno.
+
+La copia de Firestore requiere haber ejecutado `firebase login`. Los archivos
+generados pueden contener datos personales, se crean con permisos `0600` y la
+carpeta `backups/` está excluida de Git. Para elegir otra ubicación:
+
+```bash
+npm run backup -- --output /ruta/segura/velanus-firestore.json
+```
 
 ## Rutas
 
@@ -35,7 +45,6 @@ History API ([`src/router.ts`](src/router.ts)):
 | `/movil` | Home (maqueta móvil) |
 | `/servicios` | Servicios |
 | `/nosotros` | Nosotros — *borrador* |
-| `/casos` | Casos de éxito — *borrador* |
 
 En producción cuelgan de `/velanus/`. El build copia `index.html` a `404.html`
 para que Pages sirva la SPA al entrar directo a una ruta o recargarla.
@@ -51,8 +60,8 @@ subpath. Si se configura un dominio propio, hay que cambiarlo a `/` en
 
 ## Pendiente antes de considerarlo producción
 
-- Las páginas Nosotros y Casos son borradores: textos, cifras y testimonios son
-  de ejemplo y hay que validarlos con el cliente antes de publicar.
+- La página Nosotros todavía contiene textos y cifras que hay que validar con
+  el cliente antes de publicar.
 - La barra `PrototypeController` es andamiaje de prototipo y sigue visible.
 - Las imágenes apuntan a URLs temporales de AI Studio; conviene bajarlas al repo.
 - El formulario de diagnóstico no envía datos a ningún sitio.

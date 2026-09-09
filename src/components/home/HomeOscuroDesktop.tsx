@@ -48,7 +48,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
   return (
     <div className="bg-[#FAFAFA] text-[#000000] font-marca">
     {/* cabecera */}
-    <header className={`${paleta.fondo} ${paleta.texto}`}>
+    <header className={`vn-site-header ${paleta.fondo} ${paleta.texto}`}>
       <div className="max-w-[1240px] mx-auto px-6 md:px-12 min-h-[84px] py-4 flex items-center justify-between gap-8 flex-wrap">
         <LogoVelaNus tono="ambar" alto={44} conBajada />
 
@@ -276,7 +276,7 @@ export const HomeOscuroDesktop: React.FC<NavigationProps> = ({
             </h2>
           </div>
           <Enlace
-            destino={{ label: `${t.home.dejarResena} →`, pantalla: 'casos-desktop' }}
+            destino={{ label: `${t.home.dejarResena} →`, pantalla: 'blog', ancla: 'resenas' }}
             onNavigate={onNavigate}
             className="text-base font-bold text-[#F9A600]"
           />

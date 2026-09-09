@@ -140,8 +140,39 @@ export const Enlace: React.FC<EnlaceProps> = ({
   }
 
   if (destino.ancla) {
+    const pantalla = destino.pantalla ?? 'home-desktop';
+    const href = `${pathForScreen(pantalla)}#${destino.ancla}`;
+
     return (
-      <a href={`#${destino.ancla}`} className={className}>
+      <a
+        href={href}
+        className={className}
+        onClick={(e) => {
+          // Los clics modificados conservan el comportamiento nativo del enlace.
+          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+          e.preventDefault();
+          const elemento = document.getElementById(destino.ancla!);
+
+          if (elemento) {
+            window.history.pushState({}, '', href);
+            const reducirMovimiento = window.matchMedia(
+              '(prefers-reduced-motion: reduce)',
+            ).matches;
+            elemento.scrollIntoView({
+              behavior: reducirMovimiento ? 'auto' : 'smooth',
+              block: 'start',
+            });
+            return;
+          }
+
+          // Desde una vista interior, primero montamos la home. `onNavigate`
+          // actualiza el historial de forma síncrona y después añadimos el hash;
+          // App esperará a que la sección exista para hacer el desplazamiento.
+          onNavigate(pantalla, 'push_back');
+          window.history.replaceState(window.history.state, '', href);
+        }}
+      >
         {destino.label}
       </a>
     );

@@ -4,7 +4,6 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { NavigationProps, ScreenId } from './types';
 import { articuloDeRuta, currentScreen, pathForScreen } from './router';
 import { aplicarSeo } from './seo';
@@ -14,7 +13,6 @@ import { HomeDesktopScreen } from './components/HomeDesktopScreen';
 import { HomeMovilScreen } from './components/HomeMovilScreen';
 import { ServiciosDesktopScreen } from './components/ServiciosDesktopScreen';
 import { NosotrosDesktopScreen } from './components/NosotrosDesktopScreen';
-import { CasosDesktopScreen } from './components/CasosDesktopScreen';
 import { pantallaDeLinea } from './components/servicios/LineaScreen';
 import { AdminScreen } from './components/AdminScreen';
 import { BlogScreen } from './components/blog/BlogScreen';
@@ -32,7 +30,6 @@ const SCREENS: Record<ScreenId, React.FC<NavigationProps>> = {
   'servicios-tramites': pantallaDeLinea('servicios-tramites'),
   'servicios-eventos': pantallaDeLinea('servicios-eventos'),
   'nosotros-desktop': NosotrosDesktopScreen,
-  'casos-desktop': CasosDesktopScreen,
   blog: BlogScreen,
   'blog-articulo': ArticuloScreen,
   'aviso-legal': pantallaLegal('aviso-legal'),
@@ -59,7 +56,6 @@ export default function App() {
   const [parametro, setParametro] = useState<string | undefined>(() =>
     articuloDeRuta(window.location.pathname),
   );
-  const [transitionDirection, setTransitionDirection] = useState<'push' | 'push_back'>('push');
   const [diagnosticModalOpen, setDiagnosticModalOpen] = useState(false);
 
   // Título, descripción y canónica dependen de la pantalla, no del documento.
@@ -70,7 +66,6 @@ export default function App() {
   // El botón atrás del navegador debe cambiar de pantalla, no salir del sitio.
   useEffect(() => {
     const onPopState = () => {
-      setTransitionDirection('push_back');
       setScreen(currentScreen());
       setParametro(articuloDeRuta(window.location.pathname));
     };
@@ -78,12 +73,44 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  // Los enlaces a secciones de la home también pueden partir de otra vista.
+  // Esperamos a que React monte la nueva pantalla antes de desplazar el
+  // documento hasta el destino.
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id) return;
+    const reducirMovimiento = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+
+    let frame = 0;
+    let intentos = 0;
+
+    const desplazar = () => {
+      const destino = document.getElementById(id);
+      if (destino) {
+        destino.scrollIntoView({
+          behavior: reducirMovimiento ? 'auto' : 'smooth',
+          block: 'start',
+        });
+        return;
+      }
+
+      if (intentos < 90) {
+        intentos += 1;
+        frame = window.requestAnimationFrame(desplazar);
+      }
+    };
+
+    frame = window.requestAnimationFrame(desplazar);
+    return () => window.cancelAnimationFrame(frame);
+  }, [screen, parametro]);
+
   const handleNavigate = (
     target: ScreenId,
-    transitionType: 'push' | 'push_back' = 'push',
+    _transitionType: 'push' | 'push_back' = 'push',
     nuevoParametro?: string,
   ) => {
-    setTransitionDirection(transitionType);
     setScreen(target);
     setParametro(nuevoParametro);
     window.history.pushState(
@@ -91,32 +118,7 @@ export default function App() {
       '',
       pathForScreen(target, nuevoParametro),
     );
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Variants for push vs push_back screen transitions
-  const screenVariants = {
-    initial: (direction: 'push' | 'push_back') => ({
-      x: direction === 'push' ? '100%' : '-100%',
-      opacity: 0,
-    }),
-    animate: {
-      x: 0,
-      opacity: 1,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 280,
-        damping: 30,
-        opacity: { duration: 0.2 },
-      },
-    },
-    exit: (direction: 'push' | 'push_back') => ({
-      x: direction === 'push' ? '-30%' : '30%',
-      opacity: 0,
-      transition: {
-        duration: 0.2,
-      },
-    }),
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const ActiveScreen = SCREENS[screen];
@@ -127,26 +129,16 @@ export default function App() {
         <PrototypeController currentScreen={screen} onNavigate={handleNavigate} />
       )}
 
-      {/* Screen Render Canvas with Motion Transitions */}
+      {/* La cabecera no se anima: solo entran los bloques de contenido. */}
       <div className="flex-grow relative overflow-x-hidden">
-        <AnimatePresence mode="wait" custom={transitionDirection}>
-          <motion.div
-            key={`${screen}:${parametro ?? ''}`}
-            custom={transitionDirection}
-            variants={screenVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="w-full min-h-full"
-          >
-            <ActiveScreen
-              currentScreen={screen}
-              onNavigate={handleNavigate}
-              openDiagnosticModal={() => setDiagnosticModalOpen(true)}
-              parametro={parametro}
-            />
-          </motion.div>
-        </AnimatePresence>
+        <div key={`${screen}:${parametro ?? ''}`} className="vn-route-view w-full min-h-full">
+          <ActiveScreen
+            currentScreen={screen}
+            onNavigate={handleNavigate}
+            openDiagnosticModal={() => setDiagnosticModalOpen(true)}
+            parametro={parametro}
+          />
+        </div>
       </div>
 
       {/* Interactive Modal */}

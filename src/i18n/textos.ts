@@ -20,7 +20,6 @@ export interface Textos {
     firma: string;
     contacto: string;
     sobreNosotros: string;
-    resenasYCasos: string;
     avisoLegal: string;
     privacidad: string;
     disclaimer: string;
@@ -216,7 +215,6 @@ const ES: Textos = {
     firma: 'Firma',
     contacto: 'Contacto',
     sobreNosotros: 'Sobre nosotros',
-    resenasYCasos: 'Reseñas y casos',
     avisoLegal: 'Aviso legal',
     privacidad: 'Privacidad',
     disclaimer: 'Descargo de responsabilidad',
@@ -431,7 +429,6 @@ const EN: Textos = {
     firma: 'The firm',
     contacto: 'Contact',
     sobreNosotros: 'About us',
-    resenasYCasos: 'Reviews and cases',
     avisoLegal: 'Legal notice',
     privacidad: 'Privacy',
     disclaimer: 'Disclaimer',

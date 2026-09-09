@@ -41,12 +41,12 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
   return (
     <div className="bg-[#FAFAFA] text-[#000000] font-marca">
       {/* banda de servicio */}
-      <div className="bg-[#000000] text-[#FAFAFA] px-5 py-2 flex items-center justify-between text-xs">
+      <div className="vn-site-header bg-[#000000] text-[#FAFAFA] px-5 py-2 flex items-center justify-between text-xs">
         <span className="text-[#B9B7B2]">{t.home.idiomaAviso}</span>
       </div>
 
       {/* cabecera */}
-      <div className="bg-[#FAFAFA] border-b border-[#E4E4E4] px-5 py-3.5 flex items-center justify-between">
+      <div className="vn-site-header bg-[#FAFAFA] border-b border-[#E4E4E4] px-5 py-3.5 flex items-center justify-between">
         <LogoVelaNus tono="negro" alto={32} />
         <button
           onClick={() => setMenuAbierto(!menuAbierto)}
@@ -225,7 +225,7 @@ export const HomeClaroMovil: React.FC<NavigationProps> = ({
           </div>
         </div>
         <Enlace
-          destino={{ label: t.home.verResenas, pantalla: 'casos-desktop' }}
+          destino={{ label: t.home.verResenas, pantalla: 'blog', ancla: 'resenas' }}
           onNavigate={onNavigate}
           className="text-[15px] font-bold border-b-2 border-[#F9A600] pb-1 self-start"
         />

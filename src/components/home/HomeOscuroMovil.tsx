@@ -49,7 +49,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
   return (
     <div className="bg-[#FAFAFA] text-[#000000] font-marca">
       {/* cabecera */}
-      <div className={`${paleta.fondo} ${paleta.texto} px-5 py-4 flex items-center justify-between`}>
+      <div className={`vn-site-header ${paleta.fondo} ${paleta.texto} px-5 py-4 flex items-center justify-between`}>
         <LogoVelaNus tono="ambar" alto={32} />
         <div className="flex items-center gap-3">
           <button
@@ -227,7 +227,7 @@ export const HomeOscuroMovil: React.FC<NavigationProps> = ({
           </div>
         </div>
         <Enlace
-          destino={{ label: `${t.home.verResenas} →`, pantalla: 'casos-desktop' }}
+          destino={{ label: `${t.home.verResenas} →`, pantalla: 'blog', ancla: 'resenas' }}
           onNavigate={onNavigate}
           className="text-[15px] font-bold text-[#F9A600]"
         />

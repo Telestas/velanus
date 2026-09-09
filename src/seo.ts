@@ -75,11 +75,6 @@ const ES: Record<ScreenId, Metadatos> = {
     descripcion:
       'Consultoría cubana de contadores y juristas para empresas e inversores extranjeros que necesitan operar en Cuba. Honorarios cerrados y un responsable con nombre.',
   },
-  'casos-desktop': {
-    titulo: `Casos y reseñas — ${TITULO_BASE}`,
-    descripcion:
-      'Casos de clientes que ya operan en Cuba con nosotros y reseñas verificadas antes de publicarse.',
-  },
   blog: {
     titulo: `Blog — ${TITULO_BASE}`,
     descripcion:
@@ -152,11 +147,6 @@ const EN: Record<ScreenId, Metadatos> = {
     titulo: `About us — ${TITULO_BASE}`,
     descripcion:
       'A Cuban consultancy of accountants and lawyers for foreign companies and investors that need to operate in Cuba. Fixed fees and a named person in charge.',
-  },
-  'casos-desktop': {
-    titulo: `Cases and reviews — ${TITULO_BASE}`,
-    descripcion:
-      'Cases from clients already operating in Cuba with us, and reviews approved before publication.',
   },
   blog: {
     titulo: `Blog — ${TITULO_BASE}`,
@@ -249,11 +239,7 @@ export const aplicarSeo = (
   meta('name', 'twitter:description', descripcion);
 
   // El panel de administración no pinta nada en un buscador.
-  /*
-   * Fuera del índice: el panel, y `casos`, que sigue publicando casos y
-   * testimonios ilustrativos. Ya no está enlazada desde ningún menú.
-   */
-  const sinIndexar = pantalla === 'admin' || pantalla === 'casos-desktop';
+  const sinIndexar = pantalla === 'admin';
   meta('name', 'robots', sinIndexar ? 'noindex, nofollow' : 'index, follow');
 };
 
