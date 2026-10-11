@@ -1,50 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Entrada } from '../../data/blog';
+import { idImagen, leerImagen } from '../../data/imagenes';
 import { Paleta } from '../marca/paleta';
 
 /**
  * Marco de imagen.
  *
- * Mientras no haya imagen —y hoy no hay ninguna— se pinta el tramado de la
- * maqueta con su etiqueta, para que el hueco se lea como pendiente y no como un
- * fallo de carga.
+ * Una entrada sin imagen no reserva un hueco en la ficha ni en el artículo.
  */
 export const MarcoImagen: React.FC<{
-  paleta: Paleta;
   src?: string;
   alt: string;
   proporcion: string;
-  etiqueta: string;
-}> = ({ paleta, src, alt, proporcion, etiqueta }) =>
-  src ? (
-    <img src={src} alt={alt} className={`${proporcion} w-full object-cover`} loading="lazy" />
-  ) : (
-    <div
-      className={`${proporcion} w-full flex items-center justify-center ${paleta.marcoImagen}`}
-    >
-      <span className={`font-mono text-[11px] ${paleta.textoTenue}`}>{etiqueta}</span>
-    </div>
-  );
+}> = ({ src, alt, proporcion }) => {
+  const [resuelta, setResuelta] = useState(idImagen(src ?? '') ? '' : src ?? '');
+
+  useEffect(() => {
+    if (!src || !idImagen(src)) {
+      setResuelta(src ?? '');
+      return;
+    }
+    let activa = true;
+    setResuelta('');
+    void leerImagen(src).then(
+      (url) => { if (activa) setResuelta(url); },
+      () => { if (activa) setResuelta(''); },
+    );
+    return () => { activa = false; };
+  }, [src]);
+
+  return resuelta ? (
+    <img src={resuelta} alt={alt} className={`${proporcion} w-full object-cover`} loading="lazy" />
+  ) : src ? (
+    <div className={`${proporcion} w-full bg-[#E4E4E4]`} aria-hidden />
+  ) : null;
+};
 
 /** Ficha de artículo en la rejilla del listado y en «relacionados». */
 export const FichaEntrada: React.FC<{
   paleta: Paleta;
   entrada: Entrada;
-  etiquetaImagen: string;
   minutos: (n: number) => string;
   onClick: () => void;
   compacta?: boolean;
-}> = ({ paleta, entrada, etiquetaImagen, minutos, onClick, compacta = false }) => (
+}> = ({ paleta, entrada, minutos, onClick, compacta = false }) => (
   <article className="flex flex-col gap-3.5">
-    <button onClick={onClick} className="text-left" aria-label={entrada.titulo}>
-      <MarcoImagen
-        paleta={paleta}
-        src={entrada.imagen}
-        alt={entrada.titulo}
-        proporcion="aspect-[16/10]"
-        etiqueta={etiquetaImagen}
-      />
-    </button>
+    {entrada.imagen && (
+      <button onClick={onClick} className="text-left" aria-label={entrada.titulo}>
+        <MarcoImagen
+          src={entrada.imagen}
+          alt={entrada.titulo}
+          proporcion="aspect-[16/10]"
+        />
+      </button>
+    )}
     <span className={`text-xs tracking-[0.14em] uppercase ${paleta.acentoTexto}`}>
       {entrada.categoria}
     </span>

@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Entrada, borrarEntrada, guardarEntrada, todasLasEntradas } from '../../data/blog';
+import { borrarImagen, guardarImagen, prepararImagen } from '../../data/imagenes';
+import { MarcoImagen } from '../blog/piezas';
 import { mensajeDeError } from '../../firebase';
 import { campo, etiqueta, Boton, Aviso } from './piezas';
 
@@ -37,6 +39,24 @@ export const PanelEntradas: React.FC = () => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [archivoImagen, setArchivoImagen] = useState<File | null>(null);
+  const [vistaPrevia, setVistaPrevia] = useState('');
+  const inputArchivo = useRef<HTMLInputElement>(null);
+
+  const limpiarArchivo = () => {
+    setArchivoImagen(null);
+    if (inputArchivo.current) inputArchivo.current.value = '';
+  };
+
+  useEffect(() => {
+    if (!archivoImagen) {
+      setVistaPrevia('');
+      return;
+    }
+    const url = URL.createObjectURL(archivoImagen);
+    setVistaPrevia(url);
+    return () => URL.revokeObjectURL(url);
+  }, [archivoImagen]);
 
   const recargar = async () => {
     setCargando(true);
@@ -60,15 +80,31 @@ export const PanelEntradas: React.FC = () => {
 
     setGuardando(true);
     setError('');
+    const anterior = entradas.find((entrada) => entrada.id === edicion.id)?.imagen ?? '';
+    let subida = '';
+    let guardado = false;
     try {
+      if (archivoImagen) subida = await guardarImagen(await prepararImagen(archivoImagen));
       await guardarEntrada({
         ...edicion,
         slug: edicion.slug.trim() || aSlug(edicion.titulo),
         minutos: Number(edicion.minutos) || 1,
+        imagen: subida || edicion.imagen.trim(),
       });
+      guardado = true;
       setEdicion(null);
+      limpiarArchivo();
+      let aviso = '';
+      if (anterior && anterior !== (subida || edicion.imagen.trim())) {
+        try { await borrarImagen(anterior); }
+        catch { aviso = 'El artículo se guardó, pero no se pudo borrar su foto anterior.'; }
+      }
       await recargar();
+      if (aviso) setError(aviso);
     } catch (fallo) {
+      if (subida && !guardado) {
+        try { await borrarImagen(subida); } catch { /* El archivo huérfano se puede retirar luego. */ }
+      }
       setError(mensajeDeError(fallo));
     } finally {
       setGuardando(false);
@@ -79,7 +115,11 @@ export const PanelEntradas: React.FC = () => {
     if (!window.confirm(`¿Borrar «${entrada.titulo}»? No se puede deshacer.`)) return;
     try {
       await borrarEntrada(entrada.id);
+      let aviso = '';
+      try { await borrarImagen(entrada.imagen); }
+      catch { aviso = 'El artículo se borró, pero no se pudo borrar su foto.'; }
       await recargar();
+      if (aviso) setError(aviso);
     } catch (fallo) {
       setError(mensajeDeError(fallo));
     }
@@ -219,16 +259,48 @@ export const PanelEntradas: React.FC = () => {
           </div>
           <div className="flex flex-col gap-[7px]">
             <label className={etiqueta} htmlFor="e-imagen">
-              Imagen de cabecera (URL)
+              Imagen de cabecera (URL opcional)
             </label>
             <input
               id="e-imagen"
               className={campo}
               value={edicion.imagen}
               placeholder="/blog/mi-imagen.jpg"
-              onChange={(e) => setEdicion({ ...edicion, imagen: e.target.value })}
+              onChange={(e) => {
+                limpiarArchivo();
+                setEdicion({ ...edicion, imagen: e.target.value });
+              }}
             />
           </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <label className={etiqueta} htmlFor="e-archivo">O subir una foto desde su equipo</label>
+          <input
+            id="e-archivo"
+            ref={inputArchivo}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className={campo}
+            onChange={(e) => setArchivoImagen(e.target.files?.[0] ?? null)}
+          />
+          <p className="text-sm text-[#767676]">
+            JPG, PNG o WebP, hasta 12 MB. Se optimiza antes de guardarse en Firestore.
+          </p>
+          {vistaPrevia && <img src={vistaPrevia} alt="Vista previa de la nueva foto" className="max-w-xs max-h-48 object-contain" />}
+          {!vistaPrevia && edicion.imagen && (
+            <div className="max-w-xs">
+              <MarcoImagen src={edicion.imagen} alt="Foto actual del artículo" proporcion="aspect-[16/9]" />
+            </div>
+          )}
+          {(edicion.imagen || archivoImagen) && (
+            <Boton tono="secundario" type="button" onClick={() => {
+              limpiarArchivo();
+              setEdicion({ ...edicion, imagen: '' });
+            }}>
+              Publicar sin imagen
+            </Boton>
+          )}
         </div>
 
         <label className="flex items-center gap-3 text-base">
@@ -255,7 +327,10 @@ export const PanelEntradas: React.FC = () => {
           <Boton type="submit" disabled={guardando}>
             {guardando ? 'Guardando…' : 'Guardar'}
           </Boton>
-          <Boton tono="secundario" type="button" onClick={() => setEdicion(null)}>
+          <Boton tono="secundario" type="button" onClick={() => {
+            limpiarArchivo();
+            setEdicion(null);
+          }}>
             Cancelar
           </Boton>
         </div>
@@ -267,7 +342,7 @@ export const PanelEntradas: React.FC = () => {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <h2 className="text-[26px] font-bold">Artículos</h2>
-        <Boton onClick={() => setEdicion(vacia())}>Nuevo artículo</Boton>
+        <Boton onClick={() => { limpiarArchivo(); setEdicion(vacia()); }}>Nuevo artículo</Boton>
       </div>
 
       {error && <Aviso>{error}</Aviso>}
@@ -300,7 +375,7 @@ export const PanelEntradas: React.FC = () => {
               </span>
             </div>
             <div className="flex gap-2">
-              <Boton tono="secundario" onClick={() => setEdicion(entrada)}>
+              <Boton tono="secundario" onClick={() => { limpiarArchivo(); setEdicion(entrada); }}>
                 Editar
               </Boton>
               <Boton tono="peligro" onClick={() => eliminar(entrada)}>

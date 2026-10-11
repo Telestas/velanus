@@ -58,6 +58,16 @@ const aDocumento = (documento: {
   ),
 });
 
+/** Lee un documento público concreto sin cargar el SDK de Firestore. */
+export const leerDocumento = async (coleccion: string, id: string): Promise<DocumentoRest> => {
+  const token = await tokenAppCheck();
+  const respuesta = await fetch(`${BASE}/${encodeURIComponent(coleccion)}/${encodeURIComponent(id)}?key=${API_KEY}`, {
+    headers: { 'X-Firebase-AppCheck': token },
+  });
+  if (!respuesta.ok) throw new Error('No se pudo cargar el documento.');
+  return aDocumento(await respuesta.json());
+};
+
 /** Convierte un valor de JavaScript al formato que espera la API REST. */
 const aCampo = (valor: unknown): ValorRest => {
   if (typeof valor === 'string') return { stringValue: valor };

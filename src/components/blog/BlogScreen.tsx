@@ -206,16 +206,14 @@ export const BlogScreen: React.FC<NavigationProps> = ({
           {destacada && (
             <section className={`${ANCHO} pb-16`}>
               <article
-                className={`border ${paleta.borde} grid md:grid-cols-2 gap-8 md:gap-12 items-center`}
+                className={`border ${paleta.borde} grid ${destacada.imagen ? 'md:grid-cols-2' : ''} gap-8 md:gap-12 items-center`}
               >
                 <MarcoImagen
-                  paleta={paleta}
                   src={destacada.imagen}
                   alt={destacada.titulo}
                   proporcion="aspect-[16/11]"
-                  etiqueta={t.blog.imagenDestacada}
                 />
-                <div className="flex flex-col gap-4 p-8 md:pl-0 md:pr-10 md:py-10">
+                <div className={`flex flex-col gap-4 p-8 md:pr-10 md:py-10 ${destacada.imagen ? 'md:pl-0' : ''}`}>
                   <div className="flex items-center gap-3.5 flex-wrap">
                     <span className="text-xs tracking-[0.14em] uppercase bg-[#F9A600] text-[#000000] px-2.5 py-1.5">
                       {t.blog.destacado}
@@ -269,7 +267,6 @@ export const BlogScreen: React.FC<NavigationProps> = ({
                   key={entrada.id}
                   paleta={paleta}
                   entrada={entrada}
-                  etiquetaImagen={t.blog.imagen}
                   minutos={t.blog.minutos}
                   onClick={() => irAlArticulo(entrada)}
                 />

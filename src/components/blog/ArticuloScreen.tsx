@@ -198,7 +198,6 @@ export const ArticuloScreen: React.FC<NavigationProps> = ({
               key={otra.id}
               paleta={paleta}
               entrada={otra}
-              etiquetaImagen={t.blog.imagen}
               minutos={t.blog.minutos}
               onClick={() => onNavigate('blog-articulo', 'push', otra.slug)}
             />
@@ -312,11 +311,9 @@ export const ArticuloScreen: React.FC<NavigationProps> = ({
         {/* cuerpo */}
         <div className="max-w-[720px] flex flex-col gap-7">
           <MarcoImagen
-            paleta={paleta}
             src={entrada.imagen}
             alt={entrada.titulo}
             proporcion="aspect-[16/9]"
-            etiqueta={t.blog.imagen}
           />
 
           {bloques.map((bloque, i) => {
@@ -396,7 +393,6 @@ export const ArticuloScreen: React.FC<NavigationProps> = ({
                   key={otra.id}
                   paleta={paleta}
                   entrada={otra}
-                  etiquetaImagen={t.blog.imagen}
                   minutos={t.blog.minutos}
                   compacta
                   onClick={() => onNavigate('blog-articulo', 'push', otra.slug)}

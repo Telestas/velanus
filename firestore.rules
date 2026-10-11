@@ -41,6 +41,19 @@ service cloud.firestore {
       allow create, update, delete: if esAdmin();
     }
 
+    /** Fotos optimizadas del blog; nunca se escriben desde el sitio público. */
+    match /imagenes/{id} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if esAdmin()
+        && request.resource.data.keys().hasOnly(['dataUrl'])
+        && request.resource.data.dataUrl is string
+        && request.resource.data.dataUrl.size() <= 480000
+        && request.resource.data.dataUrl.matches('data:image/webp;base64,[A-Za-z0-9+/=]+');
+      allow update: if false;
+      allow delete: if esAdmin();
+    }
+
     /** Preguntas frecuentes: mismo trato que las entradas. */
     match /preguntas/{id} {
       allow read: if resource.data.publicada == true || esAdmin();

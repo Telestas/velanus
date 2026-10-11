@@ -28,7 +28,7 @@ export interface Entrada {
   publicada: boolean;
   /** Sale en grande arriba del listado. Solo la más reciente marcada. */
   destacada: boolean;
-  /** URL de la imagen de cabecera; vacío deja el marcador de la maqueta. */
+  /** URL externa o referencia firestore:<id>; vacío muestra el artículo sin foto. */
   imagen: string;
   /** Cargo del autor, para la ficha del artículo. */
   autorCargo: string;

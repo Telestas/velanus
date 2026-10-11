@@ -2,10 +2,10 @@
 
 Sitio de consultoría corporativa y gestión administrativa para empresas en Cuba.
 
-**En vivo:** https://telestas.github.io/velanus/
+**En vivo:** https://velanus.com/
 
-Prototipo de front estático (React 19 + TypeScript + Vite + Tailwind v4). No tiene
-backend ni llamadas a APIs externas.
+Front estático (React 19 + TypeScript + Vite + Tailwind v4) con Firebase Auth,
+Firestore y App Check para el blog, los formularios y la administración.
 
 ## Desarrollo local
 
@@ -34,6 +34,12 @@ carpeta `backups/` está excluida de Git. Para elegir otra ubicación:
 npm run backup -- --output /ruta/segura/velanus-firestore.json
 ```
 
+## Imágenes del blog
+
+En `/admin` se puede subir una foto JPG, PNG o WebP para cada artículo, pegar una URL o dejarlo sin imagen. El navegador convierte las fotos subidas a WebP y las limita a 350 KiB. Cada foto se guarda en un documento separado de Firestore (`imagenes`), mientras que el artículo conserva solo su referencia; al reemplazar o borrar un artículo se intenta borrar también la foto anterior. Hay que desplegar `firestore.rules` antes de usar la subida en producción.
+
+Esta opción funciona con las cuotas gratuitas de Firestore, pero cada foto ocupa almacenamiento y su carga cuenta como lectura y transferencia. Para una biblioteca grande o mucho tráfico, conviene migrar las imágenes a almacenamiento de objetos. Firebase Storage exige el plan Blaze con facturación habilitada, aunque incluye una cuota sin cargo.
+
 ## Rutas
 
 Cada pantalla tiene su propia URL, resuelta por un router mínimo sobre la
@@ -46,17 +52,16 @@ History API ([`src/router.ts`](src/router.ts)):
 | `/servicios` | Servicios |
 | `/nosotros` | Nosotros — *borrador* |
 
-En producción cuelgan de `/velanus/`. El build copia `index.html` a `404.html`
+En producción cuelgan del dominio raíz. El build copia `index.html` a `404.html`
 para que Pages sirva la SPA al entrar directo a una ruta o recargarla.
 
 ## Despliegue
 
-Cada push a `main` dispara [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
-que compila y publica en GitHub Pages.
+Las etiquetas `v*` en `main` disparan [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
+que compila y publica en GitHub Pages. Los pushes a `main` solo ejecutan CI.
 
-El `base` de Vite está fijado a `/velanus/` porque Pages sirve el sitio bajo ese
-subpath. Si se configura un dominio propio, hay que cambiarlo a `/` en
-[`vite.config.ts`](vite.config.ts).
+El `base` de Vite está fijado a `/` para el dominio propio; `public/CNAME` contiene
+`velanus.com`. Si se quita el dominio, hay que revisar ambos ajustes.
 
 ## Pendiente antes de considerarlo producción
 
