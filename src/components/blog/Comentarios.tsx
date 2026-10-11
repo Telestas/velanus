@@ -40,6 +40,25 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
     return () => { activo = false; };
   }, [slug, intento]);
 
+  useEffect(() => {
+    let ultimaActualizacion = Date.now();
+    const actualizar = () => {
+      const ahora = Date.now();
+      if (ahora - ultimaActualizacion < 1000) return;
+      ultimaActualizacion = ahora;
+      setIntento((n) => n + 1);
+    };
+    const alVolver = () => {
+      if (document.visibilityState === 'visible') actualizar();
+    };
+    window.addEventListener('focus', actualizar);
+    document.addEventListener('visibilitychange', alVolver);
+    return () => {
+      window.removeEventListener('focus', actualizar);
+      document.removeEventListener('visibilitychange', alVolver);
+    };
+  }, []);
+
   const campo = `border ${paleta.borde} ${paleta.banda} ${paleta.texto} px-3.5 py-3.5 text-base outline-none focus-visible:outline-2 focus-visible:outline-[#F9A600]`;
 
   const enviar = async (e: React.FormEvent) => {
@@ -67,9 +86,14 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
       <div className="flex items-baseline justify-between gap-6">
         <h2 className="text-[24px] md:text-[28px] font-bold">{t.blog.comentarios}</h2>
         {!cargandoComentarios && !errorComentarios && (
-          <span className={`text-sm ${paleta.textoTenue}`}>
-            {t.blog.publicados(comentarios.length)}
-          </span>
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className={`text-sm ${paleta.textoTenue}`}>
+              {t.blog.publicados(comentarios.length)}
+            </span>
+            <button type="button" onClick={() => setIntento((n) => n + 1)} className={`text-sm font-bold ${paleta.acentoTexto}`}>
+              {t.blog.actualizarComentarios}
+            </button>
+          </div>
         )}
       </div>
 

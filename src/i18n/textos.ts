@@ -157,6 +157,7 @@ export interface Textos {
     sinComentarios: string;
     errorComentarios: string;
     reintentarComentarios: string;
+    actualizarComentarios: string;
     dejarComentario: string;
     correoNoPublica: string;
     comentario: string;
@@ -371,6 +372,7 @@ const ES: Textos = {
     sinComentarios: 'Aún no hay comentarios publicados en este artículo.',
     errorComentarios: 'No se pudieron cargar los comentarios.',
     reintentarComentarios: 'Reintentar',
+    actualizarComentarios: 'Actualizar',
     dejarComentario: 'Deje un comentario',
     correoNoPublica: 'Correo (no se publica)',
     comentario: 'Comentario',
@@ -587,6 +589,7 @@ const EN: Textos = {
     sinComentarios: 'No comments published on this article yet.',
     errorComentarios: 'Comments could not be loaded.',
     reintentarComentarios: 'Try again',
+    actualizarComentarios: 'Refresh',
     dejarComentario: 'Leave a comment',
     correoNoPublica: 'Email (not published)',
     comentario: 'Comment',
