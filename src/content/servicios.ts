@@ -9,9 +9,9 @@ import { Idioma } from '../i18n/idioma';
  * plazos, qué necesitamos, preguntas frecuentes y cierre—, así que se
  * describen como datos y las pinta una sola plantilla.
  *
- * BORRADOR: los `[PLAZO PENDIENTE]` y las respuestas marcadas están así a
- * propósito. Los plazos ante instituciones cubanas y el alcance jurídico los
- * confirma el cliente; no inventarlos.
+ * BORRADOR: los `[PLAZO PENDIENTE]` sirven de respaldo hasta que el panel
+ * publique valores para cada servicio. Las respuestas jurídicas marcadas las
+ * confirma el cliente; no inventarlas.
  *
  * En inglés se conservan sin traducir las figuras jurídicas cubanas (MIPYME,
  * TCP, CNA, PDL) y los sistemas contables (Versat, Odoo): son nombres propios

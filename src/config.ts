@@ -9,7 +9,7 @@ export const WHATSAPP_NUMBER = '5353854623';
 /** El mismo número, formateado para mostrar en pantalla. */
 export const WHATSAPP_DISPLAY = '+53 5 385 4623';
 
-export const CONTACT_EMAIL = 'contacto@velanus.com';
+export const CONTACT_EMAIL = 'informacion@velanus.com';
 
 export const CONTACT_CITY = 'La Habana, Cuba';
 

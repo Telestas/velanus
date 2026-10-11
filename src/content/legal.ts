@@ -58,7 +58,7 @@ const ES: ContenidoLegal = {
           titulo: 'Titular del sitio',
           parrafos: [
             'Vela Nus Consultores & Asociados, con domicilio en Infanta entre Peñalver y Sitios, Centro Habana, La Habana, Cuba.',
-            'Correo de contacto: contacto@velanus.com. Teléfono y WhatsApp: +53 5 385 4623.',
+            'Correo de contacto: informacion@velanus.com. Teléfono y WhatsApp: +53 5 385 4623.',
             '[PENDIENTE — figura jurídica de la firma, número de inscripción registral y demás datos identificativos que exija la normativa cubana.]',
           ],
         },
@@ -100,7 +100,7 @@ const ES: ContenidoLegal = {
           titulo: 'Responsable del tratamiento',
           parrafos: [
             'Vela Nus Consultores & Asociados, Infanta entre Peñalver y Sitios, Centro Habana, La Habana, Cuba.',
-            'Para cualquier cuestión sobre sus datos: contacto@velanus.com.',
+            'Para cualquier cuestión sobre sus datos: informacion@velanus.com.',
             '[PENDIENTE — designación de responsable o delegado de protección de datos, si procede.]',
           ],
         },
@@ -150,7 +150,7 @@ const ES: ContenidoLegal = {
         {
           titulo: 'Sus derechos',
           parrafos: [
-            'Puede pedirnos acceder a sus datos, rectificarlos, suprimirlos, oponerse al tratamiento o pedir que se limite. Basta con escribir a contacto@velanus.com indicando qué solicita.',
+            'Puede pedirnos acceder a sus datos, rectificarlos, suprimirlos, oponerse al tratamiento o pedir que se limite. Basta con escribir a informacion@velanus.com indicando qué solicita.',
             'Le pediremos alguna comprobación razonable de su identidad, para no entregar datos de una persona a otra.',
             '[PENDIENTE — plazo máximo de respuesta y autoridad de control ante la que reclamar.]',
           ],
@@ -224,7 +224,7 @@ const EN: ContenidoLegal = {
           titulo: 'Site owner',
           parrafos: [
             'Vela Nus Consultores & Asociados, at Infanta between Peñalver and Sitios, Centro Habana, Havana, Cuba.',
-            'Contact email: contacto@velanus.com. Phone and WhatsApp: +53 5 385 4623.',
+            'Contact email: informacion@velanus.com. Phone and WhatsApp: +53 5 385 4623.',
             '[PENDING — the firm’s legal form, registration number and any other identifying details required under Cuban law.]',
           ],
         },
@@ -266,7 +266,7 @@ const EN: ContenidoLegal = {
           titulo: 'Data controller',
           parrafos: [
             'Vela Nus Consultores & Asociados, Infanta between Peñalver and Sitios, Centro Habana, Havana, Cuba.',
-            'For anything concerning your data: contacto@velanus.com.',
+            'For anything concerning your data: informacion@velanus.com.',
             '[PENDING — appointment of a data protection officer, if applicable.]',
           ],
         },
@@ -316,7 +316,7 @@ const EN: ContenidoLegal = {
         {
           titulo: 'Your rights',
           parrafos: [
-            'You may ask us to access, rectify, erase, restrict or object to the processing of your data. Just write to contacto@velanus.com saying what you need.',
+            'You may ask us to access, rectify, erase, restrict or object to the processing of your data. Just write to informacion@velanus.com saying what you need.',
             'We will ask for reasonable proof of identity, so as not to hand one person’s data to another.',
             '[PENDING — maximum response time and the supervisory authority to complain to.]',
           ],

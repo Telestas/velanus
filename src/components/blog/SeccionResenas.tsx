@@ -22,9 +22,24 @@ export const SeccionResenas: React.FC<{ paleta: Paleta }> = ({ paleta }) => {
 
   const [resenas, setResenas] = useState<Resena[]>([]);
   const [servicio, setServicio] = useState('');
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    void resenasPublicadas().then(setResenas);
+    let activa = true;
+    void resenasPublicadas().then(
+      (leidas) => {
+        if (activa) setResenas(leidas);
+      },
+      () => {
+        if (activa) setError(true);
+      },
+    ).finally(() => {
+      if (activa) setCargando(false);
+    });
+    return () => {
+      activa = false;
+    };
   }, []);
 
   const visibles = useMemo(
@@ -65,7 +80,17 @@ export const SeccionResenas: React.FC<{ paleta: Paleta }> = ({ paleta }) => {
           ))}
         </div>
 
-        {visibles.length === 0 ? (
+        {error ? (
+          <p role="alert" className={`text-[17px] ${paleta.textoSuave} pb-4`}>
+            {idioma === 'en'
+              ? 'Reviews could not be loaded. Please try again later.'
+              : 'No se pudieron cargar las reseñas. Inténtelo de nuevo más tarde.'}
+          </p>
+        ) : cargando ? (
+          <p className={`text-[17px] ${paleta.textoSuave} pb-4`}>
+            {idioma === 'en' ? 'Loading reviews…' : 'Cargando reseñas…'}
+          </p>
+        ) : visibles.length === 0 ? (
           <p className={`text-[17px] ${paleta.textoSuave} pb-4`}>{t.blog.sinResenas}</p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

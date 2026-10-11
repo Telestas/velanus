@@ -75,7 +75,7 @@ export const PanelCifras: React.FC = () => {
   return (
     <form onSubmit={guardar} className="flex flex-col gap-6 max-w-[640px]">
       <div className="flex flex-col gap-3">
-        <h2 className="text-[26px] font-bold">Cifras del sitio</h2>
+        <h2 className="text-[26px] font-bold">Indicadores del sitio</h2>
         <p className="text-[17px] leading-relaxed text-[#4A4A4A]">
           Se publican al guardar, sin desplegar nada. Lo que quede en blanco aparece
           marcado como pendiente en el sitio.

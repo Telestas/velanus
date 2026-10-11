@@ -16,6 +16,14 @@ const vacia = (orden: number): Omit<Pregunta, 'id'> & { id?: string } => ({
   publicada: true,
 });
 
+const secciones: Record<string, string> = {
+  general: 'General (todos los servicios)',
+  contabilidad: 'Contabilidad',
+  legal: 'Legal corporativo',
+  tramites: 'Trámites y visas',
+  eventos: 'Eventos y capacitación',
+};
+
 /**
  * Preguntas frecuentes.
  *
@@ -30,6 +38,7 @@ export const PanelPreguntas: React.FC = () => {
   );
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [filtroSeccion, setFiltroSeccion] = useState('');
 
   const recargar = async () => {
     setCargando(true);
@@ -116,11 +125,9 @@ export const PanelPreguntas: React.FC = () => {
               value={edicion.seccion}
               onChange={(e) => setEdicion({ ...edicion, seccion: e.target.value })}
             >
-              <option value="general">General</option>
-              <option value="contabilidad">Contabilidad</option>
-              <option value="legal">Legal corporativo</option>
-              <option value="tramites">Trámites y visas</option>
-              <option value="eventos">Eventos y capacitación</option>
+              {Object.entries(secciones).map(([valor, nombre]) => (
+                <option key={valor} value={valor}>{nombre}</option>
+              ))}
             </select>
           </div>
           <div className="flex flex-col gap-[7px]">
@@ -164,6 +171,21 @@ export const PanelPreguntas: React.FC = () => {
         <Boton onClick={() => setEdicion(vacia(preguntas.length))}>Nueva pregunta</Boton>
       </div>
 
+      <div className="flex flex-col gap-[7px] max-w-[340px]">
+        <label className={etiqueta} htmlFor="filtro-preguntas-seccion">Filtrar por sección</label>
+        <select
+          id="filtro-preguntas-seccion"
+          className={campo}
+          value={filtroSeccion}
+          onChange={(e) => setFiltroSeccion(e.target.value)}
+        >
+          <option value="">Todas las secciones</option>
+          {Object.entries(secciones).map(([valor, nombre]) => (
+            <option key={valor} value={valor}>{nombre}</option>
+          ))}
+        </select>
+      </div>
+
       {error && <Aviso>{error}</Aviso>}
       {cargando && <p className="text-base text-[#4A4A4A]">Cargando…</p>}
       {!cargando && preguntas.length === 0 && (
@@ -172,19 +194,24 @@ export const PanelPreguntas: React.FC = () => {
           código; estas se añadirían a ellas.
         </p>
       )}
+      {!cargando && preguntas.length > 0 && !preguntas.some((pregunta) => !filtroSeccion || pregunta.seccion === filtroSeccion) && (
+        <p className="text-base text-[#4A4A4A]">No hay preguntas en esta sección.</p>
+      )}
 
       <div className="flex flex-col">
-        {preguntas.map((pregunta) => (
+        {preguntas.filter((pregunta) => !filtroSeccion || pregunta.seccion === filtroSeccion).map((pregunta) => (
           <div
             key={pregunta.id}
             className="grid sm:grid-cols-[1fr_auto] gap-4 py-5 border-t border-[#E4E4E4] items-start"
           >
             <div className="flex flex-col gap-1">
               <h3 className="text-[18px] font-bold">{pregunta.pregunta}</h3>
-              <span className="text-sm text-[#767676]">
-                {pregunta.seccion} · orden {pregunta.orden}
-                {pregunta.publicada ? '' : ' · sin publicar'}
-              </span>
+              <div className="flex items-center gap-2 flex-wrap text-sm text-[#767676]">
+                <span>{secciones[pregunta.seccion] ?? pregunta.seccion} · orden {pregunta.orden}</span>
+                <span className={`px-2 py-1 font-bold ${pregunta.publicada ? 'bg-[#E4E4E4] text-[#4A4A4A]' : 'bg-[#F9A600] text-[#000000]'}`}>
+                  {pregunta.publicada ? 'Publicada' : 'Sin publicar'}
+                </span>
+              </div>
             </div>
             <div className="flex gap-2">
               <Boton tono="secundario" onClick={() => setEdicion(pregunta)}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationProps } from '../types';
 import {
   CONTACT_EMAIL,
@@ -8,10 +8,12 @@ import {
 } from '../config';
 import { contenidoNosotros } from '../content/nosotros';
 import { useCifras, valorDeCifra } from '../data/cifras';
+import { miembrosPublicados, type MiembroEquipo } from '../data/equipo';
 import { contenidoServicios } from '../content/servicios';
 import { useIdioma } from '../i18n/idioma';
 import { textos } from '../i18n/textos';
 import { Enlace } from './home/comunes';
+import { MarcoImagen } from './blog/piezas';
 import { useVarianteHome } from './home/useVariante';
 import { CabeceraSitio } from './marca/CabeceraSitio';
 import { PieSitio } from './marca/PieSitio';
@@ -21,10 +23,8 @@ import { ANCHO, paletaDe } from './marca/paleta';
 /**
  * Sobre nosotros.
  *
- * BORRADOR: la firma no ha facilitado historia, nombres del equipo, cifras ni
- * credenciales. Todo eso se pinta con sus marcadores `[PENDIENTE]` a la vista:
- * es preferible un hueco declarado a un dato inventado. No rellenarlos sin que
- * el cliente los confirme.
+ * La historia y las credenciales siguen como borradores. Los perfiles del
+ * equipo y los indicadores se leen del panel cuando existen.
  */
 export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
   currentScreen,
@@ -36,6 +36,15 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
   const t = textos(idioma);
   const c = contenidoNosotros(idioma);
   const paleta = paletaDe(useVarianteHome());
+  const [equipo, setEquipo] = useState<MiembroEquipo[]>([]);
+
+  useEffect(() => {
+    let activo = true;
+    void miembrosPublicados().then((miembros) => {
+      if (activo) setEquipo(miembros);
+    });
+    return () => { activo = false; };
+  }, []);
 
   return (
     <div className={`${paleta.fondo} ${paleta.texto} font-marca`}>
@@ -116,7 +125,7 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
         </div>
       </section>
 
-      {/* equipo — BORRADOR: sin nombres ni retratos */}
+      {/* Los perfiles publicados sustituyen las fichas de muestra. */}
       <section className={`${ANCHO} py-22`}>
         <div className="flex justify-between items-end gap-10 mb-11 flex-wrap">
           <TituloSeccion
@@ -124,23 +133,31 @@ export const NosotrosDesktopScreen: React.FC<NavigationProps> = ({
             etiqueta={t.nosotros.equipoEtiqueta}
             titulo={t.nosotros.equipoTitulo}
           />
-          <span className={`text-sm ${paleta.textoTenue} max-w-[320px] lg:text-right`}>
-            {c.avisoEquipo}
-          </span>
+          {equipo.length === 0 && (
+            <span className={`text-sm ${paleta.textoTenue} max-w-[320px] lg:text-right`}>
+              {c.avisoEquipo}
+            </span>
+          )}
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {c.equipo.map((miembro, i) => (
-            <article key={i} className="flex flex-col gap-4">
-              <div
-                className={`aspect-[4/5] flex items-center justify-center ${paleta.marcoImagen}`}
-              >
-                <span className={`font-mono text-[11px] ${paleta.textoTenue}`}>{t.nosotros.retrato}</span>
-              </div>
+          {(equipo.length ? equipo : c.equipo).map((miembro, i) => (
+            <article key={'id' in miembro ? miembro.id : i} className="flex flex-col gap-4">
+              {'foto' in miembro && miembro.foto ? (
+                <MarcoImagen src={miembro.foto} alt={miembro.nombre} proporcion="aspect-[4/5]" />
+              ) : (
+                <div className={`aspect-[4/5] flex items-center justify-center ${paleta.marcoImagen}`}>
+                  <span className={`font-mono text-[11px] ${paleta.textoTenue}`}>
+                    {t.nosotros.retrato}
+                  </span>
+                </div>
+              )}
               <div className="flex flex-col gap-1.5">
                 <h3 className="text-xl font-bold">{miembro.nombre}</h3>
-                <span className={`text-[15px] ${paleta.acentoTexto}`}>{miembro.cargo}</span>
+                <span className={`text-[15px] ${paleta.acentoTexto}`}>
+                  {idioma === 'en' && 'cargoEn' in miembro ? miembro.cargoEn || miembro.cargo : miembro.cargo}
+                </span>
                 <p className={`mt-1 text-[15px] leading-[1.55] ${paleta.textoSuave}`}>
-                  {miembro.perfil}
+                  {idioma === 'en' && 'perfilEn' in miembro ? miembro.perfilEn || miembro.perfil : miembro.perfil}
                 </p>
               </div>
             </article>

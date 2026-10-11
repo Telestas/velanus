@@ -175,9 +175,8 @@ service cloud.firestore {
     }
 
     /**
-     * Ajustes del sitio que la firma edita desde el panel. Hoy solo
-     * `sitio/cifras` (entidades constituidas, clientes atendidos, países de
-     * origen y profesionales en el equipo).
+     * Ajustes del sitio editados desde el panel: `sitio/cifras`, `sitio/plazos`
+     * y `sitio/equipo`. No contienen datos privados.
      *
      * Lectura pública: son datos de escaparate y los pinta el sitio para
      * cualquier visitante. Escritura, solo admin.

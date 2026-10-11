@@ -143,20 +143,25 @@ export const borrarEntrada = async (id: string): Promise<void> => {
 /* ------------------------------- preguntas ------------------------------ */
 
 export const preguntasPublicadas = async (seccion?: string): Promise<Pregunta[]> => {
-  const { collection, getDocs, orderBy, query, where } = await import(
-    'firebase/firestore'
-  );
-
-  const restricciones = [
-    where('publicada', '==', true),
-    ...(seccion ? [where('seccion', '==', seccion)] : []),
-    orderBy('orden', 'asc'),
-  ];
-
-  const resultado = await getDocs(
-    query(collection(await db(), 'preguntas'), ...restricciones),
-  );
-  return resultado.docs.map((d) => conId<Pregunta>(d.id, d.data()));
+  // Una sola igualdad evita exigir un índice compuesto por sección y orden.
+  const documentos = await consultar({
+    coleccion: 'preguntas',
+    donde: [{ campo: 'publicada', valor: true }],
+    estricto: true,
+  });
+  return documentos
+    .map(({ id, datos }): Pregunta => ({
+      id,
+      pregunta: String(datos.pregunta ?? ''),
+      respuesta: String(datos.respuesta ?? ''),
+      seccion: String(datos.seccion ?? ''),
+      orden: Number(datos.orden ?? 0),
+      publicada: true,
+    }))
+    .filter(
+      (pregunta) => !seccion || pregunta.seccion === 'general' || pregunta.seccion === seccion,
+    )
+    .sort((a, b) => a.orden - b.orden);
 };
 
 export const todasLasPreguntas = async (): Promise<Pregunta[]> => {

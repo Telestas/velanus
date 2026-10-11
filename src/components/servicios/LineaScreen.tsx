@@ -1,7 +1,8 @@
-import React from 'react';
-import { NavigationProps } from '../../types';
+import React, { useEffect, useState } from 'react';
+import { NavigationProps, ScreenId } from '../../types';
 import { contenidoServicios, lineaDe } from '../../content/servicios';
-import { ScreenId } from '../../types';
+import { preguntasPublicadas, type Pregunta } from '../../data/blog';
+import { textoDePlazo, usarPlazos, type ClaveServicio } from '../../data/plazos';
 import { useIdioma } from '../../i18n/idioma';
 import { textos } from '../../i18n/textos';
 import { Enlace } from '../home/comunes';
@@ -33,6 +34,28 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
   const t = textos(idioma);
   const linea = lineaDe(contenidoServicios(idioma), pantalla)!;
   const paleta = paletaDe(useVarianteHome());
+  const plazosGuardados = usarPlazos();
+  const [preguntasAdmin, setPreguntasAdmin] = useState<Pregunta[]>([]);
+  const [errorPreguntas, setErrorPreguntas] = useState(false);
+  const seccion = pantalla.replace('servicios-', '');
+  const preguntas = [...linea.preguntas, ...preguntasAdmin];
+
+  useEffect(() => {
+    let activa = true;
+    setPreguntasAdmin([]);
+    setErrorPreguntas(false);
+    void preguntasPublicadas(seccion).then(
+      (leidas) => {
+        if (activa) setPreguntasAdmin(leidas);
+      },
+      () => {
+        if (activa) setErrorPreguntas(true);
+      },
+    );
+    return () => {
+      activa = false;
+    };
+  }, [seccion]);
 
   /*
    * La línea C atiende a personas, no a empresas: en la maqueta cuelga
@@ -148,7 +171,7 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
                 >
                   <span className={`text-[17px] ${paleta.textoFuerte}`}>{plazo.concepto}</span>
                   <span className={`text-base font-bold ${paleta.acentoTexto} text-right`}>
-                    {plazo.plazo}
+                  {textoDePlazo(plazosGuardados[seccion as ClaveServicio]?.[i], idioma, plazo.plazo)}
                   </span>
                 </div>
               ))}
@@ -174,12 +197,19 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
       {/* preguntas frecuentes */}
       <section className={`${ANCHO} py-20`}>
         <h2 className="text-[28px] md:text-[34px] font-bold mb-8">{t.servicios.preguntas}</h2>
+        {errorPreguntas && (
+          <p role="alert" className={`text-sm ${paleta.textoTenue} mb-4`}>
+            {idioma === 'en'
+              ? 'Additional questions could not be loaded.'
+              : 'No se pudieron cargar las preguntas adicionales.'}
+          </p>
+        )}
         <div className="flex flex-col">
-          {linea.preguntas.map((item, i) => (
+          {preguntas.map((item, i) => (
             <div
-              key={item.pregunta}
+              key={'id' in item ? item.id : item.pregunta}
               className={`grid lg:grid-cols-[420px_1fr] gap-4 lg:gap-12 py-6 border-t ${paleta.borde} ${
-                i === linea.preguntas.length - 1 ? 'border-b' : ''
+                i === preguntas.length - 1 ? 'border-b' : ''
               }`}
             >
               <h3 className="text-[19px] font-bold">{item.pregunta}</h3>

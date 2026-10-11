@@ -4,9 +4,8 @@ import { ClaveCifra } from '../data/cifras';
 /**
  * Contenido de «Sobre nosotros», en los dos idiomas.
  *
- * BORRADOR: no hay nombres, cargos, credenciales ni historia de la firma. Todo
- * eso va marcado como pendiente a propósito —cualquier cosa escrita ahí sería
- * inventada— y solo lo rellena el cliente.
+ * La historia y las credenciales siguen pendientes de confirmación. Las fichas
+ * de equipo son de muestra hasta que se publiquen perfiles desde el panel.
  */
 
 export interface Regla {

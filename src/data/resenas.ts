@@ -53,10 +53,13 @@ export const resenasPublicadas = async (limite?: number): Promise<Resena[]> => {
   const documentos = await consultar({
     coleccion: 'resenas',
     donde: [{ campo: 'aprobada', valor: true }],
-    ordenar: { campo: 'creado', direccion: 'DESCENDING' },
-    limite,
+    estricto: true,
   });
-  return documentos.map(({ id, datos }) => aResena(id, datos));
+  // Ordenar aquí evita requerir un índice compuesto que no está desplegado.
+  const ordenadas = documentos
+    .map(({ id, datos }) => aResena(id, datos))
+    .sort((a, b) => (b.creado?.getTime() ?? 0) - (a.creado?.getTime() ?? 0));
+  return limite === undefined ? ordenadas : ordenadas.slice(0, limite);
 };
 
 /** Envía una reseña a la cola de moderación. No se publica al enviarla. */
