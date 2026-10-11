@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Entrada, borrarEntrada, guardarEntrada, todasLasEntradas } from '../../data/blog';
+import { Comentario, Entrada, borrarEntrada, guardarEntrada, todasLasEntradas, todosLosComentarios } from '../../data/blog';
 import { borrarImagen, guardarImagen, prepararImagen } from '../../data/imagenes';
 import { MarcoImagen } from '../blog/piezas';
+import { PanelComentarios } from './PanelComentarios';
 import { mensajeDeError } from '../../firebase';
 import { campo, etiqueta, Boton, Aviso } from './piezas';
 
@@ -33,11 +34,15 @@ const vacia = (): Omit<Entrada, 'id'> & { id?: string } => ({
 /** Alta, edición y borrado de artículos del blog. */
 export const PanelEntradas: React.FC = () => {
   const [entradas, setEntradas] = useState<Entrada[]>([]);
+  const [comentarios, setComentarios] = useState<Comentario[]>([]);
+  const [abiertos, setAbiertos] = useState<Record<string, boolean>>({});
   const [edicion, setEdicion] = useState<(Omit<Entrada, 'id'> & { id?: string }) | null>(
     null,
   );
   const [cargando, setCargando] = useState(true);
+  const [cargandoComentarios, setCargandoComentarios] = useState(true);
   const [error, setError] = useState('');
+  const [errorComentarios, setErrorComentarios] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [archivoImagen, setArchivoImagen] = useState<File | null>(null);
   const [vistaPrevia, setVistaPrevia] = useState('');
@@ -70,9 +75,28 @@ export const PanelEntradas: React.FC = () => {
     }
   };
 
+  const recargarComentarios = async () => {
+    setCargandoComentarios(true);
+    setErrorComentarios('');
+    try {
+      setComentarios(await todosLosComentarios());
+    } catch (fallo) {
+      setErrorComentarios(mensajeDeError(fallo));
+      throw fallo;
+    } finally {
+      setCargandoComentarios(false);
+    }
+  };
+
   useEffect(() => {
     void recargar();
+    void recargarComentarios().catch(() => {});
   }, []);
+
+  const comentariosDeEntrada = (slug: string): Comentario[] =>
+    comentarios.filter((comentario) => comentario.entrada === slug);
+  const slugs = new Set(entradas.map((entrada) => entrada.slug));
+  const sinArticulo = comentarios.filter((comentario) => !slugs.has(comentario.entrada));
 
   const guardar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -245,37 +269,18 @@ export const PanelEntradas: React.FC = () => {
           />
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-[7px]">
-            <label className={etiqueta} htmlFor="e-cargo">
-              Cargo del autor
-            </label>
-            <input
-              id="e-cargo"
-              className={campo}
-              value={edicion.autorCargo}
-              onChange={(e) => setEdicion({ ...edicion, autorCargo: e.target.value })}
-            />
-          </div>
-          <div className="flex flex-col gap-[7px]">
-            <label className={etiqueta} htmlFor="e-imagen">
-              Imagen de cabecera (URL opcional)
-            </label>
-            <input
-              id="e-imagen"
-              className={campo}
-              value={edicion.imagen}
-              placeholder="/blog/mi-imagen.jpg"
-              onChange={(e) => {
-                limpiarArchivo();
-                setEdicion({ ...edicion, imagen: e.target.value });
-              }}
-            />
-          </div>
+        <div className="flex flex-col gap-[7px]">
+          <label className={etiqueta} htmlFor="e-cargo">Cargo del autor</label>
+          <input
+            id="e-cargo"
+            className={campo}
+            value={edicion.autorCargo}
+            onChange={(e) => setEdicion({ ...edicion, autorCargo: e.target.value })}
+          />
         </div>
 
         <div className="flex flex-col gap-3">
-          <label className={etiqueta} htmlFor="e-archivo">O subir una foto desde su equipo</label>
+          <label className={etiqueta} htmlFor="e-archivo">Foto de cabecera (opcional)</label>
           <input
             id="e-archivo"
             ref={inputArchivo}
@@ -298,7 +303,7 @@ export const PanelEntradas: React.FC = () => {
               limpiarArchivo();
               setEdicion({ ...edicion, imagen: '' });
             }}>
-              Publicar sin imagen
+              Quitar imagen
             </Boton>
           )}
         </div>
@@ -346,7 +351,16 @@ export const PanelEntradas: React.FC = () => {
       </div>
 
       {error && <Aviso>{error}</Aviso>}
+      {errorComentarios && (
+        <div className="flex items-center gap-3 flex-wrap">
+          <Aviso>No se pudieron cargar los comentarios: {errorComentarios}</Aviso>
+          <Boton tono="secundario" onClick={() => void recargarComentarios().catch(() => {})}>
+            Reintentar
+          </Boton>
+        </div>
+      )}
       {cargando && <p className="text-base text-[#4A4A4A]">Cargando…</p>}
+      {cargandoComentarios && <p className="text-sm text-[#767676]">Cargando comentarios…</p>}
 
       {!cargando && entradas.length === 0 && (
         <p className="text-base text-[#4A4A4A]">
@@ -356,35 +370,66 @@ export const PanelEntradas: React.FC = () => {
       )}
 
       <div className="flex flex-col">
-        {entradas.map((entrada) => (
-          <div
-            key={entrada.id}
-            className="grid sm:grid-cols-[1fr_auto] gap-4 py-5 border-t border-[#E4E4E4] items-start"
-          >
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h3 className="text-[19px] font-bold">{entrada.titulo}</h3>
-                {!entrada.publicada && (
-                  <span className="text-xs font-bold uppercase tracking-[0.14em] bg-[#E4E4E4] text-[#4A4A4A] px-2 py-1">
-                    Borrador
+        {entradas.map((entrada) => {
+          const delArticulo = comentariosDeEntrada(entrada.slug);
+          const pendientes = delArticulo.filter((comentario) => !comentario.aprobado).length;
+          return (
+            <div
+              key={entrada.id}
+              className="grid sm:grid-cols-[1fr_auto] gap-4 py-5 border-t border-[#E4E4E4] items-start"
+            >
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h3 className="text-[19px] font-bold">{entrada.titulo}</h3>
+                  {!entrada.publicada && (
+                    <span className="text-xs font-bold uppercase tracking-[0.14em] bg-[#E4E4E4] text-[#4A4A4A] px-2 py-1">
+                      Borrador
+                    </span>
+                  )}
+                </div>
+                <span className="text-sm text-[#767676]">
+                  {entrada.fecha} · {entrada.categoria} · /blog/{entrada.slug}
+                </span>
+                {!cargandoComentarios && !errorComentarios && (
+                  <span className="text-sm text-[#4A4A4A]">
+                    {delArticulo.length} {delArticulo.length === 1 ? 'comentario' : 'comentarios'}
+                    {pendientes > 0 ? ` · ${pendientes} pendientes` : ''}
                   </span>
                 )}
               </div>
-              <span className="text-sm text-[#767676]">
-                {entrada.fecha} · {entrada.categoria} · /blog/{entrada.slug}
-              </span>
+              <div className="flex gap-2 flex-wrap">
+                <Boton
+                  tono="secundario"
+                  aria-expanded={Boolean(abiertos[entrada.id])}
+                  disabled={cargandoComentarios || Boolean(errorComentarios)}
+                  onClick={() => setAbiertos((actual) => ({ ...actual, [entrada.id]: !actual[entrada.id] }))}
+                >
+                  {abiertos[entrada.id] ? 'Ocultar comentarios' : 'Ver comentarios'}
+                </Boton>
+                <Boton tono="secundario" onClick={() => { limpiarArchivo(); setEdicion(entrada); }}>
+                  Editar
+                </Boton>
+                <Boton tono="peligro" onClick={() => eliminar(entrada)}>
+                  Borrar
+                </Boton>
+              </div>
+              {abiertos[entrada.id] && (
+                <div className="sm:col-span-2 border-t border-[#E4E4E4] pt-4">
+                  <PanelComentarios comentarios={delArticulo} alActualizar={recargarComentarios} />
+                </div>
+              )}
             </div>
-            <div className="flex gap-2">
-              <Boton tono="secundario" onClick={() => { limpiarArchivo(); setEdicion(entrada); }}>
-                Editar
-              </Boton>
-              <Boton tono="peligro" onClick={() => eliminar(entrada)}>
-                Borrar
-              </Boton>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {sinArticulo.length > 0 && (
+        <section className="border-t border-[#E4E4E4] pt-6 flex flex-col gap-3">
+          <h3 className="text-xl font-bold">Comentarios sin artículo</h3>
+          <p className="text-sm text-[#767676]">El artículo pudo haberse borrado o cambiado de URL.</p>
+          <PanelComentarios comentarios={sinArticulo} alActualizar={recargarComentarios} />
+        </section>
+      )}
     </div>
   );
 };

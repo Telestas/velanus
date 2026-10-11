@@ -10,11 +10,21 @@
       ]
     },
     {
-      "//": "Comentarios de una entrada, en orden de publicación.",
+      "//": "Índice anterior de comentarios; mantener durante la transición.",
       "collectionGroup": "comentarios",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "entrada", "order": "ASCENDING" },
+        { "fieldPath": "creado", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "//": "Comentarios aprobados de una entrada, en orden de publicación.",
+      "collectionGroup": "comentarios",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "entrada", "order": "ASCENDING" },
+        { "fieldPath": "aprobado", "order": "ASCENDING" },
         { "fieldPath": "creado", "order": "ASCENDING" }
       ]
     }

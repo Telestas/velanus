@@ -38,10 +38,9 @@ Por qué cada parte, para poder mantenerla:
   línea (la altura del logo). Sin esto, el logo se descoloca. Quitando esos dos
   casos se podría endurecer.
 - **`font-src 'self'`** — las fuentes están autoalojadas en `/fonts`.
-- **`img-src` con `https:`** — las imágenes de los artículos del blog se indican
-  por URL desde el panel y pueden estar en un servicio externo, porque Cloud
-  Storage exige facturación. Si algún día todas las imágenes viven en el repo,
-  esto se puede reducir a `'self' data:`.
+- **`img-src` con `data:`** — las fotos subidas desde el panel se guardan en
+  Firestore como WebP y se muestran como URL de datos. `https:` se conserva para
+  imágenes externas de artículos anteriores; puede retirarse cuando se migren.
 - **`connect-src`** — los hosts con los que habla el sitio:
   Firestore (contenido y formularios), Identity Toolkit (sesión anónima al
   enviar algo y acceso al panel), Secure Token (renovación de sesión del panel)

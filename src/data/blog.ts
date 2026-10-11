@@ -225,6 +225,7 @@ export const comentariosDe = async (slug: string): Promise<Comentario[]> => {
       { campo: 'aprobado', valor: true },
     ],
     ordenar: { campo: 'creado', direccion: 'ASCENDING' },
+    estricto: true,
   });
   return documentos.map(({ id, datos }) => aComentario(id, datos));
 };

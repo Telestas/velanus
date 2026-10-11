@@ -36,7 +36,7 @@ npm run backup -- --output /ruta/segura/velanus-firestore.json
 
 ## Imágenes del blog
 
-En `/admin` se puede subir una foto JPG, PNG o WebP para cada artículo, pegar una URL o dejarlo sin imagen. El navegador convierte las fotos subidas a WebP y las limita a 350 KiB. Cada foto se guarda en un documento separado de Firestore (`imagenes`), mientras que el artículo conserva solo su referencia; al reemplazar o borrar un artículo se intenta borrar también la foto anterior. Hay que desplegar `firestore.rules` antes de usar la subida en producción.
+En `/admin` se puede subir una foto JPG, PNG o WebP para cada artículo o dejarlo sin imagen. El navegador convierte las fotos subidas a WebP y las limita a 350 KiB. Cada foto se guarda en un documento separado de Firestore (`imagenes`), mientras que el artículo conserva solo su referencia; al reemplazar o borrar un artículo se intenta borrar también la foto anterior.
 
 Esta opción funciona con las cuotas gratuitas de Firestore, pero cada foto ocupa almacenamiento y su carga cuenta como lectura y transferencia. Para una biblioteca grande o mucho tráfico, conviene migrar las imágenes a almacenamiento de objetos. Firebase Storage exige el plan Blaze con facturación habilitada, aunque incluye una cuota sin cargo.
 

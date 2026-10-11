@@ -1,46 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Comentario,
   aprobarComentario,
   borrarComentario,
   responderComentario,
-  todosLosComentarios,
 } from '../../data/blog';
 import { mensajeDeError } from '../../firebase';
 import { Aviso, Boton } from './piezas';
 
-/**
- * Moderación de comentarios.
- *
- * **Nada se publica sin pasar por aquí.** Un comentario enviado queda pendiente
- * hasta que se aprueba, y el sitio se lo advierte a quien lo escribe. Sin Cloud
- * Functions no hay filtro automático, así que esta pantalla es la única puerta.
- */
-export const PanelComentarios: React.FC = () => {
-  const [comentarios, setComentarios] = useState<Comentario[]>([]);
-  const [cargando, setCargando] = useState(true);
+/** Acciones de moderación para los comentarios de un artículo. */
+export const PanelComentarios: React.FC<{
+  comentarios: Comentario[];
+  alActualizar: () => Promise<void>;
+}> = ({ comentarios, alActualizar }) => {
   const [error, setError] = useState('');
 
-  const recargar = async () => {
-    setCargando(true);
+  const alternar = async (comentario: Comentario) => {
     setError('');
     try {
-      setComentarios(await todosLosComentarios());
-    } catch (fallo) {
-      setError(mensajeDeError(fallo));
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    void recargar();
-  }, []);
-
-  const alternar = async (comentario: Comentario) => {
-    try {
       await aprobarComentario(comentario.id, !comentario.aprobado);
-      await recargar();
+      await alActualizar();
     } catch (fallo) {
       setError(mensajeDeError(fallo));
     }
@@ -53,9 +32,10 @@ export const PanelComentarios: React.FC = () => {
       comentario.respuesta,
     );
     if (respuesta === null) return;
+    setError('');
     try {
       await responderComentario(comentario.id, respuesta);
-      await recargar();
+      await alActualizar();
     } catch (fallo) {
       setError(mensajeDeError(fallo));
     }
@@ -63,26 +43,19 @@ export const PanelComentarios: React.FC = () => {
 
   const eliminar = async (comentario: Comentario) => {
     if (!window.confirm(`¿Borrar el comentario de ${comentario.nombre}?`)) return;
+    setError('');
     try {
       await borrarComentario(comentario.id);
-      await recargar();
+      await alActualizar();
     } catch (fallo) {
       setError(mensajeDeError(fallo));
     }
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <h2 className="text-[26px] font-bold">Comentarios</h2>
-        <Boton tono="secundario" onClick={recargar}>
-          Actualizar
-        </Boton>
-      </div>
-
+    <div className="flex flex-col gap-4">
       {error && <Aviso>{error}</Aviso>}
-      {cargando && <p className="text-base text-[#4A4A4A]">Cargando…</p>}
-      {!cargando && comentarios.length === 0 && (
+      {comentarios.length === 0 && (
         <p className="text-base text-[#4A4A4A]">Todavía no hay comentarios.</p>
       )}
 

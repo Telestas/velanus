@@ -86,6 +86,8 @@ interface OpcionesConsulta {
   donde?: { campo: string; valor: unknown }[];
   ordenar?: { campo: string; direccion: 'ASCENDING' | 'DESCENDING' };
   limite?: number;
+  /** Las vistas con estado de error no deben confundir fallos con listas vacías. */
+  estricto?: boolean;
 }
 
 /**
@@ -97,6 +99,7 @@ export const consultar = async ({
   donde = [],
   ordenar,
   limite,
+  estricto = false,
 }: OpcionesConsulta): Promise<DocumentoRest[]> => {
   const filtros = donde.map(({ campo, valor }) => ({
     fieldFilter: { field: { fieldPath: campo }, op: 'EQUAL', value: aCampo(valor) },
@@ -124,11 +127,12 @@ export const consultar = async ({
       },
       body: JSON.stringify({ structuredQuery }),
     });
-    if (!respuesta.ok) return [];
+    if (!respuesta.ok) throw new Error(`Firestore respondió ${respuesta.status}.`);
 
     const filas = (await respuesta.json()) as { document?: { name: string; fields?: Record<string, ValorRest> } }[];
     return filas.filter((fila) => fila.document).map((fila) => aDocumento(fila.document!));
-  } catch {
+  } catch (fallo) {
+    if (estricto) throw fallo;
     return [];
   }
 };

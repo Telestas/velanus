@@ -18,6 +18,9 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
   const t = textos(idioma);
 
   const [comentarios, setComentarios] = useState<Comentario[]>([]);
+  const [cargandoComentarios, setCargandoComentarios] = useState(true);
+  const [errorComentarios, setErrorComentarios] = useState(false);
+  const [intento, setIntento] = useState(0);
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [texto, setTexto] = useState('');
@@ -27,8 +30,15 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
   const [error, setError] = useState('');
 
   useEffect(() => {
-    void comentariosDe(slug).then(setComentarios);
-  }, [slug]);
+    let activo = true;
+    setCargandoComentarios(true);
+    setErrorComentarios(false);
+    void comentariosDe(slug).then(
+      (lista) => { if (activo) setComentarios(lista); },
+      () => { if (activo) setErrorComentarios(true); },
+    ).finally(() => { if (activo) setCargandoComentarios(false); });
+    return () => { activo = false; };
+  }, [slug, intento]);
 
   const campo = `border ${paleta.borde} ${paleta.banda} ${paleta.texto} px-3.5 py-3.5 text-base outline-none focus-visible:outline-2 focus-visible:outline-[#F9A600]`;
 
@@ -56,16 +66,27 @@ export const Comentarios: React.FC<{ paleta: Paleta; slug: string }> = ({ paleta
     <section className={`mt-6 border-t ${paleta.borde} pt-9 flex flex-col gap-6`}>
       <div className="flex items-baseline justify-between gap-6">
         <h2 className="text-[24px] md:text-[28px] font-bold">{t.blog.comentarios}</h2>
-        <span className={`text-sm ${paleta.textoTenue}`}>
-          {t.blog.publicados(comentarios.length)}
-        </span>
+        {!cargandoComentarios && !errorComentarios && (
+          <span className={`text-sm ${paleta.textoTenue}`}>
+            {t.blog.publicados(comentarios.length)}
+          </span>
+        )}
       </div>
 
-      {comentarios.length === 0 && (
+      {cargandoComentarios && <p className={`text-base ${paleta.textoSuave}`}>…</p>}
+      {errorComentarios && (
+        <div className="flex items-center gap-4 flex-wrap">
+          <p className={`text-base ${paleta.textoSuave}`}>{t.blog.errorComentarios}</p>
+          <button type="button" onClick={() => setIntento((n) => n + 1)} className={`text-sm font-bold ${paleta.acentoTexto}`}>
+            {t.blog.reintentarComentarios}
+          </button>
+        </div>
+      )}
+      {!cargandoComentarios && !errorComentarios && comentarios.length === 0 && (
         <p className={`text-base ${paleta.textoSuave}`}>{t.blog.sinComentarios}</p>
       )}
 
-      {comentarios.map((comentario) => (
+      {!cargandoComentarios && !errorComentarios && comentarios.map((comentario) => (
         <article key={comentario.id} className="flex flex-col gap-4">
           <div className={`flex gap-4 pb-6 border-b ${paleta.borde}`}>
             <div className={`w-10 h-10 flex-none ${paleta.marcoImagen}`} aria-hidden />
