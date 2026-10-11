@@ -22,7 +22,7 @@ interface LineaScreenProps extends NavigationProps {
  *
  * Las cuatro líneas comparten estructura en la maqueta —hero con panel, qué
  * incluye, plazos y requisitos sobre banda, preguntas frecuentes y cierre—, así
- * que la pantalla se pinta una vez y recibe los datos de `content/servicios.ts`.
+ * que la pantalla se pinta una vez. Las preguntas se cargan del panel.
  */
 export const LineaScreen: React.FC<LineaScreenProps> = ({
   pantalla,
@@ -38,7 +38,7 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
   const [preguntasAdmin, setPreguntasAdmin] = useState<Pregunta[]>([]);
   const [errorPreguntas, setErrorPreguntas] = useState(false);
   const seccion = pantalla.replace('servicios-', '');
-  const preguntas = [...linea.preguntas, ...preguntasAdmin];
+  const preguntas = preguntasAdmin;
 
   useEffect(() => {
     let activa = true;
@@ -194,32 +194,35 @@ export const LineaScreen: React.FC<LineaScreenProps> = ({
         </div>
       </section>
 
-      {/* preguntas frecuentes */}
-      <section className={`${ANCHO} py-20`}>
-        <h2 className="text-[28px] md:text-[34px] font-bold mb-8">{t.servicios.preguntas}</h2>
-        {errorPreguntas && (
-          <p role="alert" className={`text-sm ${paleta.textoTenue} mb-4`}>
-            {idioma === 'en'
-              ? 'Additional questions could not be loaded.'
-              : 'No se pudieron cargar las preguntas adicionales.'}
-          </p>
-        )}
-        <div className="flex flex-col">
-          {preguntas.map((item, i) => (
-            <div
-              key={'id' in item ? item.id : item.pregunta}
-              className={`grid lg:grid-cols-[420px_1fr] gap-4 lg:gap-12 py-6 border-t ${paleta.borde} ${
-                i === preguntas.length - 1 ? 'border-b' : ''
-              }`}
-            >
-              <h3 className="text-[19px] font-bold">{item.pregunta}</h3>
-              <p className={`text-[17px] leading-relaxed ${paleta.textoSuave}`}>
-                {item.respuesta}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {(preguntas.length > 0 || errorPreguntas) && (
+        <section className={`${ANCHO} py-20`}>
+          <h2 className="text-[28px] md:text-[34px] font-bold mb-8">{t.servicios.preguntas}</h2>
+          {errorPreguntas && (
+            <p role="alert" className={`text-sm ${paleta.textoTenue} mb-4`}>
+              {idioma === 'en'
+                ? 'Frequently asked questions could not be loaded.'
+                : 'No se pudieron cargar las preguntas frecuentes.'}
+            </p>
+          )}
+          <div className="flex flex-col">
+            {preguntas.map((item, i) => (
+              <div
+                key={item.id}
+                className={`grid lg:grid-cols-[420px_1fr] gap-4 lg:gap-12 py-6 border-t ${paleta.borde} ${
+                  i === preguntas.length - 1 ? 'border-b' : ''
+                }`}
+              >
+                <h3 className="text-[19px] font-bold">
+                  {idioma === 'en' ? item.preguntaEn?.trim() || item.pregunta : item.pregunta}
+                </h3>
+                <p className={`text-[17px] leading-relaxed ${paleta.textoSuave}`}>
+                  {idioma === 'en' ? item.respuestaEn?.trim() || item.respuesta : item.respuesta}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <BandaCta
         paleta={paleta}

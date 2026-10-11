@@ -6,8 +6,8 @@ import { Idioma } from '../i18n/idioma';
  * subpáginas de línea.
  *
  * Las cuatro subpáginas comparten estructura —hero con panel, qué incluye,
- * plazos, qué necesitamos, preguntas frecuentes y cierre—, así que se
- * describen como datos y las pinta una sola plantilla.
+ * plazos, qué necesitamos y cierre—, así que se describen como datos y las
+ * pinta una sola plantilla. Las preguntas frecuentes vienen del panel.
  *
  * BORRADOR: los `[PLAZO PENDIENTE]` sirven de respaldo hasta que el panel
  * publique valores para cada servicio. Las respuestas jurídicas marcadas las
@@ -21,11 +21,6 @@ import { Idioma } from '../i18n/idioma';
 export interface Plazo {
   concepto: string;
   plazo: string;
-}
-
-export interface Pregunta {
-  pregunta: string;
-  respuesta: string;
 }
 
 export interface ItemIncluido {
@@ -56,7 +51,6 @@ export interface LineaPagina {
   plazos: Plazo[];
   notaPlazos?: string;
   requisitos: string[];
-  preguntas: Pregunta[];
   cierre: { titulo: string; boton: string; mensaje: string };
 }
 
@@ -141,28 +135,6 @@ const CONTABILIDAD_ES: LineaPagina = {
     'Contratos laborales y nóminas previas',
     'Extractos bancarios del período',
   ],
-  preguntas: [
-    {
-      pregunta: '¿Necesito estar en Cuba para el cierre contable?',
-      respuesta:
-        'No. Trabajamos de forma remota con accesos a su sistema y le entregamos los estados por correo, con una llamada para explicárselos.',
-    },
-    {
-      pregunta: '¿Trabajan con Versat o con Odoo?',
-      respuesta:
-        'Con los dos. Si aún no tiene sistema, le recomendamos uno según el tamaño y el tipo de operación.',
-    },
-    {
-      pregunta: 'Mi contabilidad viene atrasada varios meses. ¿La asumen?',
-      respuesta:
-        'Sí. Primero valoramos el atraso y le decimos qué se puede reconstruir y con qué soportes; eso va como trabajo aparte del servicio mensual.',
-    },
-    {
-      pregunta: '¿Pueden entregarme los estados en inglés?',
-      respuesta:
-        '[RESPUESTA PENDIENTE — confirmar si se ofrece entrega bilingüe y con qué alcance]',
-    },
-  ],
   cierre: {
     titulo: 'Díganos en qué estado está su contabilidad. La valoración inicial no se cobra.',
     boton: 'Agendar por WhatsApp',
@@ -239,27 +211,6 @@ const LEGAL_ES: LineaPagina = {
     'Contratos y comunicaciones del conflicto',
     'Capital de aporte previsto',
   ],
-  preguntas: [
-    {
-      pregunta: '¿Puede un extranjero ser socio de una MIPYME cubana?',
-      respuesta:
-        '[RESPUESTA PENDIENTE — la redacta el equipo jurídico según el marco vigente]',
-    },
-    {
-      pregunta: '¿Tengo que viajar a Cuba para constituir?',
-      respuesta:
-        'No, si nos otorga poder de representación. Le indicamos cómo otorgarlo desde su país y qué legalizaciones lleva.',
-    },
-    {
-      pregunta: '¿Qué diferencia hay entre MIPYME, TCP, CNA y PDL?',
-      respuesta:
-        '[RESPUESTA PENDIENTE — comparativa a redactar por el equipo jurídico; da para un artículo del blog enlazado desde aquí]',
-    },
-    {
-      pregunta: '¿Nos representan también ante el litigio?',
-      respuesta: '[RESPUESTA PENDIENTE — confirmar alcance de representación y colegiación]',
-    },
-  ],
   cierre: {
     titulo: 'Cuéntenos qué quiere hacer en Cuba. Le decimos qué figura legal necesita.',
     boton: 'Agendar por WhatsApp',
@@ -317,22 +268,6 @@ const TRAMITES_ES: LineaPagina = {
     'Motivo y fechas del viaje',
     'Autorización para gestionar en su nombre',
   ],
-  preguntas: [
-    {
-      pregunta: '¿Garantizan que me den la visa?',
-      respuesta:
-        'No. Nadie puede garantizar una decisión consular, y quien se lo prometa le está mintiendo. Lo que garantizamos es un expediente completo, correcto y presentado a tiempo.',
-    },
-    {
-      pregunta: '¿Qué pasa si me la niegan?',
-      respuesta: '[RESPUESTA PENDIENTE — política de honorarios en caso de negativa]',
-    },
-    {
-      pregunta: 'Vivo fuera de Cuba. ¿Pueden sacar mis documentos aquí?',
-      respuesta:
-        'Sí, con su autorización. Es uno de los encargos más frecuentes de cubanos residentes en el exterior.',
-    },
-  ],
   cierre: {
     titulo: 'Díganos qué documento o qué visa necesita y le decimos qué lleva.',
     boton: 'Consultar por WhatsApp',
@@ -386,22 +321,6 @@ const EVENTOS_ES: LineaPagina = {
     'Presupuesto orientativo',
     'Necesidades de local y equipos',
     'Nivel de partida del equipo, si es taller',
-  ],
-  preguntas: [
-    {
-      pregunta: '¿Incluye local, catering y equipos?',
-      respuesta:
-        '[RESPUESTA PENDIENTE — confirmar qué entra en el servicio y qué se factura aparte]',
-    },
-    {
-      pregunta: '¿Capacitan en Versat y en Odoo?',
-      respuesta:
-        '[RESPUESTA PENDIENTE — trabajamos con los dos sistemas, pero falta confirmar si se imparte formación sobre ellos]',
-    },
-    {
-      pregunta: '¿Pueden organizar un evento si mi empresa no es cliente?',
-      respuesta: '[RESPUESTA PENDIENTE]',
-    },
   ],
   cierre: {
     titulo: 'Cuéntenos qué evento tiene en mente y le mandamos una propuesta.',
@@ -502,28 +421,6 @@ const CONTABILIDAD_EN: LineaPagina = {
     'Employment contracts and previous payrolls',
     'Bank statements for the period',
   ],
-  preguntas: [
-    {
-      pregunta: 'Do I need to be in Cuba for the accounting close?',
-      respuesta:
-        'No. We work remotely with access to your system and send you the statements by email, with a call to explain them.',
-    },
-    {
-      pregunta: 'Do you work with Versat or with Odoo?',
-      respuesta:
-        'Both. If you do not have a system yet, we recommend one based on the size and type of your operation.',
-    },
-    {
-      pregunta: 'My accounting is several months behind. Will you take it on?',
-      respuesta:
-        'Yes. First we assess the backlog and tell you what can be reconstructed and with which supporting documents; that is quoted separately from the monthly service.',
-    },
-    {
-      pregunta: 'Can you deliver the statements in English?',
-      respuesta:
-        '[ANSWER PENDING — confirm whether bilingual delivery is offered and to what extent]',
-    },
-  ],
   cierre: {
     titulo: 'Tell us where your accounting stands. The initial assessment is free.',
     boton: 'Book on WhatsApp',
@@ -600,27 +497,6 @@ const LEGAL_EN: LineaPagina = {
     'Contracts and correspondence about the dispute',
     'Intended capital contribution',
   ],
-  preguntas: [
-    {
-      pregunta: 'Can a foreigner be a partner in a Cuban MIPYME?',
-      respuesta:
-        '[ANSWER PENDING — to be drafted by the legal team under the regulations in force]',
-    },
-    {
-      pregunta: 'Do I have to travel to Cuba to incorporate?',
-      respuesta:
-        'No, if you grant us power of attorney. We tell you how to grant it from your country and which legalisations it requires.',
-    },
-    {
-      pregunta: 'What is the difference between MIPYME, TCP, CNA and PDL?',
-      respuesta:
-        '[ANSWER PENDING — comparison to be drafted by the legal team; worth a blog post linked from here]',
-    },
-    {
-      pregunta: 'Do you also represent us in litigation?',
-      respuesta: '[ANSWER PENDING — confirm scope of representation and bar membership]',
-    },
-  ],
   cierre: {
     titulo: 'Tell us what you want to do in Cuba. We will tell you which legal form you need.',
     boton: 'Book on WhatsApp',
@@ -678,22 +554,6 @@ const TRAMITES_EN: LineaPagina = {
     'Purpose and dates of travel',
     'Authorisation to act on your behalf',
   ],
-  preguntas: [
-    {
-      pregunta: 'Do you guarantee I will get the visa?',
-      respuesta:
-        'No. Nobody can guarantee a consular decision, and anyone who promises you one is lying. What we guarantee is a complete, correct application filed on time.',
-    },
-    {
-      pregunta: 'What happens if it is refused?',
-      respuesta: '[ANSWER PENDING — fee policy in case of refusal]',
-    },
-    {
-      pregunta: 'I live outside Cuba. Can you obtain my documents there?',
-      respuesta:
-        'Yes, with your authorisation. It is one of the most frequent requests from Cubans living abroad.',
-    },
-  ],
   cierre: {
     titulo: 'Tell us which document or visa you need and we will tell you what it takes.',
     boton: 'Ask on WhatsApp',
@@ -747,22 +607,6 @@ const EVENTOS_EN: LineaPagina = {
     'Indicative budget',
     'Venue and equipment needs',
     'Starting level of the team, for workshops',
-  ],
-  preguntas: [
-    {
-      pregunta: 'Does it include venue, catering and equipment?',
-      respuesta:
-        '[ANSWER PENDING — confirm what the service covers and what is billed separately]',
-    },
-    {
-      pregunta: 'Do you train on Versat and Odoo?',
-      respuesta:
-        '[ANSWER PENDING — we work with both systems, but whether we teach them is still to be confirmed]',
-    },
-    {
-      pregunta: 'Can you organise an event if my company is not a client?',
-      respuesta: '[ANSWER PENDING]',
-    },
   ],
   cierre: {
     titulo: 'Tell us what event you have in mind and we will send you a proposal.',

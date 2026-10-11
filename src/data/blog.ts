@@ -38,6 +38,9 @@ export interface Pregunta {
   id: string;
   pregunta: string;
   respuesta: string;
+  /** Traducción opcional; la versión española sirve de respaldo. */
+  preguntaEn?: string;
+  respuestaEn?: string;
   /** Agrupa las preguntas por sección: 'general', 'contabilidad'… */
   seccion: string;
   orden: number;
@@ -154,6 +157,8 @@ export const preguntasPublicadas = async (seccion?: string): Promise<Pregunta[]>
       id,
       pregunta: String(datos.pregunta ?? ''),
       respuesta: String(datos.respuesta ?? ''),
+      preguntaEn: String(datos.preguntaEn ?? ''),
+      respuestaEn: String(datos.respuestaEn ?? ''),
       seccion: String(datos.seccion ?? ''),
       orden: Number(datos.orden ?? 0),
       publicada: true,

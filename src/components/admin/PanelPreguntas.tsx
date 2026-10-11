@@ -11,6 +11,8 @@ import { Aviso, Boton, campo, etiqueta } from './piezas';
 const vacia = (orden: number): Omit<Pregunta, 'id'> & { id?: string } => ({
   pregunta: '',
   respuesta: '',
+  preguntaEn: '',
+  respuestaEn: '',
   seccion: 'general',
   orden,
   publicada: true,
@@ -28,8 +30,8 @@ const secciones: Record<string, string> = {
  * Preguntas frecuentes.
  *
  * `seccion` decide dónde sale cada una: `general`, o la clave de una línea de
- * servicio (`contabilidad`, `legal`, `tramites`, `eventos`). Las que ya trae la
- * maqueta siguen en el código; estas se suman a ellas.
+ * servicio (`contabilidad`, `legal`, `tramites`, `eventos`). Solo las preguntas
+ * publicadas aquí aparecen en las páginas de servicios.
  */
 export const PanelPreguntas: React.FC = () => {
   const [preguntas, setPreguntas] = useState<Pregunta[]>([]);
@@ -89,7 +91,7 @@ export const PanelPreguntas: React.FC = () => {
 
         <div className="flex flex-col gap-[7px]">
           <label className={etiqueta} htmlFor="p-pregunta">
-            Pregunta
+            Pregunta en español
           </label>
           <input
             id="p-pregunta"
@@ -102,7 +104,7 @@ export const PanelPreguntas: React.FC = () => {
 
         <div className="flex flex-col gap-[7px]">
           <label className={etiqueta} htmlFor="p-respuesta">
-            Respuesta
+            Respuesta en español
           </label>
           <textarea
             id="p-respuesta"
@@ -112,6 +114,34 @@ export const PanelPreguntas: React.FC = () => {
             onChange={(e) => setEdicion({ ...edicion, respuesta: e.target.value })}
             required
           />
+        </div>
+
+        <div className="flex flex-col gap-[7px]">
+          <label className={etiqueta} htmlFor="p-pregunta-en">
+            Pregunta en inglés (opcional)
+          </label>
+          <input
+            id="p-pregunta-en"
+            className={campo}
+            value={edicion.preguntaEn ?? ''}
+            onChange={(e) => setEdicion({ ...edicion, preguntaEn: e.target.value })}
+          />
+        </div>
+
+        <div className="flex flex-col gap-[7px]">
+          <label className={etiqueta} htmlFor="p-respuesta-en">
+            Respuesta en inglés (opcional)
+          </label>
+          <textarea
+            id="p-respuesta-en"
+            rows={6}
+            className={`${campo} resize-y`}
+            value={edicion.respuestaEn ?? ''}
+            onChange={(e) => setEdicion({ ...edicion, respuestaEn: e.target.value })}
+          />
+          <span className="text-sm text-[#767676]">
+            Si no hay traducción, se mostrará la versión española en la página inglesa.
+          </span>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
@@ -190,8 +220,7 @@ export const PanelPreguntas: React.FC = () => {
       {cargando && <p className="text-base text-[#4A4A4A]">Cargando…</p>}
       {!cargando && preguntas.length === 0 && (
         <p className="text-base text-[#4A4A4A]">
-          No hay preguntas guardadas. Las que salen ahora en Servicios están escritas en el
-          código; estas se añadirían a ellas.
+          No hay preguntas guardadas. Cree y publique una para mostrarla en Servicios.
         </p>
       )}
       {!cargando && preguntas.length > 0 && !preguntas.some((pregunta) => !filtroSeccion || pregunta.seccion === filtroSeccion) && (
