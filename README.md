@@ -21,6 +21,7 @@ Otros comandos:
 - `npm run lint` — typecheck con `tsc --noEmit`
 - `npm test` — pruebas automáticas de rutas y formularios
 - `npm run build` — build de producción en `dist/`
+- `npm run build:cloudflare` — build para Cloudflare Pages, sin `404.html`
 - `npm run preview` — sirve el build local
 - `npm run backup` — copia las colecciones de Firestore a `backups/`
 
@@ -52,8 +53,10 @@ History API ([`src/router.ts`](src/router.ts)):
 | `/servicios` | Servicios |
 | `/nosotros` | Nosotros — *borrador* |
 
-En producción cuelgan del dominio raíz. El build copia `index.html` a `404.html`
-para que Pages sirva la SPA al entrar directo a una ruta o recargarla.
+En producción cuelgan del dominio raíz. El build de GitHub Pages copia
+`index.html` a `404.html` para cargar la SPA al abrir una ruta directamente.
+El build de Cloudflare Pages omite ese archivo para activar su fallback a
+`index.html` con respuesta HTTP 200.
 
 ## Despliegue
 
@@ -62,6 +65,12 @@ que compila y publica en GitHub Pages. Los pushes a `main` solo ejecutan CI.
 
 El `base` de Vite está fijado a `/` para el dominio propio; `public/CNAME` contiene
 `velanus.com`. Si se quita el dominio, hay que revisar ambos ajustes.
+
+Para preparar una vista previa en Cloudflare Pages, ejecutar
+`npm run build:cloudflare` y `wrangler pages deploy dist --project-name velanus`.
+El proyecto y el dominio deben configurarse en la cuenta de Cloudflare antes
+de cambiar el origen de producción. Hasta ese cambio, las etiquetas siguen
+publicando en GitHub Pages.
 
 ## Pendiente antes de considerarlo producción
 
