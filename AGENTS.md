@@ -11,7 +11,7 @@ Use Node.js 22+ and `npm ci` to install the lockfile dependencies.
 - `npm run dev` starts Vite at `http://localhost:3000`.
 - `npm run lint` runs TypeScript checking with `tsc --noEmit`; there is no ESLint setup.
 - `npm test` runs the Node test suite through `tsx`.
-- `npm run build` creates the production site in `dist/`; `npm run preview` serves that build locally.
+- `npm run build:cloudflare` creates the production site in `dist/`; `npm run preview` serves that build locally. `npm run build` retains the GitHub Pages 404 fallback for rollback.
 - `npm run backup` exports Firestore collections to the ignored `backups/` directory and requires Firebase login.
 
 Run lint, tests, and build before opening a pull request; CI runs the same checks.
@@ -26,7 +26,7 @@ Tests use `node:test` and `node:assert/strict`, with files named `tests/*.test.t
 
 ## Commits & Pull Requests
 
-Recent commits use short Spanish imperative subjects, for example `Mejora navegación, copias y pruebas`; follow that pattern and keep each commit focused. In pull requests, describe the user-visible change, link any relevant issue, list verification commands, and include screenshots for visual changes. Note Firebase rule or configuration changes explicitly. Deployment runs from `v*` tags on `main`, not from every push.
+Recent commits use short Spanish imperative subjects, for example `Mejora navegación, copias y pruebas`; follow that pattern and keep each commit focused. In pull requests, describe the user-visible change, link any relevant issue, list verification commands, and include screenshots for visual changes. Note Firebase rule or configuration changes explicitly. Cloudflare Pages deployment runs from `v*` tags on `main`, not from every push.
 
 ## Security & Configuration
 

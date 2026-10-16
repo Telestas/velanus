@@ -53,24 +53,26 @@ History API ([`src/router.ts`](src/router.ts)):
 | `/servicios` | Servicios |
 | `/nosotros` | Nosotros — *borrador* |
 
-En producción cuelgan del dominio raíz. El build de GitHub Pages copia
-`index.html` a `404.html` para cargar la SPA al abrir una ruta directamente.
-El build de Cloudflare Pages omite ese archivo para activar su fallback a
-`index.html` con respuesta HTTP 200.
+En producción cuelgan del dominio raíz. Cloudflare Pages sirve `index.html`
+con respuesta HTTP 200 para las rutas de la SPA porque el build
+`npm run build:cloudflare` no incluye `404.html`. El build `npm run build`
+conserva una copia en `404.html` para un posible retorno a GitHub Pages.
 
 ## Despliegue
 
 Las etiquetas `v*` en `main` disparan [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
-que compila y publica en GitHub Pages. Los pushes a `main` solo ejecutan CI.
+que compila y publica en Cloudflare Pages. Los pushes a `main` solo ejecutan CI.
+La acción requiere el secreto `CLOUDFLARE_API_TOKEN` con permiso
+**Account → Cloudflare Pages → Edit**; el ID de cuenta y el proyecto están
+configurados en el workflow.
 
-El `base` de Vite está fijado a `/` para el dominio propio; `public/CNAME` contiene
-`velanus.com`. Si se quita el dominio, hay que revisar ambos ajustes.
+El `base` de Vite está fijado a `/` para el dominio propio. `public/CNAME`
+queda solo para facilitar una posible reversión a GitHub Pages.
 
-Para preparar una vista previa en Cloudflare Pages, ejecutar
-`npm run build:cloudflare` y `wrangler pages deploy dist --project-name velanus`.
-El proyecto y el dominio deben configurarse en la cuenta de Cloudflare antes
-de cambiar el origen de producción. Hasta ese cambio, las etiquetas siguen
-publicando en GitHub Pages.
+Para publicar manualmente desde una sesión de Wrangler autorizada, ejecutar
+`npm run build:cloudflare` y `wrangler pages deploy dist --project-name velanus --branch main`.
+El dominio `velanus.com` está asociado al proyecto `velanus` de Pages. Firebase
+sigue alojando Auth, Firestore y App Check; no requiere migrar los datos.
 
 ## Pendiente antes de considerarlo producción
 

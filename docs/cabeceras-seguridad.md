@@ -1,12 +1,11 @@
 # Cabeceras de seguridad
 
-GitHub Pages no permite configurar cabeceras HTTP, así que las pone **Cloudflare**,
-que ya está delante del dominio. Eso significa que **no viven en este repositorio**:
-este documento es la copia de lo que hay configurado allí, para que se pueda
-revisar, reproducir y —sobre todo— actualizar cuando el sitio cambie.
-
-> Si algún día el frontend se mueve a Firebase Hosting, estas cabeceras pasan a
-> `firebase.json` y se despliegan con el código. Sería mejor sitio para ellas.
+Cloudflare Pages aloja el frontend y permite configurar cabeceras con un archivo
+`public/_headers`. La configuración siguiente describe la política prevista,
+pero **no está activa todavía**: el 15 de octubre de 2026 solo se comprobaron
+`X-Content-Type-Options` y `Referrer-Policy`, añadidas por defecto por Pages.
+Antes de aplicar CSP y HSTS hay que probar el blog, Firebase App Check y el
+panel de administración en el dominio de producción.
 
 ## 1. Regla de cabeceras (Cloudflare → Rules → Transform Rules → Modify Response Header)
 

@@ -1,40 +1,30 @@
-name: Deploy to GitHub Pages
+name: Deploy to Cloudflare Pages
 
-# Se despliega al etiquetar una versión, no al empujar a main: así main puede
-# recibir trabajo sin que cada commit salga a producción, y cada despliegue
-# queda asociado a una versión concreta.
-#
-#   git tag v0.0.2 && git push origin v0.0.2
-#
-# `workflow_dispatch` queda como escape para redesplegar a mano.
+# Las versiones se publican al etiquetar un commit de main.
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
 
-# Permisos que necesita actions/deploy-pages
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  deployments: write
 
-# Un despliegue a la vez; no cancela el que ya está en curso.
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://velanus.com
     steps:
       - uses: actions/checkout@v4
         with:
-          # Historia completa: la comprobación de abajo necesita comparar la
-          # etiqueta con main, y un clon superficial no lo permite.
           fetch-depth: 0
 
-      # La etiqueta tiene que estar en main: evita publicar desde una rama
-      # suelta por descuido.
       - name: Comprobar que la etiqueta está en main
         if: startsWith(github.ref, 'refs/tags/')
         run: |
@@ -58,21 +48,13 @@ jobs:
       - name: Tests
         run: npm test
 
-      - name: Build
-        run: npm run build
+      - name: Build for Cloudflare Pages
+        run: npm run build:cloudflare
 
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v4
         with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 01263066afb95deb2da62d5c02454ea7
+          command: pages deploy dist --project-name=velanus --branch=main --commit-hash=${{ github.sha }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
